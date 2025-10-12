@@ -43,18 +43,44 @@
                         <?php
                         $file_url = base_url($materi->file_path);
                         $ext = strtolower(pathinfo($materi->file_path, PATHINFO_EXTENSION));
-                        $is_image = in_array($ext, ['jpg', 'jpeg', 'png', 'mp4']);
+
+                        // Kelompokkan jenis file
+                        $is_image = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                        $is_video = in_array($ext, ['mp4', 'mov', 'avi', 'mkv', 'webm']);
+                        $is_audio = in_array($ext, ['mp3', 'wav', 'ogg']);
+                        $is_pdf   = ($ext === 'pdf');
                         ?>
 
-                        <?php if ($is_image): ?>
-                            <!-- Jika gambar, langsung download -->
-                            <a href="<?= $file_url; ?>" download class="btn btn-success btn-sm">
-                                <i class="bi bi-download"></i> Unduh Gambar
+                        <?php if ($is_image || $is_video || $is_audio): ?>
+                            <!-- Tampilkan media dengan tombol download & kembali -->
+                            <div class="mb-3">
+                                <?php if ($is_image): ?>
+                                    <img src="<?= $file_url; ?>" alt="File Gambar" class="img-fluid rounded shadow-sm mb-3" style="max-height: 400px;">
+                                <?php elseif ($is_video): ?>
+                                    <video controls class="w-100 rounded shadow-sm mb-3" style="max-height: 400px;">
+                                        <source src="<?= $file_url; ?>" type="video/<?= $ext; ?>">
+                                        Browser Anda tidak mendukung tag video.
+                                    </video>
+                                <?php elseif ($is_audio): ?>
+                                    <audio controls class="w-100 mb-3">
+                                        <source src="<?= $file_url; ?>" type="audio/<?= $ext; ?>">
+                                        Browser Anda tidak mendukung pemutar audio.
+                                    </audio>
+                                <?php endif; ?>
+                            </div>
+
+                            <a href="<?= $file_url; ?>" download class="btn btn-success btn-sm me-2">
+                                <i class="bi bi-download"></i> Download File
+                            </a>
+
+                        <?php elseif ($is_pdf): ?>
+                            <a href="<?= $file_url; ?>" class="btn btn-success btn-sm me-2">
+                                <i class="bi bi-download"></i> Download PDF
                             </a>
                         <?php else: ?>
-                            <!-- Jika bukan gambar, tampilkan tombol lihat -->
-                            <a href="<?= $file_url; ?>" class="btn btn-primary btn-sm">
-                                <i class="bi bi-eye"></i> Lihat File
+                            <!-- File lainnya langsung download -->
+                            <a href="<?= $file_url; ?>" download class="btn btn-success btn-sm">
+                                <i class="bi bi-download"></i> Download File
                             </a>
                         <?php endif; ?>
 
@@ -63,7 +89,6 @@
                     <?php endif; ?>
                 </div>
             </div>
-
 
             <div class="row mb-3">
                 <div class="col-md-3 fw-bold text-secondary">Dibuat Oleh</div>

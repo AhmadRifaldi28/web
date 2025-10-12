@@ -12,10 +12,18 @@ class Materi extends MY_Controller
 
     public function index()
     {
-        $data['materi'] = $this->Materi_model->all();
+        $q = $this->input->get('q'); // Ambil kata kunci dari input form
+
+        if (!empty($q)) {
+            $this->db->like('judul', $q);
+            $this->db->or_like('deskripsi', $q);
+        }
+
+        $data['materi'] = $this->db->get('materi')->result();
         $this->load->view('layouts/header', $data);
         $this->load->view('materi/index', $data);
     }
+
     public function detail($id)
     {
         $data['materi'] = $this->Materi_model->get_by_id($id);

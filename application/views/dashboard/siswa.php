@@ -1,7 +1,3 @@
-<!-- ========================= -->
-<!-- DASHBOARD SISWA CONTENT -->
-<!-- ========================= -->
-
 <main class="main">
 
   <!-- Courses Hero Section -->
@@ -121,7 +117,9 @@
               <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
               <div class="instructor">
                 <img src="<?= base_url('assets/img/person/person-f-3.webp'); ?>" alt="Instructor" class="instructor-img">
-                <div class="instructor-info"><h6>Sarah Johnson</h6><span>Marketing Expert</span></div>
+                <div class="instructor-info">
+                  <h6>Sarah Johnson</h6><span>Marketing Expert</span>
+                </div>
               </div>
               <div class="course-stats">
                 <div class="rating">
@@ -132,7 +130,7 @@
                   <i class="bi bi-people-fill"></i><span>342 students</span>
                 </div>
               </div>
-             <a href="<?= site_url('enroll'); ?>" class="btn-course">Enroll Now</a>
+              <a href="<?= site_url('enroll'); ?>" class="btn-course">Enroll Now</a>
             </div>
           </div>
         </div>
