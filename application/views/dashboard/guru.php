@@ -1,10 +1,6 @@
 <style>
   /* Styling utama untuk kartu versi simpel */
 
-  body {
-    padding-top: 1em;
-  }
-
   /* Styling untuk kartu fitur */
   .feature-card {
     border: 1px solid #e9ecef;
@@ -78,7 +74,7 @@
     </div>
 
     <div class="col-lg-4 col-md-6">
-      <a href="<?= site_url('diskusi/NOMOR_ID_KURSUS'); ?>" class="text-decoration-none">
+      <a href="<?= site_url('guru/forum'); ?>" class="text-decoration-none">
         <div class="card feature-card h-100 text-center shadow-sm">
           <div class="card-body">
             <i class="bi bi-chat-left-text feature-icon icon-diskusi"></i>

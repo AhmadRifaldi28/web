@@ -58,3 +58,10 @@ $route['materi/view/(:num)'] = 'materi/view/$1';
 $route['default_controller'] = 'auth/login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+
+// Forum
+$route['forum'] = 'forum/index';
+$route['forum/thread/(:num)'] = 'forum/thread/$1';
+$route['forum/create'] = 'forum/create';
+$route['forum/comment/(:num)'] = 'forum/comment/$1';

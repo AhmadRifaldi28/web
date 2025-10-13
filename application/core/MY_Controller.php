@@ -9,7 +9,7 @@ class MY_Controller extends CI_Controller {
         $this->load->library('session');
         if ($this->session->userdata('user_id')) {
             $this->load->model('User_model');
-            $this->user = $this->User_model->get($this->session->userdata('user_id'));
+            $this->user = $this->User_model->get_by_id($this->session->userdata('user_id'));
         } else {
             $this->user = null;
         }

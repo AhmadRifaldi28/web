@@ -40,7 +40,7 @@
     </div>
   </footer>
 
- Scroll Top -->
+  Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
     <i class="bi bi-arrow-up-short"></i>
   </a>
@@ -53,6 +53,19 @@
 
   <!-- Main JS -->
   <script src="<?= base_url('assets/js/main.js') ?>"></script>
-  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const currentUrl = window.location.pathname;
+      document.querySelectorAll("#navmenu a").forEach(link => {
+        if (link.href.includes(currentUrl)) {
+          link.classList.add("active");
+        } else {
+          link.classList.remove("active");
+        }
+      });
+    });
 
-  </html>
+  </script>
+</body>
+
+</html>

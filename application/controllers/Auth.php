@@ -42,7 +42,7 @@ class Auth extends CI_Controller
         if ($user && password_verify($password, $user->password)) {
             // Set session data
             $userdata = [
-                'id'        => $user->id,
+                'user_id'        => $user->id,
                 'username'  => $user->username,
                 'name'      => $user->name,
                 'role'      => $user->role,
