@@ -49,6 +49,8 @@
             <li><a href="<?= base_url('materi') ?>" class="<?= ($segment1 == 'materi') ? 'active' : '' ?>">Materi</a></li>
             <li><a href="<?= base_url('guru/kuis') ?>" class="<?= ($currentPath == 'guru/kuis' || $currentPath == 'siswa/kuis') ? 'active' : '' ?>">Kuis</a></li>
             <li><a href="<?= base_url('guru/forum') ?>" class="<?= ($currentPath == 'guru/forum' || $currentPath == 'siswa/forum') ? 'active' : '' ?>">Forum</a></li>
+            <li><a href="<?= base_url('guru/kelas') ?>" class="<?= ($currentPath == 'guru/kelas' || $currentPath == 'siswa/kelas') ? 'active' : '' ?>">Kelas</a></li>
+            <li><a href="<?= base_url('guru/siswa') ?>" class="<?= ($currentPath == 'guru/siswa' || $currentPath == 'siswa/siswa') ? 'active' : '' ?>">Siswa</a></li>
             <li><a href="<?= base_url('auth/logout') ?>">Logout</a></li>
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
