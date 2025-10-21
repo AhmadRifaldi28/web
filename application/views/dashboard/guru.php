@@ -44,7 +44,7 @@
 <div class="container py-5">
   <div class="text-center mb-4">
     <h2>Selamat Datang, <?= $user['name']; ?> </h2>
-    <p class="lead">Anda login sebagai <strong>Guru</strong></p>
+    <p class="lead">Anda login sebagai <strong><?= $user['role']; ?></strong></p>
   </div>
 
   <div class="row g-4">
@@ -62,7 +62,7 @@
     </div>
 
     <div class="col-lg-4 col-md-6">
-      <a href="<?= site_url('tugas/NOMOR_ID_KURSUS'); ?>" class="text-decoration-none">
+      <a href="<?= site_url('guru/tugas'); ?>" class="text-decoration-none">
         <div class="card feature-card h-100 text-center shadow-sm">
           <div class="card-body">
             <i class="bi bi-clipboard2-check feature-icon icon-tugas"></i>

@@ -19,7 +19,7 @@
 
   <div class="container py-5">
     <div class="row justify-content-center">
-      <div class="col-md-5 col-lg-4">
+      <div class="col-md-5 col-lg-5">
         <div class="card shadow-lg border-0 rounded-4">
           <div class="card-body p-4 p-sm-5">
 

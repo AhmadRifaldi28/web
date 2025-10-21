@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -37,26 +38,28 @@
         <h1 class="sitename">Learner</h1>
       </a>
 
-      <?php 
-        $segment1 = $this->uri->segment(1); // contoh: guru
-        $segment2 = $this->uri->segment(2); // contoh: forum
-        $currentPath = $segment1 . '/' . $segment2; // hasil: guru/forum
-        ?>
+      <?php
+      $segment1 = $this->uri->segment(1); // contoh: guru
+      $segment2 = $this->uri->segment(2); // contoh: forum
+      $segment3 = $this->uri->segment(3); // contoh: forum
+      $currentPath = $segment1 . '/' . $segment2 . '/' . $segment3; // hasil: guru/forum
+      ?>
 
-        <nav id="navmenu" class="navmenu">
-          <ul>
-            <li><a href="<?= base_url('dashboard/guru') ?>" class="<?= ($currentPath == 'dashboard/guru') ? 'active' : '' ?>">Home</a></li>
-            <li><a href="<?= base_url('materi') ?>" class="<?= ($segment1 == 'materi') ? 'active' : '' ?>">Materi</a></li>
-            <li><a href="<?= base_url('guru/kuis') ?>" class="<?= ($currentPath == 'guru/kuis' || $currentPath == 'siswa/kuis') ? 'active' : '' ?>">Kuis</a></li>
-            <li><a href="<?= base_url('guru/forum') ?>" class="<?= ($currentPath == 'guru/forum' || $currentPath == 'siswa/forum') ? 'active' : '' ?>">Forum</a></li>
-            <li><a href="<?= base_url('guru/kelas') ?>" class="<?= ($currentPath == 'guru/kelas' || $currentPath == 'siswa/kelas') ? 'active' : '' ?>">Kelas</a></li>
-            <li><a href="<?= base_url('guru/siswa') ?>" class="<?= ($currentPath == 'guru/siswa' || $currentPath == 'siswa/siswa') ? 'active' : '' ?>">Siswa</a></li>
-            <li><a href="<?= base_url('auth/logout') ?>">Logout</a></li>
-          </ul>
-          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-        </nav>
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="<?= base_url('dashboard/') ?>" class="<?= ($currentPath == 'dashboard/guru' || $currentPath == 'dashboard/siswa') ? 'active' : '' ?>">Home</a></li>
+          <li><a href="<?= base_url('materi') ?>" class="<?= ($segment1 == 'materi') ? 'active' : '' ?>">Materi</a></li>
+          <li><a href="<?= base_url('guru/kuis') ?>" class="<?= ($currentPath == 'guru/kuis' || $currentPath == 'siswa/kuis')  ? 'active' : '' ?>">Kuis</a></li>
+          <li><a href="<?= base_url('guru/forum') ?>" class="<?= ($currentPath == 'guru/forum' || $currentPath == 'guru/thread') ? 'active' : '' ?>">Forum</a></li>
+          <li><a href="<?= base_url('guru/kelas') ?>" class="<?= ($currentPath == 'guru/kelas' || $currentPath == 'siswa/kelas') ? 'active' : '' ?>">Kelas</a></li>
+          <li><a href="<?= base_url('guru/siswa') ?>" class="<?= ($currentPath == 'guru/siswa' || $currentPath == 'siswa/siswa') ? 'active' : '' ?>">Siswa</a></li>
+          <li><a href="<?= base_url('guru/tugas') ?>" class="<?= ($currentPath == 'guru/tugas' || $currentPath == 'siswa/tugas') ? 'active' : '' ?>">Tugas</a></li>
+          <li><a href="<?= base_url('auth/logout') ?>">Logout</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
 
-      </div>
-    </header>
+    </div>
+  </header>
 
-    <main class="main">
+  <main class="main">
