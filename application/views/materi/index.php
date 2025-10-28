@@ -1,15 +1,15 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold text-primary mb-0">
-            <i class="bi bi-journal-text me-2"></i> Daftar Materi
+            Daftar Materi
         </h3>
 
-        <?php if ($this->session->userdata('role') == 'guru'): ?>
+        <?php if ($this->session->userdata('role_id') == 1): ?>
             <div>
-                <a href="<?= site_url('materi/create'); ?>" class="btn btn-success me-2 shadow-sm">
+                <a href="<?= site_url('guru/materi/create'); ?>" class="btn btn-success me-2 shadow-sm">
                     <i class="bi bi-plus-circle"></i> Tambah Materi
                 </a>
-                <a href="<?= site_url('dashboard/guru'); ?>" class="btn btn-outline-secondary shadow-sm">
+                <a href="<?= site_url('guru/dashboard'); ?>" class="btn btn-outline-secondary shadow-sm">
                     <i class="bi bi-arrow-left-circle"></i> Kembali
                 </a>
             </div>
@@ -49,16 +49,23 @@
                             <?= $m->deskripsi; ?>
                         </p>
                         <div class="text-center mt-auto">
-                            <a href="<?= site_url('materi/view/' . $m->id); ?>"
+                            <?php if ($user['role_id'] == 1): ?>
+                                <a href="<?= site_url('guru/materi/detail/' . $m->id); ?>"
+                                    class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                                    <i class="bi bi-eye"></i> Lihat Materi
+                                </a>
+                                <a href="#"
+                                    class="btn btn-danger btn-sm rounded-pill px-3 btn-hapus"
+                                    data-id="<?= $m->id; ?>"
+                                    data-judul="<?= htmlspecialchars($m->judul); ?>">
+                                    <i class="bi bi-trash"></i> Hapus
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= site_url('siswa/materi/detail/' . $m->id); ?>"
                                 class="btn btn-outline-primary btn-sm rounded-pill px-4">
                                 <i class="bi bi-eye"></i> Lihat Materi
                             </a>
-                            <a href="#"
-                                class="btn btn-danger btn-sm rounded-pill px-3 btn-hapus"
-                                data-id="<?= $m->id; ?>"
-                                data-judul="<?= htmlspecialchars($m->judul); ?>">
-                                <i class="bi bi-trash"></i> Hapus
-                            </a>
+                            <?php endif ?>
                         </div>
                     </div>
                 </div>
@@ -76,9 +83,8 @@
 </div>
 </div>
 
-<!-- 🔧 Script Live Search -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="<?= base_url('assets/js/jquery-3.6.0.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/sweetalert.js') ?>"></script>
 <script>
     $(document).ready(function() {
         $("#searchInput").on("keyup", function() {
@@ -122,7 +128,7 @@
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "<?= site_url('materi/delete/'); ?>" + id;
+                        window.location.href = "<?= site_url('guru/materi/delete/'); ?>" + id;
                     }
                 });
             });

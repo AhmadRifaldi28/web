@@ -5,8 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Platform Edukasi</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Favicons -->
+  <link href="<?= base_url('assets/img/favicon.png'); ?>" rel="icon">
+  <link href="<?= base_url('assets/img/apple-touch-icon.png'); ?>" rel="apple-touch-icon">
+  <link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+  <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.css') ?>">
+  <link href="<?= base_url('assets/css/style.css') ?>" rel="stylesheet">
   <style>
     /* Opsional: Menambahkan sedikit gaya untuk body */
     body {
@@ -17,14 +21,14 @@
 
 <body>
 
-  <div class="container py-5">
+  <div class="container py-4">
     <div class="row justify-content-center">
       <div class="col-md-5 col-lg-5">
         <div class="card shadow-lg border-0 rounded-4">
           <div class="card-body p-4 p-sm-5">
 
             <div class="text-center mb-4">
-              <img src="https://via.placeholder.com/100" alt="Logo Edukasi" class="mb-3" style="width: 100px;">
+              <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo Edukasi" class="mb-3" style="width: 120px;">
               <h3 class="fw-bold">Selamat Datang 👋</h3>
               <p class="text-muted"> AYO Lanjutkan perjalanan belajarmu hari ini.</p>
             </div>
@@ -38,21 +42,23 @@
               </div>
             <?php endif; ?>
 
-            <form action="<?= site_url('auth/login_action'); ?>" method="POST">
+            <form action="<?= site_url('auth'); ?>" method="POST">
               <div class="mb-3">
                 <label for="username" class="form-label">Username atau Email</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                  <input type="text" class="form-control" id="username" name="username" placeholder="cth: nama.siswa" required>
+                  <input type="text" class="form-control" id="username" name="username" placeholder="cth: nama.siswa" >
                 </div>
+                  <?= form_error('username', '<small class="text-danger pl-3">', '</small>'); ?>
               </div>
 
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password Anda" required>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password Anda" >
                 </div>
+                  <?= form_error('password', '<small class="text-danger pl-3">', '</small>'); ?>
               </div>
 
               <button type="submit" class="btn btn-primary w-100 mt-2 fw-bold">Masuk</button>
@@ -67,7 +73,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 </body>
 
 </html>

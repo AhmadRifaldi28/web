@@ -14,13 +14,13 @@ class Forum_model extends CI_Model {
 
   public function get_all_forum($keyword = null)
   {
-    $this->db->select('forum.*, users.name as nama_guru');
+    $this->db->select('forum.*, user.name as nama_guru');
     $this->db->from('forum');
-    $this->db->join('users', 'users.id = forum.dibuat_oleh', 'left');
+    $this->db->join('user', 'user.id = forum.dibuat_oleh', 'left');
 
     if (!empty($keyword)) {
       $this->db->like('forum.judul', $keyword);
-      $this->db->or_like('users.name', $keyword);
+      $this->db->or_like('user.name', $keyword);
     }
 
     $this->db->order_by('forum.tanggal', 'DESC');
@@ -30,9 +30,9 @@ class Forum_model extends CI_Model {
 
 
   public function get_by_id($id) {
-    return $this->db->select('forum.*, users.name AS nama_guru')
+    return $this->db->select('forum.*, user.name AS nama_guru')
     ->from('forum')
-    ->join('users', 'users.id = forum.dibuat_oleh', 'left')
+    ->join('user', 'user.id = forum.dibuat_oleh', 'left')
     ->where('forum.id', $id)
     ->get()
     ->row();

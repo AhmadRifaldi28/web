@@ -10,9 +10,9 @@ class Komentar_model extends CI_Model
 
     public function get_by_forum($forum_id)
     {
-        return $this->db->select('komentar.*, users.name as nama_user')
+        return $this->db->select('komentar.*, user.name as nama_user')
         ->from('komentar')
-        ->join('users', 'users.id = komentar.user_id', 'left')
+        ->join('user', 'user.id = komentar.user_id', 'left')
         ->where('forum_id', $forum_id)
         ->order_by('komentar.tanggal', 'ASC')
         ->get()->result();

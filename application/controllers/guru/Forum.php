@@ -7,14 +7,8 @@ class Forum extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(['Forum_model', 'Komentar_model']);
-        $this->load->library('session');
-        $this->load->helper(['url', 'form']);
-
-        // Hanya Guru
-        if ($this->session->userdata('role') != 'guru') {
-            show_error('Akses ditolak. Hanya guru yang dapat mengakses halaman ini.', 403);
-        }
+        // cek login
+        is_logged_in();
     }
 
     public function index()
@@ -29,9 +23,12 @@ class Forum extends CI_Controller
         }
 
         // Jika permintaan biasa → tampilkan view penuh
-        $this->load->view('layouts/header');
+        $data['title'] = 'Forum';
+        $data['user'] = $this->session->userdata();
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
         $this->load->view('guru/forum/index', $data);
-        $this->load->view('layouts/footer');
+        $this->load->view('templates/footer');
     }
 
 
@@ -105,24 +102,18 @@ class Forum extends CI_Controller
         echo json_encode(['status' => 'success', 'message' => 'Forum berhasil dihapus.']);
     }
 
-    public function detail($id)
-    {
-        $data['forum'] = $this->Forum_model->get_forum_by_id($id);
-        $data['komentar'] = $this->Komentar_model->get_by_forum($id);
-
-        $this->load->view('layouts/header');
-        $this->load->view('guru/forum/detail', $data);
-        $this->load->view('layouts/footer');
-    }
-
     public function thread($id)
     {
         $data['thread'] = $this->Forum_model->get_by_id($id);
         if (!$data['thread']) show_404();
         $data['comments'] = $this->Komentar_model->get_by_forum($id);
-        $this->load->view('layouts/header', $data);
+        $data['title'] = 'Forum';
+        $data['user'] = $this->session->userdata();
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
         $this->load->view('guru/forum/thread', $data);
-        $this->load->view('layouts/footer');
+        $this->load->view('templates/footer');
     }
 
     public function komentar()
@@ -222,7 +213,7 @@ class Forum extends CI_Controller
     {
         // Cek user login
         $user_id = $this->session->userdata('user_id');
-        $role = $this->session->userdata('role');
+        $role = $this->session->userdata('role_id');
 
         // Ambil data komentar
         $komentar = $this->Komentar_model->get_by_id($id);
@@ -232,7 +223,7 @@ class Forum extends CI_Controller
         }
 
         // Hanya pembuat komentar atau guru boleh hapus
-        if ($komentar->user_id != $user_id && $role != 'guru') {
+        if ($komentar->user_id != $user_id && $role != 1) {
             echo json_encode(['status' => 'error', 'message' => 'Anda tidak memiliki izin untuk menghapus komentar ini.']);
             return;
         }

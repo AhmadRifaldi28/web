@@ -1,287 +1,295 @@
-<style>
-  .table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* smooth scroll di iOS */
-}
+<h1 class="h3 mb-4 text-gray-800">Kelola <?= $title; ?></h1>
 
-.table-responsive::-webkit-scrollbar {
-  height: 8px;
-}
+<div class="row">
+	<div class="col-lg-12">
 
-.table-responsive::-webkit-scrollbar-thumb {
-  background-color: #d1d1d1;
-  border-radius: 10px;
-}
+		<?= $this->session->flashdata('message'); ?>
 
-.table-responsive:hover::-webkit-scrollbar-thumb {
-  background-color: #999;
-}
+		<div class="card shadow mb-4">
+			<div class="card-header py-3">
+				<button class="btn btn-primary" id="btnAddForum">
+					<i class="fas fa-plus"></i> Buat Topik Forum Baru
+				</button>
+			</div>
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-bordered" id="forumTable" width="100%" cellspacing="0">
+						<thead>
+							<tr>
+								<th style="width: 5%;">No</th>
+								<th>Judul Topik</th>
+								<th style="width: 20%;">Dibuat Oleh</th>
+								<th style="width: 20%;">Tanggal</th>
+								<th style="width: 15%;">Aksi</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
 
-</style>
-
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-    <h3 class="mb-2">Kelola Forum Diskusi</h3>
-    <div class="d-flex align-items-center">
-      <input type="text" id="searchForum" class="form-control me-2" placeholder="Cari forum atau nama guru..." style="width:250px;">
-      <button class="btn btn-primary" id="btnTambah">
-        <i class="bi bi-plus-circle"></i> Tambah Forum
-      </button>
-    </div>
-  </div>
-
-  <!-- Modern Table -->
-  <div class="card shadow-sm border-0">
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table align-middle table-bordered table-hover" id="tabelForum">
-          <thead class="table-light border-bottom">
-            <tr>
-              <th width="5%">#</th>
-              <th>Judul</th>
-              <th>Dibuat oleh</th>
-              <th>Tanggal</th>
-              <th width="15%" class="text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="forumList">
-            <?php $no = 1; foreach($forum as $f): ?>
-              <tr>
-                <td><?= $no++; ?></td>
-                <td class="fw-semibold"><?= htmlentities($f->judul); ?></td>
-                <td><span class="badge bg-info text-dark"><?= htmlentities($f->nama_guru); ?></span></td>
-                <td><?= date('d M Y H:i', strtotime($f->tanggal)); ?></td>
-                <td class="text-center">
-                  <a href="<?= base_url('guru/forum/thread/'.$f->id) ?>" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-chat-text"></i> Buka
-                  </a>
-                  <button class="btn btn-warning btn-sm btnEdit m-2 m-lg-0" data-id="<?= $f->id ?>" title="Edit">
-                    <i class="bi bi-pencil-square"></i>
-                  </button>
-                  <button class="btn btn-danger btn-sm btnHapus" data-id="<?= $f->id ?>" title="Hapus">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+	</div>
 </div>
 
-<!-- Modal Form -->
-<div class="modal fade" id="modalForum" tabindex="-1">
-  <div class="modal-dialog">
-    <form id="formForum" class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title"><i class="bi bi-chat-text"></i> Tambah Forum</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" name="id" id="id">
+<div class="modal fade" id="forumModal" tabindex="-1" aria-labelledby="forumModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="forumModalLabel">Topik Forum Baru</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form id="forumForm">
+				<div class="modal-body">
+					<input type="hidden" name="id" id="forumId">
+					
+					<div class="mb-3">
+						<label for="judul" class="form-label">Judul Topik</label>
+						<input type="text" class="form-control" id="judul" name="judul" required>
+					</div>
 
-        <div class="mb-3">
-          <label>Judul Forum</label>
-          <input type="text" name="judul" id="judul" class="form-control" required>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-      </div>
-    </form>
-  </div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+					<button type="submit" class="btn btn-primary">Simpan</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 
 
-<!-- jQuery & Bootstrap -->
 <script src="<?= base_url('assets/js/jquery-3.6.0.min.js') ?>"></script>
+<script src="<?= base_url('assets/vendor/simple-datatables/simple-datatables.js'); ?>"></script>
 <script src="<?= base_url('assets/js/sweetalert.js') ?>"></script>
-
 <script>
-$(function(){
-  let delayTimer;
+    // Pastikan skrip berjalan setelah DOM (dan jQuery) dimuat
+    $(document).ready(function() {
 
-  $('#searchForum').on('keyup', function(){
-    clearTimeout(delayTimer);
-    const keyword = $(this).val();
+    	const base_url = '<?= base_url() ?>';
+        let dataTable; // Variabel untuk menyimpan instance simple-datatable
 
-    delayTimer = setTimeout(() => {
-      $.ajax({
-        url: '<?= base_url("guru/forum") ?>',
-        type: 'GET',
-        data: {q: keyword},
-        dataType: 'json',
-        success: function(res){
-          let html = '';
-          if (res.length > 0) {
-            let no = 1;
-            res.forEach(f => {
-              html += `
-                <tr>
-                  <td>${no++}</td>
-                  <td>${f.judul}</td>
-                  <td>${f.nama_guru ?? 'Tidak diketahui'}</td>
-                  <td>${f.tanggal}</td>
-                  <td>
-                    <a href="<?= base_url('guru/forum/thread/') ?>${f.id}" class="btn btn-outline-primary btn-sm">
-                      <i class="bi bi-chat-left-text"></i> Buka
+        // --- Referensi Elemen jQuery ---
+        const $forumModal = new bootstrap.Modal(document.getElementById('forumModal'));
+        const $forumForm = $('#forumForm');
+        const $forumModalLabel = $('#forumModalLabel');
+        const $forumId = $('#forumId');
+        const $judul = $('#judul');
+
+        // Referensi elemen statis untuk event delegation
+        const $cardBody = $('.card-body');
+
+        /**
+         * Inisialisasi simple-datatables
+         */
+         const initDataTable = () => {
+         	if (dataTable) {
+                dataTable.destroy(); // Hancurkan tabel lama
+              }
+              dataTable = new simpleDatatables.DataTable("#forumTable", {
+              	searchable: true,
+              	fixedHeight: false,
+              	labels: {
+              		placeholder: "Cari...",
+              		perPage: "",
+              		noResults: "Tidak ada data ditemukan",
+              		noRows: "Tidak ada data ditemukan",
+              		info: "Menampilkan {start} sampai {end} dari {rows} data",
+              	}
+              });
+            };
+
+        /**
+         * Fungsi untuk memformat tanggal (agar lebih rapi)
+         */
+         const formatTanggal = (tanggalDB) => {
+         	if (!tanggalDB) return '';
+         	const options = {
+         		year: 'numeric',
+         		month: 'long',
+         		day: 'numeric',
+         		hour: '2-digit',
+         		minute: '2-digit'
+         	};
+         	return new Date(tanggalDB).toLocaleString('id-ID', options);
+         };
+
+        /**
+         * Fungsi untuk memuat data dari controller (via AJAX)
+         * dan membangun tabel
+         */
+         const loadForumData = () => {
+            // Controller index() akan merespons JSON jika via AJAX
+            $.getJSON(base_url + 'guru/forum') // atau 'forum/index'
+            .done(function(data) {
+            	const formattedData = data.map((forum, index) => {
+            		
+                    // Menggunakan variabel JavaScript ${base_url} dan ${forum.id}
+                    const buttons = `
+                    <div class="btn-group" role="group" aria-label="Aksi Forum">
+                    <a href="${base_url}guru/forum/thread/${forum.id}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-chat-text"></i> Buka
                     </a>
-                    <button class="btn btn-warning btn-sm btnEdit" data-id="${f.id}">
-                      <i class="bi bi-pencil"></i>
+                    <button class="btn btn-warning btn-sm btn-edit" 
+                    data-id="${forum.id}">
+                    <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="btn btn-danger btn-sm btnHapus" data-id="${f.id}">
-                      <i class="bi bi-trash"></i>
+                    <button class="btn btn-danger btn-sm btn-delete" 
+                    data-id="${forum.id}" 
+                    data-judul="${forum.judul}">
+                    <i class="fas fa-trash"></i> Hapus
                     </button>
-                  </td>
-                </tr>`;
+                    </div>
+                    `;
+                    // === AKHIR PERUBAHAN ===
+                    
+                    return [
+                    index + 1,
+                    forum.judul,
+                    forum.nama_guru,
+                    formatTanggal(forum.tanggal),
+                    buttons
+                    ];
+                  });
+
+                // Inisialisasi atau re-inisialisasi tabel
+                initDataTable();
+
+                // Masukkan data baru ke tabel
+                if (formattedData.length > 0) {
+                	dataTable.insert({
+                		data: formattedData
+                	});
+                }
+              })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            	console.error('Failed to load forum data:', textStatus, errorThrown);
+            	Swal.fire('Error', 'Gagal memuat data forum.', 'error');
             });
-          } else {
-            html = `
-              <tr><td colspan="5" class="text-center text-muted py-3">
-                <i class="bi bi-search"></i> Tidak ada hasil ditemukan
-              </td></tr>`;
-          }
-          $('#forumList').html(html);
-        },
-        error: function(){
-          console.error('Gagal memuat hasil pencarian');
-        }
-      });
-    }, 1200); // delay 0.4 detik setelah user berhenti mengetik
-  });
-});
-</script>
+          };
 
+        /**
+         * Menampilkan Notifikasi Toast (SweetAlert2)
+         */
+         const showToast = (icon, title) => {
+         	Swal.fire({
+         		icon: icon,
+         		title: title,
+         		toast: true,
+         		position: 'top-end',
+         		showConfirmButton: false,
+         		timer: 3000,
+         		timerProgressBar: true
+         	});
+         };
 
-<script>
-$(document).ready(function(){
-  const modalEl = document.getElementById('modalForum');
-  const modal = new bootstrap.Modal(modalEl);
-
-  let csrfName = $('meta[name="csrf-name"]').attr('content');
-  let csrfHash = $('meta[name="csrf-hash"]').attr('content');
-
-  // Tambah Forum
-  $('#btnTambah').on('click', function(){
-    $('#formForum')[0].reset();
-    $('#id').val('');
-    $('.modal-title').html('<i class="bi bi-chat-text"></i> Tambah Forum');
-    modal.show();
-  });
-
-  // Delegated event: Edit Forum
-  $(document).on('click', '.btnEdit', function(){
-    const id = $(this).data('id');
-    $.ajax({
-      url: '<?= base_url("guru/forum/get_forum/") ?>' + id,
-      type: 'GET',
-      dataType: 'json',
-      success: function(res){
-        if (res) {
-          $('#id').val(res.id);
-          $('#judul').val(res.judul);
-          $('#materi_id').val(res.materi_id);
-          $('.modal-title').html('<i class="bi bi-pencil-square"></i> Edit Forum');
-          modal.show();
-        } else {
-          Swal.fire('Oops!', 'Data forum tidak ditemukan!', 'warning');
-        }
-      },
-      error: function(){
-        Swal.fire('Gagal', 'Tidak dapat mengambil data forum.', 'error');
-      }
-    });
-  });
-
-  // Simpan Forum (Tambah/Edit)
-  $('#formForum').on('submit', function(e){
-    e.preventDefault();
-    const formData = $(this).serializeArray();
-    formData.push({ name: csrfName, value: csrfHash });
-
-    $.ajax({
-      url: '<?= base_url("guru/forum/save") ?>',
-      type: 'POST',
-      data: $.param(formData),
-      dataType: 'json',
-      success: function(res){
-        Swal.close();
-        if(res.status === 'success'){
-          Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: res.message,
-            timer: 1500,
-            showConfirmButton: false
+        // --- 1. CREATE (Tampilkan Modal) ---
+        $('#btnAddForum').on('click', function() {
+            $forumForm[0].reset(); // Kosongkan form
+            $forumId.val(''); // Pastikan ID kosong
+            $forumModalLabel.text('Topik Forum Baru');
+            $forumModal.show();
           });
-          modal.hide();
 
-          // Refresh tabel tanpa reload
-          $('#tabelForum').load(location.href + " #tabelForum>*", "");
-        } else {
-          Swal.fire('Gagal', res.message || 'Gagal menyimpan data.', 'error');
-        }
+        // --- 2. SAVE (Create & Update) ---
+        $forumForm.on('submit', function(e) {
+        	e.preventDefault();
+        	
+            const formData = $(this).serialize(); // Ambil data form
 
-        if(res.csrfName && res.csrfHash){
-          csrfName = res.csrfName;
-          csrfHash = res.csrfHash;
-        }
-      },
-      error: function(){
-        Swal.fire('Gagal', 'Terjadi kesalahan koneksi atau token CSRF.', 'error');
-      }
-    });
-  });
+            $.ajax({
+            	url: base_url + 'guru/forum/save',
+            	type: 'POST',
+            	data: formData,
+            	dataType: 'json',
+            	success: function(response) {
+            		if (response.status === 'success') {
+            			$forumModal.hide();
+            			showToast('success', response.message);
+                        loadForumData(); // Reload data tabel
+                      } else {
+                      	Swal.fire('Gagal!', response.message, 'error');
+                      }
+                    },
+                    error: function() {
+                    	Swal.fire('Error', 'Terjadi kesalahan saat menyimpan.', 'error');
+                    }
+                  });
+          });
 
-  // Hapus Forum
-  $(document).on('click', '.btnHapus', function(){
-    const id = $(this).data('id');
+        // --- 3. EDIT (Show Modal) & 4. DELETE (Confirmation) ---
+        // PENTING: Gunakan event delegation pada $cardBody (induk statis)
+        
+        // Event untuk tombol EDIT
+        $cardBody.on('click', '.btn-edit', function() {
+        	const id = $(this).data('id');
 
-    Swal.fire({
-      title: 'Yakin ingin menghapus?',
-      text: 'Data forum akan dihapus permanen!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Ya, Hapus',
-      cancelButtonText: 'Batal',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#6c757d',
-    }).then((result) => {
-      if(result.isConfirmed){
-        $.ajax({
-          url: '<?= base_url("guru/forum/delete/") ?>' + id,
-          type: 'POST',
-          data: {[csrfName]: csrfHash},
-          dataType: 'json',
-          success: function(res){
-            Swal.fire({
-              icon: res.status === 'success' ? 'success' : 'error',
-              title: res.message,
-              timer: 1500,
-              showConfirmButton: false
+            // Panggil controller get_forum($id) untuk data terbaru
+            $.getJSON(base_url + 'guru/forum/get_forum/' + id)
+            .done(function(data) {
+            	if (data.error) {
+            		Swal.fire('Error', data.error, 'error');
+            	} else {
+                        // Isi form modal
+                        $forumId.val(data.id);
+                        $judul.val(data.judul);
+                        $forumModalLabel.text('Edit Topik Forum');
+                        $forumModal.show();
+                      }
+                    })
+            .fail(function() {
+            	Swal.fire('Error', 'Gagal mengambil data forum.', 'error');
             });
+          });
 
-            if(res.status === 'success'){
-              $('#tabelForum').load(location.href + " #tabelForum>*", "");
-            }
+        // Event untuk tombol DELETE
+        $cardBody.on('click', '.btn-delete', function() {
+        	const id = $(this).data('id');
+        	const judul = $(this).data('judul');
 
-            if(res.csrfName && res.csrfHash){
-              csrfName = res.csrfHash;
-              csrfHash = res.csrfHash;
-            }
-          },
-          error: function(){
-            Swal.fire('Gagal', 'Tidak dapat menghapus data. Token mungkin expired.', 'error');
-          }
+        	Swal.fire({
+        		title: 'Anda Yakin?',
+        		text: `Topik "${judul}" akan dihapus permanen!`,
+        		icon: 'warning',
+        		showCancelButton: true,
+        		confirmButtonColor: '#d33',
+        		cancelButtonColor: '#3085d6',
+        		confirmButtonText: 'Ya, hapus!',
+        		cancelButtonText: 'Batal'
+        	}).then((result) => {
+        		if (result.isConfirmed) {
+                    // Jika dikonfirmasi, panggil fungsi delete
+                    deleteForum(id);
+                  }
+                });
         });
-      }
-    });
-  });
-});
-</script>
 
+        /**
+         * Fungsi untuk eksekusi delete via AJAX
+         */
+         const deleteForum = (id) => {
+         	$.ajax({
+         		url: base_url + 'guru/forum/delete/' + id,
+                type: 'POST', // Gunakan POST untuk delete demi keamanan
+                dataType: 'json',
+                success: function(response) {
+                	if (response.status === 'success') {
+                		showToast('success', response.message);
+                        loadForumData(); // Reload data tabel
+                      } else {
+                      	Swal.fire('Gagal!', response.message, 'error');
+                      }
+                    },
+                    error: function() {
+                    	Swal.fire('Error', 'Terjadi kesalahan saat menghapus.', 'error');
+                    }
+                  });
+         };
 
-<script src="<?= base_url('assets/js/csrf.js'); ?>"></script>
+        // --- Inisialisasi Awal ---
+        // Muat data saat halaman pertama kali dibuka
+        loadForumData();
+
+      });
+    </script>

@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -49,19 +49,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['materi'] = 'materi/index';
-$route['materi/create'] = 'materi/create';
-$route['materi/edit/(:num)'] = 'materi/edit/$1';
-$route['materi/delete/(:num)'] = 'materi/delete/$1';
-$route['materi/view/(:num)'] = 'materi/view/$1';
-
-$route['default_controller'] = 'auth/login';
+// $route['default_controller'] = 'welcome';
+$route['default_controller'] = 'auth';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-
-
-// Forum
-$route['forum'] = 'forum/index';
-$route['forum/thread/(:num)'] = 'forum/thread/$1';
-$route['forum/create'] = 'forum/create';
-$route['forum/comment/(:num)'] = 'forum/comment/$1';

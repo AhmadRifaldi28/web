@@ -5,8 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar Akun Baru</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Favicons -->
+  <link href="<?= base_url('assets/img/favicon.png'); ?>" rel="icon">
+  <link href="<?= base_url('assets/img/apple-touch-icon.png'); ?>" rel="apple-touch-icon">
+  <link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+  <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.css') ?>">
+  <link href="<?= base_url('assets/css/style.css') ?>" rel="stylesheet">
   <style>
     body {
       /* Ganti URL di bawah dengan link gambar Anda */
@@ -37,7 +41,7 @@
           <div class="card-body p-4 p-sm-5">
 
             <div class="text-center mb-4">
-              <img src="https://via.placeholder.com/100" alt="Logo Edukasi" class="mb-3" style="width: 100px;">
+              <img src="<?= base_url('assets/img/courses-14.webp') ?>" alt="Logo Edukasi" class="mb-3" style="width: 100px;">
               <h3 class="fw-bold">Mulai Petualangan Belajarmu! 🚀</h3>
               <p class="text-muted">Buat akun untuk mengakses semua materi pembelajaran.</p>
             </div>
@@ -54,31 +58,34 @@
                 <label for="name" class="form-label">Nama Lengkap</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                  <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan nama lengkap Anda" required>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan nama lengkap Anda" value="<?= set_value('name'); ?>" >
                 </div>
+                  <?= form_error('name', '<small class="text-danger pl-3">', '</small>'); ?>
               </div>
 
               <div class="mb-3">
                 <label for="email" class="form-label">Alamat Email</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                  <input type="email" class="form-control" id="email" name="email" placeholder="contoh@email.com" required>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="contoh@email.com" value="<?= set_value('email'); ?>" >
                 </div>
+                  <?= form_error('email', '<small class="text-danger pl-3">', '</small>'); ?>
               </div>
 
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-person"></i></span>
-                  <input type="text" class="form-control" id="username" name="username" placeholder="Buat username unik" required>
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Buat username unik" value="<?= set_value('username'); ?>" >
                 </div>
+                  <?= form_error('username', '<small class="text-danger pl-3">', '</small>'); ?>
               </div>
 
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Minimal 8 karakter" required>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Minimal 8 karakter" >
                   <span class="input-group-text password-toggle-icon" id="togglePassword">
                     <i class="bi bi-eye-slash"></i>
                   </span>
@@ -86,28 +93,22 @@
                 <div class="progress mt-2" style="height: 5px;">
                   <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <small id="password-strength-text" class="form-text"></small>
+                <div>
+                  <small id="password-strength-text" class="form-text"></small>
+                </div>
+                <?= form_error('password', '<small class="text-danger pl-3">', '</small>'); ?>
               </div>
 
               <div class="mb-3">
                 <label for="password_confirm" class="form-label">Konfirmasi Password</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                  <input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="Ketik ulang password Anda" required>
+                  <input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="Ketik ulang password Anda" >
                 </div>
               </div>
 
-              <div class="mb-3">
-                <label for="role" class="form-label">Daftar Sebagai</label>
-                <select name="role" id="role" class="form-select" required>
-                  <option value="" disabled selected>-- Pilih Peran Anda --</option>
-                  <option value="guru">Guru / Pengajar</option>
-                  <option value="siswa">Siswa / Peserta Didik</option>
-                </select>
-              </div>
-
               <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="" id="termsCheck" required>
+                <input class="form-check-input" type="checkbox" value="" id="termsCheck" >
                 <label class="form-check-label" for="termsCheck">
                   Saya menyetujui <a href="#">Syarat & Ketentuan</a> yang berlaku.
                 </label>
@@ -117,7 +118,7 @@
             </form>
 
             <div class="text-center mt-4">
-              <p class="text-muted">Sudah punya akun? <a href="<?= site_url('auth/login'); ?>" class="fw-bold text-decoration-none">Masuk di sini</a></p>
+              <p class="text-muted">Sudah punya akun? <a href="<?= site_url('auth/'); ?>" class="fw-bold text-decoration-none">Masuk di sini</a></p>
             </div>
           </div>
         </div>
@@ -125,7 +126,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const togglePassword = document.querySelector('#togglePassword');

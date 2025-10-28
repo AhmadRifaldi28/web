@@ -8,59 +8,86 @@ class Auth extends CI_Controller
     {
         parent::__construct();
         $this->load->model('User_model');
-        $this->load->library('session');
         $this->load->helper(array('form', 'url'));
     }
 
     // ==========================
     // 🔹 TAMPILAN HALAMAN LOGIN
     // ==========================
-    public function login()
+    public function index()
     {
         // Jika sudah login, arahkan sesuai role
         if ($this->session->userdata('logged_in')) {
-            $role = $this->session->userdata('role');
-            if ($role == 'guru') {
-                redirect('dashboard/guru');
+            $role = $this->session->userdata('role_id');
+            if ($role == 1) {
+                redirect('guru/dashboard');
             } else {
-                redirect('dashboard/siswa');
+                redirect('siswa/dashboard');
             }
         }
-        $this->load->view('auth/login');
+        // $this->load->view('auth/login');
+
+        $this->form_validation->set_rules('username', 'Username', 'trim|required');
+        $this->form_validation->set_rules('password', 'Password', 'trim|required');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Login Page';
+            $this->load->view('auth/login');
+        } else {
+            // validasinya success
+            $this->_login();
+        }
+    }
+
+    private function _login()
+    {
+        $username = $this->input->post('username');
+        $password = $this->input->post('password');
+
+        $user = $this->db->get_where('user', ['username' => $username])->row_array();
+
+
+        // jika usernya ada
+        if ($user) {
+            // jika usernya aktif
+            if ($user['is_active'] == 1) {
+                // cek password
+                if (password_verify($password, $user['password'])) {
+                    // var_dump($user); exit;
+                    $data = [
+                        'username' => $user['username'],
+                        'name' => $user['name'],
+                        'image' => $user['image'],
+                        'user_id' => $user['id'],
+                        'role_id' => $user['role_id'],
+                        'logged_in' => TRUE
+                    ];
+                    $this->session->set_userdata($data);
+                    if ($user['role_id'] == 1) {
+                        redirect('guru/dashboard');
+                    } else {
+                        redirect('siswa/dashboard');
+                    }
+                } else {
+                    $this->session->set_flashdata('error', 'password salah!');
+                    redirect('auth');
+                }
+            } else {
+                $this->session->set_flashdata('error', 'Akun belum diaktifkan!');
+                redirect('auth');
+            }
+        } else {
+            $this->session->set_flashdata('error', 'Akun belum terdaftar!');
+            redirect('auth');
+        }
     }
 
     // ==========================
     // 🔹 PROSES LOGIN
     // ==========================
-    public function login_action()
-    {
-        $username = $this->input->post('username', TRUE);
-        $password = $this->input->post('password', TRUE);
-
-        $user = $this->User_model->get_by_username($username);
-
-        if ($user && password_verify($password, $user->password)) {
-            // Set session data
-            $userdata = [
-                'user_id'        => $user->id,
-                'username'  => $user->username,
-                'name'      => $user->name,
-                'role'      => $user->role,
-                'logged_in' => TRUE
-            ];
-            $this->session->set_userdata($userdata);
-
-            // Redirect sesuai role
-            if ($user->role == 'guru') {
-                redirect('dashboard/guru');
-            } else {
-                redirect('dashboard/siswa');
-            }
-        } else {
-            $this->session->set_flashdata('error', 'Username atau password salah!');
-            redirect('auth/login');
-        }
-    }
+    // public function login_action()
+    // {
+    // }
 
     // ==========================
     // 🔹 TAMPILAN REGISTER
@@ -75,24 +102,52 @@ class Auth extends CI_Controller
     // ==========================
     public function register_action()
     {
-        $data = [
-            'name'     => $this->input->post('name', TRUE),
-            'email'    => $this->input->post('email', TRUE),
-            'username' => $this->input->post('username', TRUE),
-            'password' => password_hash($this->input->post('password', TRUE), PASSWORD_DEFAULT),
-            'role'     => $this->input->post('role', TRUE)
-        ];
 
-        // Cek username sudah digunakan
-        $check = $this->User_model->get_by_username($data['username']);
-        if ($check) {
-            $this->session->set_flashdata('error', 'Username sudah digunakan!');
-            redirect('auth/register');
+        $this->form_validation->set_rules('name', 'Nama', 'trim|required', [
+            'required' => 'Nama wajib diisi!'
+        ]);
+        $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[user.username]', [
+            'required' => 'Username wajib diisi!',
+            'is_unique' => 'Username sudah terdaftar!'
+        ]);
+        $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[user.email]', [
+            'required' => 'Email wajib diisi!',
+            'is_unique' => 'Email sudah terdaftar!'
+        ]);
+        $this->form_validation->set_rules('password', 'Password', 'required|trim|min_length[5]|matches[password_confirm]', [
+            'required' => 'Password wajib diisi!',
+            'matches' => 'Password tidak sama!',
+            'min_length' => 'Password minimal 5 karakter!'
+        ]);
+        $this->form_validation->set_rules('password_confirm', 'Password', 'required|trim|matches[password]');
+        
+
+        if ($this->form_validation->run() == false) {
+
+            $data['title'] = 'Halaman Pendaftaran';
+            $this->load->view('auth/register');
+        } else {
+            // validasinya success
+            // $this->_login();
+
+            $data = [
+                'name'     => $this->input->post('name', TRUE),
+                'email'    => $this->input->post('email', TRUE),
+                'username' => $this->input->post('username', TRUE),
+                'password' => password_hash($this->input->post('password', TRUE), PASSWORD_DEFAULT),
+            ];
+
+            // Cek username sudah digunakan
+            $check = $this->User_model->get_by_username($data['username']);
+            if ($check) {
+                $this->session->set_flashdata('error', 'Username sudah digunakan!');
+                redirect('auth/register');
+            }
+            $this->User_model->insert($data);
+            redirect('auth');
+            $this->session->set_flashdata('success', 'Pendaftaran berhasil, silakan login.');
         }
 
-        $this->User_model->insert($data);
-        $this->session->set_flashdata('success', 'Pendaftaran berhasil, silakan login.');
-        redirect('auth/login');
     }
 
     // ==========================
@@ -101,7 +156,19 @@ class Auth extends CI_Controller
     public function logout()
     {
         $this->session->sess_destroy();
-        redirect('auth/login');
+        redirect('auth');
+    }
+
+    public function blocked()
+    {
+        if ($this->session->userdata()) {
+            $data['user'] = $this->session->userdata();
+        } else {
+            $data['user'] = [];
+        }
+        $this->load->view('templates/header', $data);
+        $this->load->view('auth/blocked');
+        $this->load->view('templates/footer');
     }
 
     // ==========================
@@ -110,7 +177,7 @@ class Auth extends CI_Controller
     public function cek_login()
     {
         if (!$this->session->userdata('logged_in')) {
-            redirect('auth/login');
+            redirect('auth');
         }
     }
 
