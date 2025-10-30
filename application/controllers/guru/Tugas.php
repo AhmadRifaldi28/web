@@ -1,13 +1,13 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Tugas extends CI_Controller {
+class Tugas extends CI_Controller
+{
 
     public function __construct()
     {
         parent::__construct();
         // Jika ada model untuk TTS/kuis, load di sini
-        // $this->load->model('Tugas_model');
         $this->load->model('TtsModel');
     }
 
@@ -100,85 +100,85 @@ class Tugas extends CI_Controller {
 
     // === Simpan pertanyaan baru via AJAX ===
     public function store_question()
-{
-    $this->load->model('TtsModel');
+    {
+        $this->load->model('TtsModel');
 
-    $tts_id     = $this->input->post('tts_id');
-    $nomor      = (int)$this->input->post('nomor');
-    $arah       = $this->input->post('arah');
-    $pertanyaan = trim($this->input->post('pertanyaan'));
-    $jawaban    = strtoupper(trim($this->input->post('jawaban')));
-    $start_x    = (int)$this->input->post('start_x');
-    $start_y    = (int)$this->input->post('start_y');
+        $tts_id     = $this->input->post('tts_id');
+        $nomor      = (int)$this->input->post('nomor');
+        $arah       = $this->input->post('arah');
+        $pertanyaan = trim($this->input->post('pertanyaan'));
+        $jawaban    = strtoupper(trim($this->input->post('jawaban')));
+        $start_x    = (int)$this->input->post('start_x');
+        $start_y    = (int)$this->input->post('start_y');
 
-    // ===== Validasi dasar =====
-    if (!$tts_id || !$arah || !$pertanyaan || !$jawaban) {
-        echo json_encode(['status' => 'error', 'message' => 'Semua field wajib diisi.']);
-        return;
+        // ===== Validasi dasar =====
+        if (!$tts_id || !$arah || !$pertanyaan || !$jawaban) {
+            echo json_encode(['status' => 'error', 'message' => 'Semua field wajib diisi.']);
+            return;
+        }
+
+        // Ambil data TTS untuk tahu grid_size
+        $tts = $this->db->get_where('tts', ['id' => $tts_id])->row();
+        if (!$tts) {
+            echo json_encode(['status' => 'error', 'message' => 'Data TTS tidak ditemukan.']);
+            return;
+        }
+
+        $grid_size = (int)$tts->grid_size;
+        $panjang_jawaban = strlen($jawaban);
+
+        // ===== Validasi panjang jawaban =====
+        if ($panjang_jawaban > $grid_size) {
+            echo json_encode(['status' => 'error', 'message' => 'Panjang jawaban melebihi ukuran grid.']);
+            return;
+        }
+
+        // ===== Validasi posisi start dalam grid =====
+        if ($start_x < 0 || $start_y < 0 || $start_x >= $grid_size || $start_y >= $grid_size) {
+            echo json_encode(['status' => 'error', 'message' => 'Posisi awal berada di luar batas grid.']);
+            return;
+        }
+
+        // ===== Validasi agar kata tidak keluar batas grid =====
+        if ($arah === 'mendatar' && ($start_x + $panjang_jawaban) > $grid_size) {
+            echo json_encode(['status' => 'error', 'message' => 'Jawaban mendatar melewati batas grid.']);
+            return;
+        }
+        if ($arah === 'menurun' && ($start_y + $panjang_jawaban) > $grid_size) {
+            echo json_encode(['status' => 'error', 'message' => 'Jawaban menurun melewati batas grid.']);
+            return;
+        }
+
+        // ===== Validasi duplikasi nomor pada TTS yang sama =====
+        $cekNomor = $this->db->get_where('tts_questions', [
+            'tts_id' => $tts_id,
+            'nomor'  => $nomor
+        ])->row();
+
+        if ($cekNomor) {
+            echo json_encode(['status' => 'error', 'message' => 'Nomor soal sudah digunakan pada TTS ini.']);
+            return;
+        }
+
+        // ===== Simpan ke database =====
+        $data = [
+            'tts_id'     => $tts_id,
+            'nomor'      => $nomor,
+            'arah'       => $arah,
+            'pertanyaan' => $pertanyaan,
+            'jawaban'    => $jawaban,
+            'start_x'    => $start_x,
+            'start_y'    => $start_y,
+        ];
+
+        $insert = $this->TtsModel->insert_question($data);
+
+        if ($insert) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan pertanyaan.']);
+        }
     }
-
-    // Ambil data TTS untuk tahu grid_size
-    $tts = $this->db->get_where('tts', ['id' => $tts_id])->row();
-    if (!$tts) {
-        echo json_encode(['status' => 'error', 'message' => 'Data TTS tidak ditemukan.']);
-        return;
-    }
-
-    $grid_size = (int)$tts->grid_size;
-    $panjang_jawaban = strlen($jawaban);
-
-    // ===== Validasi panjang jawaban =====
-    if ($panjang_jawaban > $grid_size) {
-        echo json_encode(['status' => 'error', 'message' => 'Panjang jawaban melebihi ukuran grid.']);
-        return;
-    }
-
-    // ===== Validasi posisi start dalam grid =====
-    if ($start_x < 0 || $start_y < 0 || $start_x >= $grid_size || $start_y >= $grid_size) {
-        echo json_encode(['status' => 'error', 'message' => 'Posisi awal berada di luar batas grid.']);
-        return;
-    }
-
-    // ===== Validasi agar kata tidak keluar batas grid =====
-    if ($arah === 'mendatar' && ($start_x + $panjang_jawaban) > $grid_size) {
-        echo json_encode(['status' => 'error', 'message' => 'Jawaban mendatar melewati batas grid.']);
-        return;
-    }
-    if ($arah === 'menurun' && ($start_y + $panjang_jawaban) > $grid_size) {
-        echo json_encode(['status' => 'error', 'message' => 'Jawaban menurun melewati batas grid.']);
-        return;
-    }
-
-    // ===== Validasi duplikasi nomor pada TTS yang sama =====
-    $cekNomor = $this->db->get_where('tts_questions', [
-        'tts_id' => $tts_id,
-        'nomor'  => $nomor
-    ])->row();
-
-    if ($cekNomor) {
-        echo json_encode(['status' => 'error', 'message' => 'Nomor soal sudah digunakan pada TTS ini.']);
-        return;
-    }
-
-    // ===== Simpan ke database =====
-    $data = [
-        'tts_id'     => $tts_id,
-        'nomor'      => $nomor,
-        'arah'       => $arah,
-        'pertanyaan' => $pertanyaan,
-        'jawaban'    => $jawaban,
-        'start_x'    => $start_x,
-        'start_y'    => $start_y,
-    ];
-
-    $insert = $this->TtsModel->insert_question($data);
-
-    if ($insert) {
-        echo json_encode(['status' => 'success']);
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan pertanyaan.']);
-    }
-}
 
 
     // === Hapus pertanyaan ===
@@ -188,41 +188,45 @@ class Tugas extends CI_Controller {
         echo json_encode(['status' => $delete ? 'success' : 'error']);
     }
 
-    /*public function preview($id)
-    {
-        $tts = $this->TtsModel->find($id);
-        if (!$tts) show_404();
-
-        $questions = $this->TtsModel->get_questions($id);
-
-        $data = [
-            'title' => 'Preview TTS: ' . $tts->judul,
-            'tts' => $tts,
-            'mode' => 'siswa',
-            'questions' => $questions
-        ];
-        $this->load->view('layouts/header', $data);
-        $this->load->view('guru/tugas/tts_preview', $data);
-        $this->load->view('layouts/footer');
-    }*/
     public function preview($tts_id)
-{
-    $this->load->model('TtsModel');
-    $data['tts'] = $this->TtsModel->find($tts_id);
-    if (!$data['tts']) show_404();
+    {
+        $this->load->model('TtsModel');
+        $data['tts'] = $this->TtsModel->find($tts_id);
+        if (!$data['tts']) show_404();
 
-    $data['questions'] = $this->TtsModel->get_questions($tts_id);
-    $data['title'] = 'Preview TTS: ' . $data['tts']->judul;
-    $data['mode'] = 'siswa';
+        $data['questions'] = $this->TtsModel->get_questions($tts_id);
+        $data['title'] = 'Preview TTS: ' . $data['tts']->judul;
+        $data['mode'] = 'siswa';
 
-    // $data['title'] = 'Tugas';
-    $data['user'] = $this->session->userdata();
-    $this->load->view('templates/header', $data);
-    $this->load->view('templates/sidebar');
-    $this->load->view('guru/tugas/tts_preview', $data);
-    $this->load->view('templates/footer');
-}
+        // $data['title'] = 'Tugas';
+        $data['user'] = $this->session->userdata();
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
+        $this->load->view('guru/tugas/tts_preview', $data);
+        $this->load->view('templates/footer');
+    }
 
+    // public function nilai_tts($tts_id = null)
+    // {
+    //     $data['title'] = 'Ruang Nilai TTS';
+
+    //     if ($tts_id === null) {
+    //         $data['tts_list'] = $this->TtsModel->get_all();
+    //         $this->load->view('templates/header', $data);
+    //         $this->load->view('templates/sidebar');
+    //         $this->load->view('guru/tts/daftar_nilai', $data);
+    //         $this->load->view('templates/footer');
+    //         return;
+    //     }
+
+    //     $data['tts'] = $this->TtsModel->get($tts_id);
+    //     $data['hasil_siswa'] = $this->TtsModel->get_all_nilai_siswa($tts_id);
+
+    //     $this->load->view('templates/header', $data);
+    //     $this->load->view('templates/sidebar');
+    //     $this->load->view('guru/tts/nilai_siswa', $data);
+    //     $this->load->view('templates/footer');
+    // }
 
 
     // ====== FUNGSI UNTUK KUIS ESAI ======

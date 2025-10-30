@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class KelasModel extends CI_Model
 {
@@ -33,9 +33,9 @@ class KelasModel extends CI_Model
 
     public function get_siswa_by_kelas($kelas_id)
     {
-        $this->db->select('siswa_kelas.id as rel_id, users.id as siswa_id, users.name, users.email, users.username');
+        $this->db->select('siswa_kelas.id as rel_id, user.id as siswa_id, user.name, user.email, user.username');
         $this->db->from('siswa_kelas');
-        $this->db->join('users', 'users.id = siswa_kelas.siswa_id');
+        $this->db->join('user', 'user.id = siswa_kelas.siswa_id');
         $this->db->where('siswa_kelas.kelas_id', $kelas_id);
         return $this->db->get()->result();
     }
@@ -64,5 +64,4 @@ class KelasModel extends CI_Model
     {
         return $this->db->delete('siswa_kelas', ['id' => $rel_id]);
     }
-
 }

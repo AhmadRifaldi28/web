@@ -6,7 +6,7 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta name="csrf-name" content="<?= $this->security->get_csrf_token_name(); ?>">
   <meta name="csrf-hash" content="<?= $this->security->get_csrf_hash(); ?>">
-  
+
   <title><?= isset($title) ? $title : 'NiceAdmin'; ?></title>
 
   <!-- Favicons -->
@@ -34,7 +34,7 @@
     <div class="d-flex align-items-center justify-content-between">
       <a href="<?= base_url(); ?>" class="logo d-flex align-items-center">
         <img src="<?= base_url('assets/img/logo.png'); ?>" alt="">
-        <span class="d-none d-lg-block">NiceAdmin</span>
+        <span class="d-none d-lg-block">E-LKPD</span>
       </a>
       <!-- <i class="bi bi-list toggle-sidebar-btn"></i> -->
       <i class="bi bi-layout-sidebar toggle-sidebar-btn"></i>
@@ -133,45 +133,45 @@
         </li><!-- End Notification Nav -->
 
         <?php if (isset($user) ? $user : null): ?>
-        <li class="nav-item dropdown pe-3">
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="<?= base_url('assets/img/') .  (isset($user['image']) ? $user['image'] : 'foto.jpg'); ?>" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2"><?= $user['username'] ?? 'User'; ?></span>
-          </a><!-- End Profile Iamge Icon -->
+          <li class="nav-item dropdown pe-3">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+              <img src="<?= base_url('assets/img/') .  (isset($user['image']) ? $user['image'] : 'foto.jpg'); ?>" alt="Profile" class="rounded-circle">
+              <span class="d-none d-md-block dropdown-toggle ps-2"><?= $user['username'] ?? 'User'; ?></span>
+            </a><!-- End Profile Iamge Icon -->
 
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6><?= $user['name'] ?? 'User'; ?></h6>
-              <span><?= ($user['role_id'] ?? '' == 1) ? 'Guru' : ''; ?></span>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+              <li class="dropdown-header">
+                <h6><?= $user['name'] ?? 'User'; ?></h6>
+                <span><?= ($user['role_id'] ?? '' == 1) ? 'Guru' : ''; ?></span>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
 
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li> 
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                  <i class="bi bi-person"></i>
+                  <span>My Profile</span>
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
 
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="<?= base_url('auth\logout') ?>">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
-            </li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="<?= base_url('auth\logout') ?>">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
+                </a>
+              </li>
 
-          </ul><!-- End Profile Dropdown Items -->
-        </li><!-- End Profile Nav -->
+            </ul><!-- End Profile Dropdown Items -->
+          </li><!-- End Profile Nav -->
         <?php endif ?>
 
       </ul>
     </nav><!-- End Icons Navigation -->
-    
+
   </header>
   <!-- End Header -->
 

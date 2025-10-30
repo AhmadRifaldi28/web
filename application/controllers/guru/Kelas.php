@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Kelas extends CI_Controller
 {
@@ -7,7 +7,7 @@ class Kelas extends CI_Controller
     {
         parent::__construct();
         $this->load->model('KelasModel');
-        $this->load->model('SiswaModel');
+        $this->load->model('Siswa_Model');
     }
 
     public function index()
@@ -18,9 +18,10 @@ class Kelas extends CI_Controller
         $data['kelas'] = $this->KelasModel->get_all_by_guru($guru_id);
         $data['title'] = 'Manajemen Kelas';
 
-        $this->load->view('layouts/header', $data);
+        $this->load->view('templates/header', $data);
         $this->load->view('guru/kelas/index', $data);
-        $this->load->view('layouts/footer');
+        $this->load->view('templates/sidebar');
+        $this->load->view('templates/footer');
     }
 
     public function store()
@@ -58,12 +59,13 @@ class Kelas extends CI_Controller
         $data['title'] = 'Detail Kelas - ' . $data['kelas']->nama_kelas;
 
         // Ambil daftar siswa (role = 'siswa') untuk dropdown
-        $data['siswa_list'] = $this->db->get_where('users', ['role' => 'siswa'])->result();
+        $data['siswa_list'] = $this->db->get_where('user', ['role_id' => 2])->result();
         $data['jumlah'] = count($data['anggota']);
 
-        $this->load->view('layouts/header', $data);
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
         $this->load->view('guru/kelas/detail', $data);
-        $this->load->view('layouts/footer');
+        $this->load->view('templates/footer');
     }
 
     // AJAX: ambil jumlah siswa dalam kelas
@@ -96,6 +98,4 @@ class Kelas extends CI_Controller
         $this->KelasModel->remove_siswa($rel_id);
         echo json_encode(['status' => 'deleted']);
     }
-
-    
 }

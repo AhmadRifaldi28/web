@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class TtsModel extends CI_Model {
+class TtsModel extends CI_Model
+{
 
     // === CRUD untuk tabel TTS ===
     public function get_all()
@@ -32,9 +33,9 @@ class TtsModel extends CI_Model {
     public function get_questions($tts_id)
     {
         return $this->db->where('tts_id', $tts_id)
-        ->order_by('arah', 'ASC')
-        ->order_by('nomor', 'ASC')
-        ->get('tts_questions')->result();
+            ->order_by('arah', 'ASC')
+            ->order_by('nomor', 'ASC')
+            ->get('tts_questions')->result();
     }
 
     public function insert_question($data)
@@ -56,4 +57,26 @@ class TtsModel extends CI_Model {
         return $row ? $row->nomor + 1 : 1;
     }
 
+    // Mengambil nilai siswa
+    // === Ambil seluruh nilai TTS semua siswa ===
+    public function get_all_nilai()
+    {
+        $this->db->select('tts_answers.*, tts.judul, user.name as nama_siswa');
+        $this->db->from('tts_answers');
+        $this->db->join('tts', 'tts.id = tts_answers.tts_id', 'left');
+        $this->db->join('user', 'user.id = tts_answers.user_id', 'left');
+        $this->db->order_by('tts_answers.submitted_at', 'DESC');
+        return $this->db->get()->result();
+    }
+
+    // === Ambil seluruh nilai berdasarkan satu TTS ===
+    public function get_all_nilai_siswa($tts_id)
+    {
+        $this->db->select('tts_answers.*, user.name as nama_siswa');
+        $this->db->from('tts_answers');
+        $this->db->join('user', 'user.id = tts_answers.user_id', 'left');
+        $this->db->where('tts_answers.tts_id', $tts_id);
+        $this->db->order_by('tts_answers.skor', 'DESC');
+        return $this->db->get()->result();
+    }
 }
