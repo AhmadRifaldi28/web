@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-name" content="<?= $this->security->get_csrf_token_name(); ?>">
+  <meta name="csrf-hash" content="<?= $this->security->get_csrf_hash(); ?>">
   <title>Login Platform Edukasi</title>
   <!-- Favicons -->
   <link href="<?= base_url('assets/img/favicon.png'); ?>" rel="icon">
@@ -42,7 +44,8 @@
               </div>
             <?php endif; ?>
 
-            <form action="<?= site_url('auth'); ?>" method="POST">
+            <!-- <form action="</?= site_url('auth'); ?>" method="POST"> -->
+             <?= form_open('auth'); ?>
               <div class="mb-3">
                 <label for="username" class="form-label">Username atau Email</label>
                 <div class="input-group">
@@ -62,7 +65,8 @@
               </div>
 
               <button type="submit" class="btn btn-primary w-100 mt-2 fw-bold">Masuk</button>
-            </form>
+            <!-- </form> -->
+            <?= form_close(); ?>
 
             <div class="text-center mt-4">
               <p class="text-muted">Belum punya akun? <a href="<?= site_url('auth/register'); ?>" class="fw-bold text-decoration-none">Daftar sekarang</a></p>

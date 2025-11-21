@@ -19,8 +19,10 @@
   -->
   <script src="<?= base_url('assets/vendor/tinymce/tinymce.min.js'); ?>"></script> 
   <script src="<?= base_url('assets/vendor/simple-datatables/simple-datatables.js'); ?>"></script>
+  <script src="<?= base_url('assets/js/sweetalert.js') ?>"></script>
 
   <!-- Template Main JS File -->
   <script src="<?= base_url('assets/js/main.js'); ?>"></script>
+  <!-- <script src="</?= base_url('assets/js/app.js') ?>"></script> -->
 </body>
 </html>

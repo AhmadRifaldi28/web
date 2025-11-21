@@ -13,7 +13,7 @@ class Menu extends CI_Controller
 	public function index()
 	{
 		$data['title'] = 'Kelola Menu';
-		$data['user'] = $this->db->get_where('user', ['username' => $this->session->userdata('username')])->row_array();
+		$data['user'] = $this->db->get_where('users', ['username' => $this->session->userdata('username')])->row_array();
 
 		$data['menu'] = $this->db->get('user_menu')->result_array();
 		$this->load->view('templates/header', $data);
@@ -35,7 +35,7 @@ class Menu extends CI_Controller
 		$id = $this->input->post('id');
 		$menu = trim($this->input->post('menu'));
 		if (empty($menu)) {
-			echo json_encode(['status' => 'error', 'message' => 'Menu tidak boleh kosong']);
+			echo json_encode(['status' => 'error', 'message' => 'Menu tidak boleh kosong', 'csrf_hash' => $this->security->get_csrf_hash()]);
 			return;
 		}
 
@@ -44,7 +44,8 @@ class Menu extends CI_Controller
 		if ($exists) {
 			echo json_encode([
 				'status' => 'error',
-				'message' => 'Nama menu sudah ada, gunakan nama lain!'
+				'message' => 'Nama menu sudah ada, gunakan nama lain!',
+				'csrf_hash' => $this->security->get_csrf_hash()
 			]);
 			return;
 		}
@@ -62,7 +63,8 @@ class Menu extends CI_Controller
 
 		echo json_encode([
 			'status' => 'success',
-			'message' => $msg
+			'message' => $msg,
+			'csrf_hash' => $this->security->get_csrf_hash()
 		]);
 
 	}
@@ -73,7 +75,8 @@ class Menu extends CI_Controller
 		if (!$id) {
 			echo json_encode([
 				'status' => 'error',
-				'message' => 'ID tidak ditemukan.'
+				'message' => 'ID tidak ditemukan.',
+				'csrf_hash' => $this->security->get_csrf_hash()
 			]);
 			return;
 		}
@@ -83,12 +86,14 @@ class Menu extends CI_Controller
 		if ($deleted) {
 			echo json_encode([
 				'status' => 'success',
-				'message' => 'Menu berhasil dihapus.'
+				'message' => 'Menu berhasil dihapus.',
+				'csrf_hash' => $this->security->get_csrf_hash()
 			]);
 		} else {
 			echo json_encode([
 				'status' => 'error',
-				'message' => 'Gagal menghapus menu.'
+				'message' => 'Gagal menghapus menu.',
+				'csrf_hash' => $this->security->get_csrf_hash()
 			]);
 		}
 	}
@@ -97,7 +102,7 @@ class Menu extends CI_Controller
 	public function submenu()
 	{
 		$data['title'] = 'Kelola Submenu';
-		$data['user'] = $this->db->get_where('user', ['username' => $this->session->userdata('username')])->row_array();
+		$data['user'] = $this->db->get_where('users', ['username' => $this->session->userdata('username')])->row_array();
 
 		$data['subMenu'] = $this->menu->getAllSubmenu();;
 		$data['menu'] = $this->db->get('user_menu')->result_array();
@@ -135,7 +140,7 @@ class Menu extends CI_Controller
 
         // Validasi sederhana
 		if ($title == '' || $menu_id == '' || $url == '' || $icon == '') {
-			echo json_encode(['status' => 'error', 'message' => 'Semua field wajib diisi.']);
+			echo json_encode(['status' => 'error', 'message' => 'Semua field wajib diisi.', 'csrf_hash' => $this->security->get_csrf_hash()]);
 			return;
 		}
 
@@ -145,7 +150,7 @@ class Menu extends CI_Controller
 		if ($id) $this->db->where('id !=', $id);
 		$cek = $this->db->get('user_sub_menu')->row();
 		if ($cek) {
-			echo json_encode(['status' => 'error', 'message' => 'Submenu dengan judul ini sudah ada pada menu tersebut.']);
+			echo json_encode(['status' => 'error', 'message' => 'Submenu dengan judul ini sudah ada pada menu tersebut.', 'csrf_hash' => $this->security->get_csrf_hash()]);
 			return;
 		}
 
@@ -161,9 +166,9 @@ class Menu extends CI_Controller
 
 		if ($success) {
             // MODIFIKASI: Kirim status sukses saja, BUKAN HTML
-			echo json_encode(['status' => 'success', 'message' => 'Data berhasil disimpan!']);
+			echo json_encode(['status' => 'success', 'message' => 'Data berhasil disimpan!', 'csrf_hash' => $this->security->get_csrf_hash()]);
 		} else {
-			echo json_encode(['status' => 'error', 'message' => 'Tidak ada perubahan data.']);
+			echo json_encode(['status' => 'error', 'message' => 'Tidak ada perubahan data.', 'csrf_hash' => $this->security->get_csrf_hash()]);
 		}
 		
         // Hapus cache (ini tetap)
@@ -179,9 +184,9 @@ class Menu extends CI_Controller
 
 		if ($deleted) {
             // MODIFIKASI: Kirim status sukses saja, BUKAN HTML
-			echo json_encode(['status' => 'success', 'message' => 'Submenu berhasil dihapus.']);
+			echo json_encode(['status' => 'success', 'message' => 'Submenu berhasil dihapus.', 'csrf_hash' => $this->security->get_csrf_hash()]);
 		} else {
-			echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus submenu.']);
+			echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus submenu.', 'csrf_hash' => $this->security->get_csrf_hash()]);
 		}
 	}
 }

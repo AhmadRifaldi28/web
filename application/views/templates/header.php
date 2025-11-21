@@ -6,8 +6,8 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta name="csrf-name" content="<?= $this->security->get_csrf_token_name(); ?>">
   <meta name="csrf-hash" content="<?= $this->security->get_csrf_hash(); ?>">
-
-  <title><?= isset($title) ? $title : 'NiceAdmin'; ?></title>
+  
+  <title><?= isset($title) ? $title : 'E-LKPD'; ?></title>
 
   <!-- Favicons -->
   <link href="<?= base_url('assets/img/favicon.png'); ?>" rel="icon">
@@ -20,12 +20,13 @@
   <!-- Vendor CSS Files -->
   <link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css'); ?>" rel="stylesheet">
   <link href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.css'); ?>" rel="stylesheet">
-  <!-- <link href="</?= base_url('assets/vendor/boxicons/css/boxicons.min.css'); ?>" rel="stylesheet"> -->
-  <link href="<?= base_url('assets/vendor/remixicon/remixicon.css'); ?>" rel="stylesheet">
   <link href="<?= base_url('assets/vendor/simple-datatables/style.css'); ?>" rel="stylesheet">
 
   <!-- Template Main CSS File -->
   <link href="<?= base_url('assets/css/style.css'); ?>" rel="stylesheet">
+
+  <!-- <script src="</?= base_url('assets/js/jquery-3.6.0.min.js') ?>"></script> -->
+  <!-- <script src="</?= base_url('assets/js/csrf.js'); ?>"></script> -->
 </head>
 
 <body>
@@ -133,49 +134,49 @@
         </li><!-- End Notification Nav -->
 
         <?php if (isset($user) ? $user : null): ?>
-          <li class="nav-item dropdown pe-3">
-            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-              <img src="<?= base_url('assets/img/') .  (isset($user['image']) ? $user['image'] : 'foto.jpg'); ?>" alt="Profile" class="rounded-circle">
-              <span class="d-none d-md-block dropdown-toggle ps-2"><?= $user['username'] ?? 'User'; ?></span>
-            </a><!-- End Profile Iamge Icon -->
+        <li class="nav-item dropdown pe-3">
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="<?= base_url('assets/img/') .  (isset($user['image']) ? $user['image'] : 'foto.jpg'); ?>" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2"><?= $user['username'] ?? 'User'; ?></span>
+          </a><!-- End Profile Iamge Icon -->
 
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-              <li class="dropdown-header">
-                <h6><?= $user['name'] ?? 'User'; ?></h6>
-                <span><?= ($user['role_id'] ?? '' == 1) ? 'Guru' : ''; ?></span>
-              </li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6><?= $user['name'] ?? 'User'; ?></h6>
+              <span><?= ($user['role_id'] ?? '' == 1) ? 'Guru' : ''; ?></span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
 
-              <li>
-                <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                  <i class="bi bi-person"></i>
-                  <span>My Profile</span>
-                </a>
-              </li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li> 
 
-              <li>
-                <a class="dropdown-item d-flex align-items-center" href="<?= base_url('auth\logout') ?>">
-                  <i class="bi bi-box-arrow-right"></i>
-                  <span>Sign Out</span>
-                </a>
-              </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="<?= base_url('auth\logout') ?>">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
 
-            </ul><!-- End Profile Dropdown Items -->
-          </li><!-- End Profile Nav -->
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
         <?php endif ?>
 
       </ul>
     </nav><!-- End Icons Navigation -->
-
+    
   </header>
   <!-- End Header -->
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1><?= $title ?? 'NiceAdmin'; ?></h1>
+      <h1><?= $title ?? 'E-LKPD'; ?></h1>
     </div><!-- End Page Title -->

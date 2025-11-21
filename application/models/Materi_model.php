@@ -3,31 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Materi_model extends CI_Model
 {
-    private $table = 'materi';
-
-    public function get($id)
-    {
-        return $this->db->get_where($this->table, ['id' => $id])->row();
-    }
-
-    public function all()
-    {
-        return $this->db->order_by('created_at', 'DESC')->get($this->table)->result();
-    }
-
-    // Ambil semua materi berdasarkan kelas
-    public function get_by_kelas($kelas_id)
-    {
-        return $this->db->order_by('tanggal', 'DESC')
-            ->get_where($this->table, ['kelas_id' => $kelas_id])
-            ->result();
-    }
-
-    // Ambil 1 materi by ID
-    public function get_by_id($id)
-    {
-        return $this->db->get_where($this->table, ['id' => $id])->row();
-    }
+    protected $table = 'materi';
 
     public function insert($data)
     {
@@ -45,21 +21,18 @@ class Materi_model extends CI_Model
         return $this->db->where('id', $id)->delete($this->table);
     }
 
-    // Tambah materi baru
-    public function add_materi($data)
+    public function get($id)
     {
-        return $this->db->insert($this->table, $data);
+        return $this->db->get_where($this->table, ['id' => $id])->row();
     }
 
-    // Edit materi
-    public function update_materi($id, $data)
+    public function all()
     {
-        return $this->db->where('id', $id)->update($this->table, $data);
+        return $this->db->order_by('created_at', 'DESC')->get($this->table)->result();
     }
 
-    // Hapus materi
-    public function delete_materi($id)
+    public function by_guru($guru_id)
     {
-        return $this->db->delete($this->table, ['id' => $id]);
+        return $this->db->get_where($this->table, ['created_by' => $guru_id])->result();
     }
 }

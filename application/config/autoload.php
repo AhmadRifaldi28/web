@@ -58,7 +58,7 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('database', 'email','form_validation', 'session', 'upload');
+$autoload['libraries'] = array('database', 'email', 'form_validation', 'session', 'upload');
 
 /*
 | -------------------------------------------------------------------
@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('auth', 'form', 'menu', 'url');
+$autoload['helper'] = array('url','form', 'auth_helper', 'menu_helper', 'security','ulid');
 
 /*
 | -------------------------------------------------------------------
@@ -132,4 +132,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('Forum_model', 'Komentar_model', 'Materi_model', 'Siswa_model');
+$autoload['model'] = array('Sekolah_model', 'Guru_model', 'Murid_model', 'User_model', 'Pbl_model', 'Pbl_tahap2_model', 'Pbl_tts_model', 'Pbl_tahap3_model', 'Pbl_tahap4_model', 'Pbl_tahap5_model');

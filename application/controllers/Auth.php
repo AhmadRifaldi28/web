@@ -44,8 +44,9 @@ class Auth extends CI_Controller
         $username = $this->input->post('username');
         $password = $this->input->post('password');
 
-        $user = $this->db->get_where('user', ['username' => $username])->row_array();
+        $user = $this->db->get_where('users', ['username' => $username])->row_array();
 
+        $role_name = $this->db->get_where('roles', ['id' => $user['role_id']])->row();
 
         // jika usernya ada
         if ($user) {
@@ -60,13 +61,18 @@ class Auth extends CI_Controller
                         'image' => $user['image'],
                         'user_id' => $user['id'],
                         'role_id' => $user['role_id'],
+                        'role' => $role_name->role,
                         'logged_in' => TRUE
                     ];
                     $this->session->set_userdata($data);
-                    if ($user['role_id'] == 1) {
+                    if ($role_name->role === 'Admin') {
+                        redirect('admin/dashboard');
+                    } elseif ($role_name->role === 'Guru') {
                         redirect('guru/dashboard');
-                    } else {
+                    } elseif ($role_name->role === 'Siswa') {
                         redirect('siswa/dashboard');
+                    } else {
+                        redirect('auth/blocked');
                     }
                 } else {
                     $this->session->set_flashdata('error', 'password salah!');
