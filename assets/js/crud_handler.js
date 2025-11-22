@@ -8,7 +8,7 @@
  * - simple-datatables
  * - SweetAlert2
  * - Fetch API
- * @version 1.1.0
+ * @version 1.2.0
  */
 export default class CrudHandler {
     
@@ -17,10 +17,10 @@ export default class CrudHandler {
         this.dataTable = null;
         this.modalInstance = null;
         
-        // (BARU) Set mode readOnly
+        // Set mode readOnly
         this.isReadOnly = config.readOnly || false;
 
-        // (BARU) Validasi yang disesuaikan
+        // Validasi yang disesuaikan
         // Wajib ada untuk SEMUA mode (termasuk read-only)
         if (!config || !config.urls || !config.urls.load || !config.tableId) {
             console.error("Konfigurasi CrudHandler (urls.load / tableId) tidak lengkap!");
@@ -28,25 +28,27 @@ export default class CrudHandler {
         }
 
         // Wajib ada HANYA jika TIDAK read-only
-        if (!this.isReadOnly && (!config.modalId || !config.formId)) {
+        /*if (!this.isReadOnly && (!config.modalId || !config.formId)) {
             console.error("Konfigurasi CrudHandler (modalId / formId) tidak lengkap untuk mode CRUD!");
-            // Hentikan jika mode CRUD tapi config kurang
             return; 
-        }
+        }*/
 
         // Cache elemen DOM yang selalu ada
         this.tableEl = document.getElementById(config.tableId);
         this.tableParent = document.querySelector(config.tableParentSelector || '.card-body');
 
-        // (BARU) Hanya cache elemen CRUD jika TIDAK read-only
+        // Hanya cache elemen CRUD jika TIDAK read-only
+        // Initialization untuk Mode Write (Create/Edit/Delete)
         if (!this.isReadOnly) {
-            this.modalEl = document.getElementById(config.modalId);
-            this.form = document.getElementById(config.formId);
-            this.modalLabel = document.getElementById(config.modalLabelId);
-            this.hiddenIdField = document.getElementById(config.hiddenIdField);
-            this.btnAdd = document.getElementById(config.btnAddId);
+            // Optional: Form & Modal hanya dibutuhkan jika fitur Create/Edit aktif
+            this.form = config.formId ? document.getElementById(config.formId) : null;
+            this.modalEl = config.modalId ? document.getElementById(config.modalId) : null;
+            this.btnAdd = config.btnAddId ? document.getElementById(config.btnAddId) : null;
+            
+            this.modalLabel = config.modalLabelId ? document.getElementById(config.modalLabelId) : null;
+            this.hiddenIdField = config.hiddenIdField ? document.getElementById(config.hiddenIdField) : null;
 
-            // Inisialisasi instance Modal Bootstrap
+            // Inisialisasi Modal hanya jika elemen modal ditemukan
             if (this.modalEl) {
                 this.modalInstance = new bootstrap.Modal(this.modalEl);
             }
@@ -55,46 +57,49 @@ export default class CrudHandler {
 
     /**
      * Inisialisasi utama:
-     * (BARU) Disesuaikan untuk mode readOnly
+     * Disesuaikan untuk mode readOnly
      */
     init() {
-        // Jika readOnly, cukup load data dan selesai.
+        // Jika readOnly, load data dan stop.
         if (this.isReadOnly) {
             this.loadData();
             return;
         }
 
-        // --- Logika di bawah ini hanya berjalan jika BUKAN readOnly ---
+        // --- Logika Write (Create/Update/Delete) ---
 
-        // Validasi form (sekarang aman karena kita tahu this.form seharusnya ada)
-        if (!this.form) {
-            console.error(`Form dengan ID #${this.config.formId} tidak ditemukan.`);
-            return;
+        // 1. Listener Tombol Tambah (Hanya jika tombol ada)
+        if (this.btnAdd) {
+            this.btnAdd.addEventListener('click', () => this.#showAddModal());
         }
-        
-        // 1. Listener untuk tombol "Tambah"
-        this.btnAdd?.addEventListener('click', () => this.#showAddModal());
 
-        // 2. Listener untuk form "Submit" (Create & Update)
-        this.form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await this.#saveData();
-        });
+        // 2. Listener Submit Form (Hanya jika form ada)
+        if (this.form) {
+            this.form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.#saveData();
+            });
+        }
 
-        // 3. Listener untuk "Edit" & "Delete" (Event Delegation)
-        this.tableParent?.addEventListener('click', (e) => {
-            const btnEdit = e.target.closest('.btn-edit');
-            if (btnEdit) {
-                this.#showEditModal(btnEdit);
-                return;
-            }
+        // 3. Listener Edit & Delete (Delegation pada Table Parent)
+        // Ini tetap berjalan meskipun Form/Modal tidak ada (untuk kasus Delete Only)
+        if (this.tableParent) {
+            this.tableParent.addEventListener('click', (e) => {
+                // Handle Edit (Hanya jika form & modal tersedia)
+                const btnEdit = e.target.closest('.btn-edit');
+                if (btnEdit && this.form && this.modalInstance) {
+                    this.#showEditModal(btnEdit);
+                    return;
+                }
 
-            const btnDelete = e.target.closest('.btn-delete');
-            if (btnDelete) {
-                this.#handleDeleteClick(btnDelete);
-                return;
-            }
-        });
+                // Handle Delete
+                const btnDelete = e.target.closest('.btn-delete');
+                if (btnDelete) {
+                    this.#handleDeleteClick(btnDelete);
+                    return;
+                }
+            });
+        }
 
         // 4. Muat data awal
         this.loadData();

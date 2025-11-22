@@ -1,0 +1,81 @@
+<div class="container py-4">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<div>
+			<h4 class="mb-1"><?= $title; ?></h4>
+			<p class="text-muted mb-0">Unggah hasil observasi Anda di sini.</p>
+		</div>
+		<a href="<?= base_url('siswa/pbl/tahap3/' . $class_id) ?>" class="btn btn-secondary">
+			<i class="bi bi-arrow-left"></i> Kembali
+		</a>
+	</div>
+
+	<div class="card shadow-sm mb-4 border-4">
+			<h5 class="card-title text-primary">Instruksi Tugas:</h5>
+			<p class="card-text"><?= nl2br(htmlspecialchars($slot->description)); ?></p>
+	</div>
+
+	<div class="card shadow-sm">
+		<div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+			<h6 class="m-0 font-weight-bold text-primary">File Saya</h6>
+			<button class="btn btn-primary btn-sm" id="btnAddUpload">
+				<i class="bi bi-cloud-upload"></i> Upload File Baru
+			</button>
+		</div>
+		<div class="card-body">
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover" id="myUploadsTable" width="100%" cellspacing="0">
+					<thead class="table-light">
+						<tr>
+							<th style="width: 5%;">No</th>
+							<th>Nama File Asli</th>
+							<th>Keterangan</th>
+							<th>Tanggal Upload</th>
+							<th style="width: 15%;">Aksi</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form id="uploadForm" enctype="multipart/form-data">
+				<div class="modal-header">
+					<h5 class="modal-title" id="uploadModalLabel">Upload Hasil Observasi</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" name="observation_slot_id" value="<?= $slot->id; ?>">
+					<input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+
+					<div class="mb-3">
+						<label for="file_upload" class="form-label">Pilih File <span class="text-danger">*</span></label>
+						<input class="form-control" type="file" id="file_upload" name="file_upload" required>
+						<div class="form-text">Format: PDF, Word, Image. Max: 5MB.</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="description" class="form-label">Keterangan Tambahan (Opsional)</label>
+						<textarea class="form-control" id="description" name="description" rows="3" placeholder="Contoh: Observasi lapangan hari ke-1"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+					<button type="submit" class="btn btn-primary">Upload</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	window.BASE_URL = "<?= base_url(); ?>";
+	window.CSRF_TOKEN_NAME = "<?= $this->security->get_csrf_token_name(); ?>";
+	window.SLOT_ID = "<?= $slot->id; ?>";
+</script>
+
+<script type="module" src="<?= base_url('assets/js/siswa/pbl_observasi_detail.js'); ?>"></script>

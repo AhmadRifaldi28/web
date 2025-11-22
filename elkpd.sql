@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 21, 2025 at 02:04 PM
+-- Generation Time: Nov 22, 2025 at 02:49 PM
 -- Server version: 8.0.30
 -- PHP Version: 7.4.33
 
@@ -219,6 +219,29 @@ INSERT INTO `pbl_observation_slots` (`id`, `class_id`, `title`, `description`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pbl_observation_uploads`
+--
+
+CREATE TABLE `pbl_observation_uploads` (
+  `id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `observation_slot_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID Siswa',
+  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `original_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pbl_observation_uploads`
+--
+
+INSERT INTO `pbl_observation_uploads` (`id`, `observation_slot_id`, `user_id`, `file_name`, `original_name`, `description`, `created_at`) VALUES
+('01KAMXPZDWQJTN29V76JY99JG3', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K912FR1QZHEWJ6MCVK8WEK5V', 'f58ccd865935e2abf00ef422384aeaab.png', 'Screenshot (1938).png', 'observasi lapangan hari ke-1', '2025-11-22 11:38:45');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pbl_orientasi`
 --
 
@@ -284,6 +307,22 @@ CREATE TABLE `pbl_quiz_questions` (
 INSERT INTO `pbl_quiz_questions` (`id`, `quiz_id`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`, `created_at`) VALUES
 ('01K9RB47XCXWVSSEBMT8NRTNC6', '01K9RB3FNYYXBC5SBAT705K85N', 'siapa', 'Saya', 'Aku', 'Dia', 'Kamu', 'C', '2025-11-11 09:15:13'),
 ('01K9RB47XCZ8MQ9BQQXK134F59', '01K9RB3FNYYXBC5SBAT705K85N', '1+1=', '1', '0', '2', '3', 'A', '2025-11-11 09:15:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pbl_quiz_results`
+--
+
+CREATE TABLE `pbl_quiz_results` (
+  `id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `quiz_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `score` int NOT NULL,
+  `total_correct` int NOT NULL,
+  `total_questions` int NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -427,7 +466,6 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `user_id`, `class_id`, `created_at`) VALUES
-('01K975TZ7SY1GTZP8H9J5769YA', '01K912FR1QZHEWJ6MCVK8WEK5V', '01K974TZ7SY1GTZP8H9J5769YA', '2025-11-12 21:06:54'),
 ('01K9A3CMSD46G85CSDZPSMQCX6', '01K912FR1QZHEWJ6MCVK8WEK5V', '01K92EK6YBT0FSC80TDYYD3ZN2', '2025-11-05 20:30:37'),
 ('01KA3AJMXBWYDCS60QFP26Y9CX', '01K94KA9TRKC5ZEAPM3PRKVP9S', '01K92EK6YBT0FSC80TDYYD3ZN2', '2025-11-15 15:37:15');
 
@@ -628,6 +666,14 @@ ALTER TABLE `pbl_observation_slots`
   ADD KEY `class_id` (`class_id`);
 
 --
+-- Indexes for table `pbl_observation_uploads`
+--
+ALTER TABLE `pbl_observation_uploads`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `observation_slot_id` (`observation_slot_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `pbl_orientasi`
 --
 ALTER TABLE `pbl_orientasi`
@@ -645,6 +691,14 @@ ALTER TABLE `pbl_quizzes`
 ALTER TABLE `pbl_quiz_questions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `quiz_id` (`quiz_id`);
+
+--
+-- Indexes for table `pbl_quiz_results`
+--
+ALTER TABLE `pbl_quiz_results`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `quiz_id` (`quiz_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `pbl_reflection_prompts`
@@ -779,6 +833,12 @@ ALTER TABLE `pbl_evaluation_quiz_questions`
 ALTER TABLE `pbl_forum_posts`
   ADD CONSTRAINT `pbl_forum_posts_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `pbl_discussion_topics` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `pbl_forum_posts_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `pbl_observation_uploads`
+--
+ALTER TABLE `pbl_observation_uploads`
+  ADD CONSTRAINT `fk_obs_slot` FOREIGN KEY (`observation_slot_id`) REFERENCES `pbl_observation_slots` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `pbl_quiz_questions`
