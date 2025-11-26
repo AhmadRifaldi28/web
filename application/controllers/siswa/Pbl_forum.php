@@ -16,7 +16,7 @@ class Pbl_forum extends CI_Controller
 	 */
 	public function detail($topic_id = null)
 	{
-		if (!$topic_id) redirect('guru/pbl');
+		if (!$topic_id) redirect('siswa/pbl');
 
 		$topic = $this->forum_model->get_topic_details($topic_id);
 		if (!$topic) show_404();
@@ -25,7 +25,7 @@ class Pbl_forum extends CI_Controller
 		$data['topic'] = $topic;
 		$data['class_id'] = $topic->class_id; // Ambil class_id dari topik
 		$data['user'] = $this->session->userdata();
-		$data['url_name'] = 'guru';
+		$data['url_name'] = 'siswa';
     $role_id = $this->session->userdata('role_id');    
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
@@ -102,10 +102,7 @@ class Pbl_forum extends CI_Controller
 	 * AJAX: Menghapus postingan (Sesuai pola pbl_tahap2.js)
 	 */
 	public function delete_post($post_id = null)
-	{
-		// (Keamanan: Seharusnya kita cek apakah guru ini pemilik kelas,
-		// atau pemilik postingan. Untuk saat ini, kita asumsikan guru bisa hapus)
-		
+	{	
 		if ($post_id) {
 			$this->forum_model->delete_post($post_id);
 			$msg = 'Postingan dihapus.';
@@ -124,4 +121,4 @@ class Pbl_forum extends CI_Controller
 }
 
 /* End of file Pbl_forum.php */
-/* Location: ./application/controllers/Guru/Pbl_forum.php */
+/* Location: ./application/controllers/Siswa/Pbl_forum.php */

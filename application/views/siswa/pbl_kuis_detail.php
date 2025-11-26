@@ -28,7 +28,6 @@
         color: #2e59d9;
         font-weight: bold;
     }
-    /* Sembunyikan radio button asli, kita styling labelnya */
     .form-check-input { display: none; } 
 </style>
 
@@ -51,6 +50,8 @@
         </div>
     <?php else: ?>
         <form id="quizSubmissionForm">
+            <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+            
             <div id="questionsTableContainer">
                 <table class="table" id="questionsTable">
                     <thead><tr><th>Soal</th></tr></thead>

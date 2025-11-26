@@ -24,10 +24,11 @@ class Pbl_refleksi_akhir extends CI_Controller
 		$data['reflection'] = $reflection;
 		$data['class_id'] = $reflection->class_id; // Ambil class_id dari refleksi
 		$data['user'] = $this->session->userdata();
+		$data['prompts'] = $this->reflection_model->get_prompts($reflection_id);
 
 		$this->load->view('templates/header', $data);
 		// $this->load->view('templates/sidebar');
-		$this->load->view('guru/pbl_refleksi_akhir_detail', $data); // View Detail BARU
+		$this->load->view('guru/pbl_refleksi_akhir_detail', $data);
 		$this->load->view('templates/footer');
 	}
 
@@ -39,6 +40,14 @@ class Pbl_refleksi_akhir extends CI_Controller
 	public function get_prompts($reflection_id)
 	{
 		$data = $this->reflection_model->get_prompts($reflection_id);
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($data));
+	}
+
+	public function get_submissions($reflection_id)
+	{
+		$data = $this->reflection_model->get_submissions($reflection_id);
 		$this->output
 			->set_content_type('application/json')
 			->set_output(json_encode($data));

@@ -5,6 +5,7 @@ class Pbl_tts_model extends CI_Model
 {
 	private $table_tts = 'pbl_tts';
 	private $table_questions = 'pbl_tts_questions';
+	private $table_results = 'pbl_tts_results';
 
 	public function get_tts_by_id($id)
 	{
@@ -162,6 +163,61 @@ class Pbl_tts_model extends CI_Model
 		// 4. Jika semua huruf lolos tanpa tabrakan
 		return ['valid' => true, 'message' => ''];
 	}
+
+    public function get_questions_for_student($tts_id)
+    {
+        // Kita perlu panjang jawaban (LENGTH(answer)) untuk membuat kotak input di frontend
+        $this->db->select('id, number, direction, question, start_x, start_y, LENGTH(answer) as ans_length, LEFT(answer, 1) as first_char');
+        $this->db->where('tts_id', $tts_id);
+        $this->db->order_by('number', 'ASC');
+        return $this->db->get($this->table_questions)->result();
+    }
+
+    // Cek apakah sudah mengerjakan
+    public function check_submission($tts_id, $user_id)
+    {
+        return $this->db->where('tts_id', $tts_id)
+            ->where('user_id', $user_id)
+            ->get($this->table_results)
+            ->row();
+    }
+
+    // Proses Penilaian TTS
+    public function submit_answers($tts_id, $user_id, $student_answers)
+    {
+        // 1. Ambil Kunci Jawaban Asli
+        $questions = $this->db->where('tts_id', $tts_id)->get($this->table_questions)->result();
+        
+        $correct_count = 0;
+        $total_questions = count($questions);
+
+        // 2. Bandingkan Jawaban
+        foreach ($questions as $q) {
+            $qid = $q->id;
+            // Normalisasi jawaban siswa (huruf besar, tanpa spasi)
+            $ans = isset($student_answers[$qid]) ? strtoupper(trim($student_answers[$qid])) : '';
+            
+            if ($ans === strtoupper($q->answer)) {
+                $correct_count++;
+            }
+        }
+
+        // 3. Hitung Skor
+        $score = ($total_questions > 0) ? ($correct_count / $total_questions) * 100 : 0;
+
+        // 4. Simpan ke DB
+        $data = [
+            'id' => generate_ulid(), // Helper ULID
+            'tts_id' => $tts_id,
+            'user_id' => $user_id,
+            'score' => round($score),
+            'total_correct' => $correct_count,
+            'total_questions' => $total_questions
+        ];
+
+        $this->db->insert($this->table_results, $data);
+        return $data;
+    }
 	
 }
 

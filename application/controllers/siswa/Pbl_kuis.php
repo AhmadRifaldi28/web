@@ -20,7 +20,7 @@ class Pbl_kuis extends CI_Controller
         $quiz = $this->Pbl_kuis_model->get_quiz_by_id($quiz_id);
         if (!$quiz) show_404();
 
-        $user_id = $this->session->userdata('id');
+        $user_id = $this->session->userdata('user_id');
         
         // Cek apakah sudah mengerjakan
         $result = $this->Pbl_kuis_model->check_submission($quiz_id, $user_id);
@@ -51,7 +51,7 @@ class Pbl_kuis extends CI_Controller
     {
         $quiz_id = $this->input->post('quiz_id');
         $answers = $this->input->post('answers'); // Array [question_id => 'A']
-        $user_id = $this->session->userdata('id');
+        $user_id = $this->session->userdata('user_id');
 
         if (!$quiz_id || empty($answers)) {
             echo json_encode(['status' => 'error', 'message' => 'Jawaban tidak boleh kosong.']);

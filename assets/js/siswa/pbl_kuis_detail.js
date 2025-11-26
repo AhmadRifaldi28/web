@@ -2,6 +2,7 @@ import CrudHandler from '../crud_handler.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Ambil elemen token untuk update nanti (bukan untuk submit awal)
     const csrfEl = document.querySelector('input[name="' + window.CSRF_TOKEN_NAME + '"]');
     const QUIZ_ID = window.QUIZ_ID;
 
@@ -16,12 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const config = {
         baseUrl: window.BASE_URL,
         entityName: 'Soal',
-        
-        // Kita hanya pakai fitur Load, jadi aktifkan readOnly 
-        // (Tapi kita butuh custom mapper untuk render input radio)
-        readOnly: true, 
-        
-        // Dummy ID agar validasi lewat (jika diperlukan oleh versi CrudHandler Anda)
+        readOnly: true,         
         tableId: 'questionsTable',
         tableParentSelector: '#questionsTableContainer',
         
@@ -32,15 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
             delete: ``
         },
         
-        // Kita tidak butuh fitur delete/search/pagination standard
-        // Untuk kuis, biasanya kita ingin menampilkan semua soal
-        // Pastikan simple-datatables dikonfigurasi untuk "All entries" di view jika memungkinkan,
-        // atau di sini kita biarkan paging standard.
-        
         dataMapper: (q, i) => {
             const num = i + 1;
             
-            // Template HTML untuk Soal + Opsi Jawaban
             const html = `
                 <div class="question-card">
                     <h5 class="mb-3">${num}. ${q.question_text}</h5>
@@ -68,18 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
-
-            // Kembalikan sebagai array 1 kolom
             return [html];
         }
     };
 
-    // Init Handler untuk load data
     const handler = new CrudHandler(config);
     handler.init();
 
-
-    // --- Logika Submit Manual (Di luar CrudHandler) ---
+    // --- Logika Submit Manual ---
     const form = document.getElementById('quizSubmissionForm');
     
     if (form) {
@@ -102,10 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function submitQuizData() {
+        // [PERBAIKAN]
+        // new FormData(form) akan otomatis mengambil <input type="hidden"> CSRF 
+        // yang sudah kita tambahkan di View. Tidak perlu append manual.
         const formData = new FormData(form);
-        // Tambahkan Quiz ID & CSRF manual karena ini form custom
+        
+        // Tambahkan Quiz ID manual
         formData.append('quiz_id', QUIZ_ID);
-        formData.append(window.CSRF_TOKEN_NAME, document.querySelector(`input[name="${window.CSRF_TOKEN_NAME}"]`).value);
 
         fetch(`${window.BASE_URL}siswa/pbl_kuis/submit_quiz`, {
             method: 'POST',
@@ -113,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())
         .then(data => {
-            // Update token CSRF global untuk request berikutnya (jika ada)
+            // Update token CSRF global di DOM jika server mengirim hash baru
             if (data.csrf_hash) {
                 document.querySelectorAll(`input[name="${window.CSRF_TOKEN_NAME}"]`).forEach(el => el.value = data.csrf_hash);
             }
@@ -125,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     text: data.message,
                     confirmButtonText: 'Lihat Hasil'
                 }).then(() => {
-                    // Reload halaman untuk melihat tampilan skor
                     window.location.reload(); 
                 });
             } else {

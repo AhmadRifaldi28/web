@@ -25,7 +25,7 @@
 <div class="container py-3">
 
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <a href="<?= base_url('guru/pbl/tahap3/' . $class_id) ?>" class="btn btn-secondary">← Kembali ke Tahap 3</a>
+    <a href="<?= base_url($url_name . '/pbl/tahap3/' . $class_id) ?>" class="btn btn-secondary">← Kembali ke Tahap 3</a>
   </div>
 
   <div class="card shadow-sm mb-3">
@@ -90,5 +90,7 @@
   window.CSRF_TOKEN_NAME = "<?= $this->security->get_csrf_token_name(); ?>";
   window.CURRENT_TOPIC_ID = "<?= $topic->id; ?>";
   window.CURRENT_USER_ID = "<?= $this->session->userdata('user_id'); ?>";
+  window.IS_ADMIN_OR_GURU = <?= $is_admin_or_guru ? 'true' : 'false' ?>;
+  window.URL_NAME = '<?= $url_name; ?>';
 </script>
 <script type="module" src="<?= base_url('assets/js/pbl_forum_detail.js'); ?>"></script>

@@ -33,9 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
             delete: (id) => `siswa/pbl_observasi/delete_upload/${id}`
         },
         deleteMethod: 'POST',
-        
-        // [PERBAIKAN 1] Gunakan nama field yang sederhana ('name')
-        // Ini akan cocok dengan data-name="..."
         deleteNameField: 'name', 
         
         modalTitles: { add: 'Upload Hasil Observasi', edit: '' },
@@ -56,9 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </a>
             `;
 
-            // Tombol Hapus
-            // [PERBAIKAN 2] Ubah 'data-original_name' menjadi 'data-name'
-            // Agar sesuai dengan config.deleteNameField: 'name'
             const deleteBtn = `
                 <button class="btn btn-sm btn-danger btn-delete" 
                     data-id="${item.id}" 

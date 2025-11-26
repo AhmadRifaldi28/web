@@ -3,6 +3,7 @@ import CrudHandler from './crud_handler.js'; // (Pastikan path ini benar)
 document.addEventListener('DOMContentLoaded', () => {
 
   const csrfEl = document.querySelector('input[name="' + window.CSRF_TOKEN_NAME + '"]');
+  const IS_ADMIN_OR_GURU = window.IS_ADMIN_OR_GURU || false;
   const CURRENT_TOPIC_ID = window.CURRENT_TOPIC_ID;
   const CURRENT_USER_ID = window.CURRENT_USER_ID;
 
@@ -29,9 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tableParentSelector: '#postsTableContainer', // Targetkan ID spesifik
     csrf: csrfConfig,
     urls: {
-      load: `guru/pbl_forum/get_posts/${CURRENT_TOPIC_ID}`,
-      save: `guru/pbl_forum/save_post`,
-      delete: (id) => `guru/pbl_forum/delete_post/${id}`
+      load: IS_ADMIN_OR_GURU ? `guru/pbl_forum/get_posts/${CURRENT_TOPIC_ID}` : `siswa/pbl_forum/get_posts/${CURRENT_TOPIC_ID}`,
+      save: IS_ADMIN_OR_GURU ? `guru/pbl_forum/save_post` : `siswa/pbl_forum/save_post`,
+      // delete: (id) => `guru/pbl_forum/delete_post/${id}`
+      delete: (id) => IS_ADMIN_OR_GURU ? `guru/pbl_forum/delete_post/${id}` : `siswa/pbl_forum/delete_post/${id}`,
     },
     deleteMethod: 'POST',
     modalTitles: { add: 'Tulis Balasan', edit: 'Edit Postingan' },
@@ -47,7 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemUserId = (item.user_id || '').toString().trim();
       const currentUserId = (CURRENT_USER_ID || '').toString().trim();
       const isOwner = (itemUserId === currentUserId && itemUserId !== '');
-      const displayName = isOwner ? 'Anda (Guru)' : item.name;
+      // const displayName = isOwner ? 'Anda (Guru)' : item.name;
+      const displayName = item.name;
 
       // (Logika ini sudah benar)
       let buttons = '';

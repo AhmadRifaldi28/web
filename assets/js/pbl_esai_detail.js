@@ -14,9 +14,76 @@ document.addEventListener('DOMContentLoaded', () => {
     tokenName: window.CSRF_TOKEN_NAME,
     tokenHash: csrfEl ? csrfEl.value : ''
   };
+  
+  // --- A. Konfigurasi CRUD untuk Pertanyaan Esai ---
+  const questionConfig = {
+    baseUrl: window.BASE_URL,
+    entityName: 'Pertanyaan Esai',
+    modalId: 'questionModal',
+    formId: 'questionForm',
+    modalLabelId: 'questionModalLabel',
+    hiddenIdField: 'questionId', 
+    tableId: 'questionsTable',
+    btnAddId: 'btnAddQuestion', // ID tombol tambah baru
+    
+    tableParentSelector: '#questionsTableContainer', 
+    csrf: csrfConfig,
+    urls: {
+      load: `guru/pbl_esai/get_questions/${CURRENT_ESSAY_ID}`,
+      save: `guru/pbl_esai/save_question`,
+      delete: `guru/pbl_esai/delete_question`,
+    },
+    deleteMethod: 'POST', 
+    modalTitles: { add: 'Tambah Pertanyaan Esai', edit: 'Edit Pertanyaan Esai' },
+    deleteNameField: 'question_number', // Field untuk konfirmasi hapus
 
-  // --- Konfigurasi CRUD untuk Memberi Feedback ---
-  const config = {
+    dataMapper: (item, i) => {
+      // Potong teks pertanyaan agar tidak terlalu panjang di tabel
+      const questionText = item.question_text ? item.question_text.substring(0, 150) + (item.question_text.length > 150 ? '...' : '') : '-';
+      
+      // Tombol Aksi
+      const actionButtons = `
+        <button class="btn btn-sm btn-info btn-edit me-2"
+          data-id="${item.id}"
+          data-question_number="${item.question_number}"
+          data-question_text="${item.question_text}"
+          data-weight="${item.weight}">
+          <i class="bi bi-pencil"></i> Edit
+        </button>
+        <button class="btn btn-sm btn-danger btn-delete"
+          data-id="${item.id}"
+          data-question_number="${item.question_number}">
+          <i class="bi bi-trash"></i> Hapus
+        </button>
+      `;
+
+      return [
+        item.question_number,
+        questionText,
+        `${item.weight}%`,
+        actionButtons
+      ];
+    },
+
+    /**
+     * Mengisi form modal saat tombol 'Edit' diklik
+     */
+    formPopulator: (form, data) => {
+      form.querySelector('#questionId').value = data.id;
+      form.querySelector('#question_number').value = data.question_number;
+      form.querySelector('#question_text').value = data.question_text;
+      form.querySelector('#weight').value = data.weight;
+      // Essay ID sudah terisi dari PHP
+    }
+  };
+
+  // Inisialisasi handler pertanyaan
+  const questionHandler = new CrudHandler(questionConfig);
+  questionHandler.init();
+
+
+  // --- B. Konfigurasi CRUD untuk Memberi Feedback (Kode lama, tetap dipertahankan) ---
+  const feedbackConfig = {
     baseUrl: window.BASE_URL,
     entityName: 'Feedback',
     modalId: 'feedbackModal',
@@ -75,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Inisialisasi handler
-  const feedbackHandler = new CrudHandler(config);
+  // Inisialisasi handler feedback
+  const feedbackHandler = new CrudHandler(feedbackConfig);
   feedbackHandler.init();
   
 });

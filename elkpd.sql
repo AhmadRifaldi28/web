@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 22, 2025 at 02:49 PM
+-- Generation Time: Nov 26, 2025 at 04:27 AM
 -- Server version: 8.0.30
 -- PHP Version: 7.4.33
 
@@ -85,8 +85,30 @@ CREATE TABLE `pbl_discussion_topics` (
 --
 
 INSERT INTO `pbl_discussion_topics` (`id`, `class_id`, `title`, `description`, `created_at`) VALUES
-('01K9HBR0JAWBTQF8K4443MBXSF', '01K92EK6YBT0FSC80TDYYD3ZN2', 'diskusi ipas', 'pertemuan 1 ipas', '2025-11-08 16:11:19'),
-('01KAJ4NWR7PDPN4Z53Z9CN8SQQ', '01K92EK6YBT0FSC80TDYYD3ZN2', 'test', 'test', '2025-11-21 09:42:46');
+('01K9HBR0JAWBTQF8K4443MBXSF', '01K92EK6YBT0FSC80TDYYD3ZN2', 'diskusi ipas', 'pertemuan 1 ipas', '2025-11-08 16:11:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pbl_essay_questions`
+--
+
+CREATE TABLE `pbl_essay_questions` (
+  `id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `essay_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'FK ke pbl_solution_essays.id',
+  `question_number` int NOT NULL COMMENT 'Nomor urut pertanyaan',
+  `question_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Teks pertanyaan',
+  `weight` int DEFAULT '100' COMMENT 'Bobot nilai pertanyaan',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pbl_essay_questions`
+--
+
+INSERT INTO `pbl_essay_questions` (`id`, `essay_id`, `question_number`, `question_text`, `weight`, `created_at`) VALUES
+('01KAWH3R6XCS1R8FX4X0TW9T69', '01K9PJEPZM76X6ANHYW6ZWHBZH', 1, 'apa yang dimaksud?', 20, '2025-11-25 10:32:27'),
+('01KAWJQ56QP8YTBH8V7CPBVSZY', '01K9PJEPZM76X6ANHYW6ZWHBZH', 2, 'jelaskan bagaimana proses?', 20, '2025-11-25 11:00:32');
 
 -- --------------------------------------------------------
 
@@ -104,6 +126,13 @@ CREATE TABLE `pbl_essay_submissions` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pbl_essay_submissions`
+--
+
+INSERT INTO `pbl_essay_submissions` (`id`, `essay_id`, `user_id`, `submission_content`, `grade`, `feedback`, `created_at`, `updated_at`) VALUES
+('01KAWJS8NS0DKQY0AYJ2CQN28A', '01K9PJEPZM76X6ANHYW6ZWHBZH', '01K912FR1QZHEWJ6MCVK8WEK5V', 'adalah hjksu yukskl yuiklhnmui , jadi stghs ucjyhg wlskd', 80, 'lumayan bagus, semoga dapat ditingkatkan lagi', '2025-11-25 11:01:41', '2025-11-25 11:04:14');
 
 -- --------------------------------------------------------
 
@@ -192,7 +221,8 @@ CREATE TABLE `pbl_forum_posts` (
 
 INSERT INTO `pbl_forum_posts` (`id`, `topic_id`, `user_id`, `post_content`, `created_at`) VALUES
 ('01K9HYYMNSC0XPWQDCXDSDPTT2', '01K9HBR0JAWBTQF8K4443MBXSF', '01K91853JEGYFN8Z034389ETB3', 'selamat', '2025-11-08 21:47:00'),
-('01K9HYYRMD5PK321ERK3NG28CJ', '01K9HBR0JAWBTQF8K4443MBXSF', '01K91853JEGYFN8Z034389ETB3', 'malam', '2025-11-08 21:47:04');
+('01K9HYYRMD5PK321ERK3NG28CJ', '01K9HBR0JAWBTQF8K4443MBXSF', '01K91853JEGYFN8Z034389ETB3', 'malam', '2025-11-08 21:47:04'),
+('01KAT3PR6B8WZH12HHWP0TDH83', '01K9HBR0JAWBTQF8K4443MBXSF', '01K912FR1QZHEWJ6MCVK8WEK5V', 'selamat siang', '2025-11-24 11:59:41');
 
 -- --------------------------------------------------------
 
@@ -213,7 +243,6 @@ CREATE TABLE `pbl_observation_slots` (
 --
 
 INSERT INTO `pbl_observation_slots` (`id`, `class_id`, `title`, `description`, `created_at`) VALUES
-('01K9HBN1J739K4TN9DPHTY07DK', '01K92EK6YBT0FSC80TDYYD3ZN2', 'observasi', 'p', '2025-11-08 16:09:42'),
 ('01KAJ4NJ1XTEZ89738D7997ZE0', '01K92EK6YBT0FSC80TDYYD3ZN2', 'ruang', 'ruang', '2025-11-21 09:42:35');
 
 -- --------------------------------------------------------
@@ -231,13 +260,6 @@ CREATE TABLE `pbl_observation_uploads` (
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `pbl_observation_uploads`
---
-
-INSERT INTO `pbl_observation_uploads` (`id`, `observation_slot_id`, `user_id`, `file_name`, `original_name`, `description`, `created_at`) VALUES
-('01KAMXPZDWQJTN29V76JY99JG3', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K912FR1QZHEWJ6MCVK8WEK5V', 'f58ccd865935e2abf00ef422384aeaab.png', 'Screenshot (1938).png', 'observasi lapangan hari ke-1', '2025-11-22 11:38:45');
 
 -- --------------------------------------------------------
 
@@ -306,7 +328,7 @@ CREATE TABLE `pbl_quiz_questions` (
 
 INSERT INTO `pbl_quiz_questions` (`id`, `quiz_id`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`, `created_at`) VALUES
 ('01K9RB47XCXWVSSEBMT8NRTNC6', '01K9RB3FNYYXBC5SBAT705K85N', 'siapa', 'Saya', 'Aku', 'Dia', 'Kamu', 'C', '2025-11-11 09:15:13'),
-('01K9RB47XCZ8MQ9BQQXK134F59', '01K9RB3FNYYXBC5SBAT705K85N', '1+1=', '1', '0', '2', '3', 'A', '2025-11-11 09:15:13');
+('01K9RB47XCZ8MQ9BQQXK134F59', '01K9RB3FNYYXBC5SBAT705K85N', '1+1=', '1', '0', '2', '3', 'C', '2025-11-11 09:15:13');
 
 -- --------------------------------------------------------
 
@@ -344,6 +366,28 @@ CREATE TABLE `pbl_reflection_prompts` (
 INSERT INTO `pbl_reflection_prompts` (`id`, `reflection_id`, `prompt_text`, `created_at`) VALUES
 ('01K9RGRNAHHACVPEB8C1KCFY0G', '01K9RDYC2RBRY0DGEHCNSF782D', 'menurut anda, bagaimana cara memajukkan sekolah', '2025-11-11 10:53:45'),
 ('01K9RGV8JE9B4MKWWQRG62P5M7', '01K9RDYC2RBRY0DGEHCNSF782D', 'menurut anda, bagaimana proses fotosintesis', '2025-11-11 10:55:10');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pbl_reflection_submissions`
+--
+
+CREATE TABLE `pbl_reflection_submissions` (
+  `id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reflection_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'FK ke pbl_final_reflections.id',
+  `user_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `submission_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Jawaban refleksi (bisa JSON jika multi-prompt, atau TEXT panjang)',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pbl_reflection_submissions`
+--
+
+INSERT INTO `pbl_reflection_submissions` (`id`, `reflection_id`, `user_id`, `submission_content`, `created_at`, `updated_at`) VALUES
+('01KAX5YWM2ZRWK3727F3GAAJ77', '01K9RDYC2RBRY0DGEHCNSF782D', '01K912FR1QZHEWJ6MCVK8WEK5V', '{\"01K9RGRNAHHACVPEB8C1KCFY0G\":\"dengan cara \",\"01K9RGV8JE9B4MKWWQRG62P5M7\":\"melalui tumbuhan\"}', '2025-11-25 16:36:48', '2025-11-25 16:36:48');
 
 -- --------------------------------------------------------
 
@@ -402,6 +446,30 @@ CREATE TABLE `pbl_tts_questions` (
   `answer` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `start_x` int DEFAULT '1',
   `start_y` int DEFAULT '1',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pbl_tts_questions`
+--
+
+INSERT INTO `pbl_tts_questions` (`id`, `tts_id`, `number`, `direction`, `question`, `answer`, `start_x`, `start_y`, `created_at`) VALUES
+('01KAR25DRCMG96KXHYZ8G4QK6X', '01K9BNTQP0WNJEWQ6H48J1KNJR', 1, 'across', 'Haus', 'MINUM', 1, 1, '2025-11-23 16:54:16'),
+('01KATJT02QY755SYVEF7ENAC7J', '01K9BNTQP0WNJEWQ6H48J1KNJR', 1, 'down', 'bintang', 'MALAM', 1, 1, '2025-11-24 16:23:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pbl_tts_results`
+--
+
+CREATE TABLE `pbl_tts_results` (
+  `id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tts_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `score` int NOT NULL,
+  `total_correct` int NOT NULL,
+  `total_questions` int NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -622,6 +690,13 @@ ALTER TABLE `pbl_discussion_topics`
   ADD KEY `class_id` (`class_id`);
 
 --
+-- Indexes for table `pbl_essay_questions`
+--
+ALTER TABLE `pbl_essay_questions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_question_essay` (`essay_id`);
+
+--
 -- Indexes for table `pbl_essay_submissions`
 --
 ALTER TABLE `pbl_essay_submissions`
@@ -708,6 +783,14 @@ ALTER TABLE `pbl_reflection_prompts`
   ADD KEY `reflection_id` (`reflection_id`);
 
 --
+-- Indexes for table `pbl_reflection_submissions`
+--
+ALTER TABLE `pbl_reflection_submissions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `reflection_id` (`reflection_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `pbl_solution_essays`
 --
 ALTER TABLE `pbl_solution_essays`
@@ -725,6 +808,14 @@ ALTER TABLE `pbl_tts`
 --
 ALTER TABLE `pbl_tts_questions`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pbl_tts_results`
+--
+ALTER TABLE `pbl_tts_results`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `tts_id` (`tts_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `roles`
@@ -816,6 +907,12 @@ ALTER TABLE `classes`
   ADD CONSTRAINT `classes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `pbl_essay_questions`
+--
+ALTER TABLE `pbl_essay_questions`
+  ADD CONSTRAINT `fk_question_essay` FOREIGN KEY (`essay_id`) REFERENCES `pbl_solution_essays` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `pbl_essay_submissions`
 --
 ALTER TABLE `pbl_essay_submissions`
@@ -851,6 +948,12 @@ ALTER TABLE `pbl_quiz_questions`
 --
 ALTER TABLE `pbl_reflection_prompts`
   ADD CONSTRAINT `pbl_reflection_prompts_ibfk_1` FOREIGN KEY (`reflection_id`) REFERENCES `pbl_final_reflections` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `pbl_reflection_submissions`
+--
+ALTER TABLE `pbl_reflection_submissions`
+  ADD CONSTRAINT `pbl_refl_sub_ibfk_1` FOREIGN KEY (`reflection_id`) REFERENCES `pbl_final_reflections` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `students`
