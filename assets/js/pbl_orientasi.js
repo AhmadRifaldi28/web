@@ -52,39 +52,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // RENDER TABLE ROW 
     dataMapper: (item, index) => {
-      const fileLink = item.file_path
-        ? `<a href="${window.BASE_URL}${item.file_path}" target="_blank">Lihat</a>`
-        : '-';
-      
-      // Kolom dasar (untuk semua role)
-      const rowData = [
-        index + 1,
-        item.title,
-        item.reflection,
-        fileLink,
-      ];
 
-      // (KONDISIONAL) Hanya tambahkan kolom Aksi jika role = admin/guru
-      if (IS_ADMIN_OR_GURU) {
-        rowData.push(`
-          <button class="btn btn-sm btn-warning btn-edit"
+  let fileHtml = '-';
+
+  if (item.file_path) {
+    const ext = item.file_path.split('.').pop().toLowerCase();
+
+    let badge = '';
+    let icon = '';
+
+    if (ext === 'pdf') {
+      badge = 'danger'; icon = 'bi-file-earmark-pdf';
+    } else if (['mp4'].includes(ext)) {
+      badge = 'primary'; icon = 'bi-camera-video';
+    } else if (['mp3','wav'].includes(ext)) {
+      badge = 'warning'; icon = 'bi-music-note';
+    } else if (['jpg','jpeg','png'].includes(ext)) {
+      badge = 'info text-dark'; icon = 'bi-image';
+    } else {
+      badge = 'secondary'; icon = 'bi-file-earmark-word';
+    }
+
+    fileHtml = `
+      <div class="d-flex gap-2 align-items-center justify-content-center">
+        <span class="badge bg-${badge}">
+          <i class="bi ${icon} me-1"></i> ${ext.toUpperCase()}
+        </span>
+        <button class="btn btn-outline-primary btn-sm btn-preview"
+          data-id="${item.id}" data-ext="${ext}">
+          Lihat
+        </button>
+      </div>`;
+  }
+
+  const rowData = [
+    index + 1,
+    item.title,
+    item.reflection,
+    fileHtml
+  ];
+
+  if (IS_ADMIN_OR_GURU) {
+    rowData.push(`
+      <div class="d-flex gap-1 justify-content-center">
+        <button class="btn btn-sm btn-warning btn-edit"
           data-id="${item.id}"
           data-title="${item.title}"
           data-reflection="${item.reflection}">
-          <i class="bi bi-pencil"></i>
+          Ubah
         </button>
         <button class="btn btn-sm btn-danger btn-delete"
           data-id="${item.id}"
           data-title="${item.title}">
-          <i class="bi bi-trash"></i>
+          Hapus
         </button>
-        `);
-      }
-      
-      // Kembalikan 4 kolom (Siswa) atau 5 kolom (Admin/Guru)
-      // Ini akan cocok dengan <thead> kondisional di PHP
-      return rowData;
-    },
+      </div>
+    `);
+  }
+
+  return rowData;
+},
+
+
 
     // POPULATE EDIT FORM 
     formPopulator: (form, data) => {
@@ -103,4 +132,62 @@ document.addEventListener('DOMContentLoaded', () => {
   // INIT CRUD HANDLER 
   const pblHandler = new CrudHandler(pblConfig);
   pblHandler.init();
+});
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.btn-preview');
+  if (!btn) return;
+
+  const id = btn.dataset.id;
+  const fileUrl = `${window.BASE_URL}file/pbl/${id}`;
+
+  // Ambil ekstensi dari data attribute (fallback aman)
+  const ext = (btn.dataset.ext || '').toLowerCase();
+
+  const container = document.getElementById('filePreviewContent');
+  let html = '';
+
+  if (['jpg', 'jpeg', 'png'].includes(ext)) {
+    html = `
+      <img src="${fileUrl}" class="img-fluid rounded mx-auto d-block">
+    `;
+  } 
+  else if (['mp4'].includes(ext)) {
+    html = `
+      <video controls class="w-100 rounded">
+        <source src="${fileUrl}">
+        Browser tidak mendukung video.
+      </video>
+    `;
+  } 
+  else if (['mp3', 'wav'].includes(ext)) {
+    html = `
+      <audio controls class="w-100">
+        <source src="${fileUrl}">
+        Browser tidak mendukung audio.
+      </audio>
+    `;
+  } 
+  else if (ext === 'pdf') {
+    html = `
+      <iframe src="${fileUrl}" width="100%" height="600" style="border:none"></iframe>
+    `;
+  } 
+  else {
+    html = `
+      <div class="text-center py-5">
+        <i class="bi bi-file-earmark-text fs-1 text-secondary mb-3"></i>
+        <p class="mb-3">File tidak dapat dipratinjau.</p>
+        <a href="${fileUrl}" class="btn btn-primary">
+          <i class="bi bi-download me-1"></i> Download File
+        </a>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+
+  new bootstrap.Modal(
+    document.getElementById('filePreviewModal')
+  ).show();
 });

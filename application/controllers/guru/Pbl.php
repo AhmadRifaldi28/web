@@ -21,6 +21,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $data);
     $this->load->view('guru/pbl_orientasi', $data);
     $this->load->view('templates/footer');
   }
@@ -45,7 +46,7 @@ class Pbl extends CI_Controller
     // Upload file (opsional)
     if (!empty($_FILES['file']['name'])) {
       $config['upload_path'] = './uploads/pbl/';
-      $config['allowed_types'] = 'jpg|jpeg|png|mp4|mp3|wav|pdf';
+      $config['allowed_types'] = 'jpg|jpeg|png|mp4|mp3|wav|pdf|docx';
       $config['max_size'] = 10240;
       $config['file_name'] = generate_ulid();
       if (!is_dir($config['upload_path'])) mkdir($config['upload_path'], 0777, true);
@@ -128,6 +129,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
 	  $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $data);
 	  $this->load->view('guru/pbl_tahap2', $data);
 	  $this->load->view('templates/footer');
 	}
@@ -288,6 +290,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $data);
     $this->load->view('guru/pbl_tahap3', $data);
     $this->load->view('templates/footer');
   }
@@ -436,7 +439,7 @@ class Pbl extends CI_Controller
       redirect('guru/dashboard');
     }
 
-    $data['title'] = 'Tahap 4 – Pengembangan Solusi';
+    $data['title'] = 'Tahap 4 – Menyajikan Hasil Karya';
     $data['class_id'] = $class_id;
     $data['user'] = $this->session->userdata();
     $data['url_name'] = 'guru';
@@ -444,7 +447,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
     $this->load->view('templates/header', $data);
-    // $this->load->view('templates/sidebar');
+    $this->load->view('templates/sidebar', $data);
     $this->load->view('guru/pbl_tahap4', $data);
     $this->load->view('templates/footer');
   }
@@ -601,143 +604,105 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $data);
     $this->load->view('guru/pbl_tahap5', $data);
     $this->load->view('templates/footer');
   }
 
-  /* CRUD REFLEKSI AKHIR */
-  public function get_reflections($class_id)
+  // [AJAX] Mengambil data rekap nilai untuk tabel
+  public function get_student_recap($class_id)
   {
-    $data = $this->Pbl_tahap5_model->get_reflections($class_id);
-    $this->output
-      ->set_content_type('application/json')
-      ->set_output(json_encode($data));
+      $this->load->model('Refleksi_model');
+      $students = $this->Refleksi_model->getAllStudentScores($class_id);
+      
+      // Return JSON langsung untuk ditangkap fetch JS
+      echo json_encode($students);
   }
 
+  // [AJAX] Simpan Refleksi
   public function save_reflection()
   {
-    $this->form_validation->set_rules('title', 'Judul Refleksi', 'required');
+  // 1. HAPUS baris pengecekan is_ajax_request yang menyebabkan error "No direct script..."
+  
+  // 2. Validasi Input (Opsional tapi disarankan)
+  $this->form_validation->set_rules('user_id', 'ID Siswa', 'required');
+  $this->form_validation->set_rules('class_id', 'ID Kelas', 'required');
+
+  if ($this->form_validation->run() === FALSE) {
+      $this->output
+          ->set_content_type('application/json')
+          ->set_output(json_encode([
+              'status' => 'error', 
+              'message' => validation_errors(),
+              'csrf_hash' => $this->security->get_csrf_hash() // Update CSRF
+          ]));
+      return;
+  }
+
+  $this->load->model('Refleksi_model');
+
+  // 3. Siapkan Data
+  $data = [
+      'class_id' => $this->input->post('class_id'),
+      'user_id' => $this->input->post('user_id'),
+      'teacher_reflection' => $this->input->post('teacher_reflection'),
+      'student_feedback' => $this->input->post('student_feedback'),
+  ];
+
+  // 4. Simpan ke Database
+  // Model akan menangani logika Insert (jika baru) atau Update (jika sudah ada)
+  $saved = $this->Refleksi_model->save_reflection($data);
+
+  // 5. Return JSON sukses + CSRF Hash baru
+  if ($saved) {
+      echo json_encode([
+          'status' => 'success',
+          'message' => 'Refleksi dan Feedback berhasil disimpan.',
+          'csrf_hash' => $this->security->get_csrf_hash()
+      ]);
+  } else {
+      echo json_encode([
+          'status' => 'error',
+          'message' => 'Gagal menyimpan data ke database.',
+          'csrf_hash' => $this->security->get_csrf_hash()
+      ]);
+    }
+  }
+
+  // --- AJAX: Save Grade ---
+  public function save_grade()
+  {
+    $this->form_validation->set_rules('final_score', 'Nilai Akhir', 'required|numeric|greater_than_equal_to[0]|less_than_equal_to[100]');
+    $this->form_validation->set_rules('feedback', 'Feedback', 'required|trim');
+    $this->form_validation->set_rules('status', 'Status', 'required|in_list[draft,published]');
 
     if ($this->form_validation->run() === FALSE) {
-      $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode(['status' => 'error', 'message' => validation_errors()]));
-      return;
+        echo json_encode(['status' => 'error', 'message' => validation_errors()]);
+        return;
     }
 
-    $id = $this->input->post('id');
-    $payload = [
-      'class_id' => $this->input->post('class_id'),
-      'title' => $this->input->post('title'),
-      'description' => $this->input->post('description')
+    $data = [
+      'class_id'    => $this->input->post('class_id'),
+      'user_id'     => $this->input->post('user_id'),
+      'final_score' => $this->input->post('final_score'),
+      'feedback'    => $this->input->post('feedback'),
+      'status'      => $this->input->post('status')
     ];
 
-    if ($id) {
-      $getData = $this->Pbl_tahap5_model->get_reflection($id);
-      if (!$getData) {
-        echo json_encode(['status'=>'error','message'=>'Refleksi tidak ada!', 'csrf_hash' => $this->security->get_csrf_hash()]);
-        return;
-      }
-
-      $this->Pbl_tahap5_model->update_reflection($id, $payload);
-      $msg = 'Refleksi diperbarui';
+    if ($this->Pbl_tahap5_model->save_grade($data)) {
+      echo json_encode([
+        'status' => 'success', 
+        'message' => 'Nilai berhasil disimpan.',
+        'csrf_hash' => $this->security->get_csrf_hash()
+      ]);
     } else {
-      $payload['id'] = generate_ulid();
-      $this->Pbl_tahap5_model->insert_reflection($payload);
-      $msg = 'Refleksi ditambahkan';
+      echo json_encode([
+        'status' => 'error', 
+        'message' => 'Gagal menyimpan database.',
+        'csrf_hash' => $this->security->get_csrf_hash()
+      ]);
     }
-    echo json_encode([
-      'status' => 'success',
-      'message' => $msg,
-      'csrf_hash' => $this->security->get_csrf_hash()
-    ]);
-  }
-
-  public function delete_reflection($id = null)
-  {
-    $getData = $this->Pbl_tahap5_model->get_reflection($id);
-    if (!$getData) {
-      echo json_encode(['status'=>'error','message'=>'Gagal hapus refleksi!', 'csrf_hash' => $this->security->get_csrf_hash()]);
-      return;
-    }
-    if ($id) {
-      $this->Pbl_tahap5_model->delete_reflection($id);
-      $msg = 'Refleksi dihapus.';
-      $status = 'success';
-    }
-    echo json_encode([
-      'status' => $status,
-      'message' => $msg,
-      'csrf_hash' => $this->security->get_csrf_hash()
-    ]);
-  }
-
-  /* CRUD TTS PENUTUP */
-  public function get_closing_tts($class_id)
-  {
-    $data = $this->Pbl_tahap5_model->get_closing_tts_list($class_id);
-    $this->output
-      ->set_content_type('application/json')
-      ->set_output(json_encode($data));
-  }
-
-  public function save_closing_tts()
-  {
-    $this->form_validation->set_rules('title', 'Judul TTS', 'required');
-    $this->form_validation->set_rules('grid_data', 'Ukuran Grid', 'required|integer');
-
-    if ($this->form_validation->run() === FALSE) {
-      $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode(['status' => 'error', 'message' => validation_errors()]));
-      return;
-    }
-
-    $id = $this->input->post('id');
-    $payload = [
-      'class_id' => $this->input->post('class_id'),
-      'title' => $this->input->post('title'),
-      'grid_data' => $this->input->post('grid_data')
-    ];
-
-    if ($id) {
-      $getData = $this->Pbl_tahap5_model->get_closing_tts($id);
-      if (!$getData) {
-        echo json_encode(['status'=>'error','message'=>'TTS Penutup tidak ada!', 'csrf_hash' => $this->security->get_csrf_hash()]);
-        return;
-      }
-      $this->Pbl_tahap5_model->update_closing_tts($id, $payload);
-      $msg = 'TTS Penutup diperbarui';
-    } else {
-      $payload['id'] = generate_ulid();
-      $this->Pbl_tahap5_model->insert_closing_tts($payload);
-      $msg = 'TTS Penutup ditambahkan';
-    }
-    echo json_encode([
-      'status' => 'success',
-      'message' => $msg,
-      'csrf_hash' => $this->security->get_csrf_hash()
-    ]);
-  }
-
-  public function delete_closing_tts($id = null)
-  {
-    $getData = $this->Pbl_tahap5_model->get_closing_tts($id);
-    if (!$getData) {
-      echo json_encode(['status'=>'error','message'=>'Gagal hapus TTS penutup!', 'csrf_hash' => $this->security->get_csrf_hash()]);
-      return;
-    }
-    if ($id) {
-      $this->Pbl_tahap5_model->delete_closing_tts($id);
-      $msg = 'TTS Penutup dihapus.';
-      $status = 'success';
-    }
-    echo json_encode([
-      'status' => $status,
-      'message' => $msg,
-      'csrf_hash' => $this->security->get_csrf_hash()
-    ]);
-  }
+  }  
 
   
 }

@@ -91,6 +91,28 @@
         </thead>
         <tbody></tbody>
       </table>
+      <!-- Tabel Nilai Siswa -->
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-trophy"></i> Daftar Nilai Siswa</h5>
+      </div>
+      <div class="card-body" id="submissionsTableContainer">
+        <table class="table table-hover table-striped" id="submissionsTable">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 5%">No</th>
+              <th>Siswa</th>
+              <th>Nilai</th>
+              <th>Waktu</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Diisi oleh JavaScript submissionHandler -->
+          </tbody>
+        </table>
+      </div>
+    </div>
     </div>
   </div>
 </div>

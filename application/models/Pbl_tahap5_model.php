@@ -3,67 +3,74 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Pbl_tahap5_model extends CI_Model
 {
-	// Definisikan tabel untuk Tahap 5
-	private $table_reflections = 'pbl_final_reflections';
-	private $table_closing_tts = 'pbl_closing_tts';
+  private $table_results = 'pbl_final_results';
+  private $table_users = 'users'; 
+  private $table_students = 'students'; // Tabel penghubung siswa ke kelas
 
-	/* ===== REFLEKSI AKHIR FUNCTIONS ===== */
-	public function get_reflections($class_id)
-	{
-		return $this->db->where('class_id', $class_id)
-			->order_by('created_at', 'DESC')
-			->get($this->table_reflections)
-			->result();
-	}
+  /**
+   * GURU: Mengambil semua siswa di kelas beserta status nilai akhirnya
+   */
+  public function get_students_with_grades($class_id)
+  {
+    // 1. Select kolom yang dibutuhkan
+    $this->db->select('u.id as user_id, u.name as student_name, u.image,
+       r.id as result_id, r.final_score, r.feedback, r.status');
+    
+    // 2. Mulai dari tabel Users (u)
+    $this->db->from($this->table_users . ' as u');
 
-	public function get_reflection($id)
-	{
-		return $this->db->where('id', $id)->get($this->table_reflections)->row();
-	}
+    // 3. Join ke tabel Students (s) untuk memfilter siswa di kelas ini
+    //    (students.user_id = users.id)
+    $this->db->join($this->table_students . ' as s', 's.user_id = u.id');
+    
+    // 4. Left Join ke tabel Nilai (r) 
+    //    (agar siswa yang belum dinilai tetap muncul di list)
+    $this->db->join($this->table_results . ' as r', 
+      'r.user_id = u.id AND r.class_id = ' . $this->db->escape($class_id), 
+        'left');
 
-	public function insert_reflection($data)
-	{
-		return $this->db->insert($this->table_reflections, $data);
-	}
+    // 5. Filter Kondisi
+    $this->db->where('s.class_id', $class_id); // Filter berdasarkan kelas
+    $this->db->where('u.role_id', '2');        // Filter hanya role siswa (sesuai DB Anda '2' biasanya siswa)
+    
+    $this->db->order_by('u.name', 'ASC');
+    
+    return $this->db->get()->result();
+  }
 
-	public function update_reflection($id, $data)
-	{
-		return $this->db->where('id', $id)->update($this->table_reflections, $data);
-	}
+  /**
+   * GURU: Simpan/Update Nilai (Upsert Logic)
+   */
+  public function save_grade($data)
+  {
+    // Cek apakah data nilai sudah ada untuk siswa ini di kelas ini
+    $exists = $this->db->where('class_id', $data['class_id'])
+    ->where('user_id', $data['user_id'])
+    ->get($this->table_results)
+    ->row();
 
-	public function delete_reflection($id)
-	{
-		return $this->db->where('id', $id)->delete($this->table_reflections);
-	}
+    if ($exists) {
+      // Update jika sudah ada
+      $this->db->where('id', $exists->id);
+      return $this->db->update($this->table_results, $data);
+    } else {
+      // Insert jika belum ada
+      // Pastikan helper string/ulid dimuat di controller
+      $data['id'] = generate_ulid(); 
+      return $this->db->insert($this->table_results, $data);
+    }
+  }
 
-	/* ===== TTS PENUTUP FUNCTIONS ===== */
-	public function get_closing_tts_list($class_id)
-	{
-		return $this->db->where('class_id', $class_id)
-			->order_by('created_at', 'DESC')
-			->get($this->table_closing_tts)
-			->result();
-	}
-
-	public function get_closing_tts($id)
-	{
-		return $this->db->where('id', $id)->get($this->table_closing_tts)->row();
-	}
-
-	public function insert_closing_tts($data)
-	{
-		return $this->db->insert($this->table_closing_tts, $data);
-	}
-
-	public function update_closing_tts($id, $data)
-	{
-		return $this->db->where('id', $id)->update($this->table_closing_tts, $data);
-	}
-
-	public function delete_closing_tts($id)
-	{
-		return $this->db->where('id', $id)->delete($this->table_closing_tts);
-	}
+  /**
+   * SISWA: Ambil nilai akhir diri sendiri
+   */
+  public function get_my_result($class_id, $user_id)
+  {
+    return $this->db->where('class_id', $class_id)
+      ->where('user_id', $user_id)
+      ->get($this->table_results)
+      ->row();
+  }
 }
 
 /* End of file Pbl_tahap5_model.php */

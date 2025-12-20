@@ -6,6 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const IS_ADMIN_OR_GURU = window.IS_ADMIN_OR_GURU || false;
   const CURRENT_CLASS_ID = window.CURRENT_CLASS_ID || null;
 
+  const infoLabel = document.getElementById('info-label');
+  const infoLabel2 = document.getElementById('info-label2');
+  const tabEls = document.querySelectorAll('button[data-bs-toggle="tab"]');
+  
+  tabEls.forEach(tabEl => {
+    tabEl.addEventListener('shown.bs.tab', function (event) {
+      // event.target adalah tab yang baru saja aktif
+      if (event.target.id === 'diskusi-tab') {
+          infoLabel.textContent = 'diskusi';
+          infoLabel2.textContent = 'diskusi';
+      } else {
+          infoLabel.textContent = 'observasi';
+          infoLabel2.textContent = 'observasi';
+      }
+    });
+  });
+
   // Hapus tombol "Tambah" jika Murid
   if (!IS_ADMIN_OR_GURU) {
     ['btnAddObservasi', 'btnAddDiskusi'].forEach(id => {
@@ -47,11 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteNameField: 'title',
 
     dataMapper: (q, i) => {
-      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/Pbl_observasi/detail/${q.id}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i> Detail</a>`;
+      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/Pbl_observasi/detail/${q.id}" class="btn btn-sm btn-info">Detail</a>`;
       
       const actionBtns = IS_ADMIN_OR_GURU ? `
-        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.description || ''}"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}"><i class="bi bi-trash"></i></button>
+        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.description || ''}">Ubah</i></button>
+        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}">Hapus</button>
       ` : '';
 
       return [i + 1, q.title, q.description || '-', detailBtn + actionBtns];
@@ -89,11 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteNameField: 'title',
 
     dataMapper: (q, i) => {
-      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_forum/detail/${q.id}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i> Detail</a>`;
+      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_forum/detail/${q.id}" class="btn btn-sm btn-info">Detail</a>`;
       
       const actionBtns = IS_ADMIN_OR_GURU ? `
-        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.description || ''}"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}"><i class="bi bi-trash"></i></button>
+        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.description || ''}">Ubah</i></button>
+        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}">Hapus</button>
       ` : '';
 
       return [i + 1, q.title, q.description || '-', detailBtn + actionBtns];

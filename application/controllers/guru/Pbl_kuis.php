@@ -291,6 +291,30 @@ class Pbl_kuis extends CI_Controller {
     redirect('guru/pbl_kuis/kuis_detail/' . $quiz_id);
   }
 
+  public function get_quiz_submissions($quiz_id)
+  {
+    $data = $this->Pbl_kuis_model->get_results_by_quiz_id($quiz_id);
+    $this->output->set_content_type('application/json')->set_output(json_encode($data));
+  }
+
+  public function delete_quiz_submission()
+  {
+    $id = $this->input->post('id'); // ID dari tabel pbl_quiz_results
+    
+    if(!$id) {
+      echo json_encode(['status'=>'error', 'message'=>'ID tidak ditemukan', 'csrf_hash' => $this->security->get_csrf_hash()]);
+      return;
+    }
+
+    $this->Pbl_kuis_model->delete_quiz_result($id);
+    
+    echo json_encode([
+      'status' => 'success', 
+      'message' => 'Nilai siswa dihapus (Siswa dapat mengerjakan ulang)', 
+      'csrf_hash' => $this->security->get_csrf_hash()
+    ]);
+  }
+
 }
 
 /* End of file Pbl_kuis.php */

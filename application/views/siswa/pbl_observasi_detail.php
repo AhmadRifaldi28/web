@@ -9,14 +9,43 @@
 		</a>
 	</div>
 
-	<div class="card shadow-sm mb-4 border-4">
+	<!-- [BARU] Menampilkan Nilai & Feedback jika ada -->
+	<?php if (!empty($result)) : ?>
+		<div class="card shadow-sm mb-4 border-start border-success border-4">
+			<div class="card-body">
+				<div class="row align-items-center">
+					<div class="col-md-3 text-center border-end">
+						<h6 class="text-uppercase text-muted fw-bold">Nilai Anda</h6>
+						<h1 class="display-4 fw-bold text-success mb-0"><?= $result->score; ?></h1>
+					</div>
+					<div class="col-md-9 ps-md-4">
+						<h5 class="card-title text-success"><i class="bi bi-chat-quote-fill"></i> Umpan Balik Guru:</h5>
+						<p class="card-text fst-italic bg-light p-3 rounded">
+							<?= !empty($result->feedback) ? nl2br(htmlspecialchars($result->feedback)) : 'Belum ada umpan balik tertulis.'; ?>
+						</p>
+						<small class="text-muted">Dinilai pada: <?= date('d M Y, H:i', strtotime($result->created_at)); ?></small>
+					</div>
+				</div>
+			</div>
+		</div>
+	<?php endif; ?>
+
+	<!-- Instruksi Tugas -->
+	<div class="card shadow-sm mb-4 border-start border-primary border-4">
+		<div class="card-body">
 			<h5 class="card-title text-primary">Instruksi Tugas:</h5>
 			<p class="card-text"><?= nl2br(htmlspecialchars($slot->description)); ?></p>
+		</div>
 	</div>
 
+	<!-- Tabel Upload -->
 	<div class="card shadow-sm">
 		<div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
 			<h6 class="m-0 font-weight-bold text-primary">File Saya</h6>
+			
+			<!-- Button Upload -->
+			<!-- Jika sudah dinilai, Anda bisa opsional menonaktifkan tombol upload dengan menambahkan kondisi -->
+			<!-- Contoh: <button ... <//?= !empty($result) ? 'disabled' : '' ?>> -->
 			<button class="btn btn-primary btn-sm" id="btnAddUpload">
 				<i class="bi bi-cloud-upload"></i> Upload File Baru
 			</button>

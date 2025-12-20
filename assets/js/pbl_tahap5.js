@@ -2,108 +2,112 @@ import CrudHandler from './crud_handler.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  const csrfEl = document.querySelector('input[name="' + window.CSRF_TOKEN_NAME + '"]');
-  const IS_ADMIN_OR_GURU = window.IS_ADMIN_OR_GURU || false;
+	const csrfEl = document.querySelector('input[name="' + window.CSRF_TOKEN_NAME + '"]');
+  // const IS_ADMIN_OR_GURU = window.IS_ADMIN_OR_GURU || false; // Tidak terlalu butuh di tahap 5 jika hanya guru
   const CURRENT_CLASS_ID = window.CURRENT_CLASS_ID || null;
 
-  // Hapus tombol "Tambah" jika Murid
-  if (!IS_ADMIN_OR_GURU) {
-    ['btnAddEsai', 'btnAddKuisEvaluasi'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn) btn.remove(); // Menghapus elemen dari DOM
-    });
-  }
-
   if (!CURRENT_CLASS_ID) {
-    console.error('CLASS ID tidak ditemukan.');
-    return;
+  	console.error('CLASS ID tidak ditemukan.');
+  	return;
   }
 
   const csrfConfig = {
-    tokenName: window.CSRF_TOKEN_NAME,
-    tokenHash: csrfEl ? csrfEl.value : ''
+  	tokenName: window.CSRF_TOKEN_NAME,
+  	tokenHash: csrfEl ? csrfEl.value : ''
   };
 
-  // --- Inisialisasi CRUD 1: Refleksi Akhir ---
+  // --- Konfigurasi CRUD Refleksi ---
   const refleksiConfig = {
-    baseUrl: window.BASE_URL,
-    entityName: 'Refleksi Akhir',
-    modalId: 'refleksiModal',
-    formId: 'refleksiForm',
-    modalLabelId: 'refleksiModalLabel',
-    hiddenIdField: 'refleksiId',
-    tableId: 'refleksiTable',
-    btnAddId: 'btnAddRefleksi',
-    tableParentSelector: '#refleksi', // Parent tab
-    csrf: csrfConfig,
-    urls: {
-      load: IS_ADMIN_OR_GURU ? `guru/pbl/get_reflections/${CURRENT_CLASS_ID}` : `siswa/pbl/get_reflections/${CURRENT_CLASS_ID}`,
-      save: `guru/pbl/save_reflection`,
-      delete: (id) => `guru/pbl/delete_reflection/${id}`
-    },
-    deleteMethod: 'POST',
-    modalTitles: { add: 'Tambah Refleksi', edit: 'Edit Refleksi' },
-    deleteNameField: 'title',
-
-    dataMapper: (q, i) => {
-      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_refleksi_akhir/detail/${q.id}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i> Detail</a>`;
+  	baseUrl: window.BASE_URL,
+  	entityName: 'Refleksi Siswa',
+  	
+      // ID Elemen DOM
+      modalId: 'refleksiModal',
+      formId: 'refleksiForm',
+      modalLabelId: 'refleksiModalLabel',
+      tableId: 'rekapTable',
+      btnAddId: null, // Kita tidak pakai tombol tambah global, tapi per baris
       
-      const actionBtns = IS_ADMIN_OR_GURU ? `
-        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.description || ''}"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}"><i class="bi bi-trash"></i></button>
-      ` : '';
+      tableParentSelector: '.card-body', // Sesuaikan dengan parent tabel Anda
 
-      return [i + 1, q.title, q.description || '-', detailBtn + actionBtns];
-    },
-
-    formPopulator: (form, data) => {
-      form.querySelector('#refleksiId').value = data.id;
-      form.querySelector('[name="title"]').value = data.title;
-      form.querySelector('[name="description"]').value = data.description || '';
-    }
-  };
-
-  // --- Inisialisasi CRUD 2: TTS Penutup ---
-  const ttsConfig = {
-    baseUrl: window.BASE_URL,
-    entityName: 'TTS Penutup',
-    modalId: 'ttsPenutupModal',
-    formId: 'ttsPenutupForm',
-    modalLabelId: 'ttsPenutupModalLabel',
-    hiddenIdField: 'ttsPenutupId',
-    tableId: 'ttsPenutupTable',
-    btnAddId: 'btnAddTtsPenutup',
-    tableParentSelector: '#tts', // Parent tab
-    csrf: csrfConfig,
-    urls: {
-      load: IS_ADMIN_OR_GURU ? `guru/pbl/get_closing_tts/${CURRENT_CLASS_ID}` : `siswa/pbl/get_closing_tts/${CURRENT_CLASS_ID}`,
-      save: `guru/pbl/save_closing_tts`,
-      delete: (id) => `guru/pbl/delete_closing_tts/${id}`
-    },
-    deleteMethod: 'POST',
-    modalTitles: { add: 'Tambah TTS Penutup', edit: 'Edit TTS Penutup' },
-    deleteNameField: 'title',
-
-    dataMapper: (q, i) => {
-      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_ttsPenutup /detail/${q.id}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i> Detail</a>`;
+      csrf: csrfConfig,
       
-      const actionBtns = IS_ADMIN_OR_GURU ? `
-        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.grid_data || ''}"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}"><i class="bi bi-trash"></i></button>
-      ` : '';
+      urls: {
+      	load: `guru/pbl/get_student_recap/${CURRENT_CLASS_ID}`,
+      	save: `guru/pbl/save_reflection`,
+          delete: null // Tidak ada fitur delete refleksi di tabel ini
+        },
 
-      return [i + 1, q.title, q.grid_data || '-', detailBtn + actionBtns];
-    },
+        modalTitles: { 
+        	add: 'Input Refleksi', 
+        	edit: 'Input / Edit Refleksi' 
+        },
 
-    formPopulator: (form, data) => {
-      form.querySelector('#ttsPenutupId').value = data.id;
-      form.querySelector('[name="title"]').value = data.title;
-      form.querySelector('[name="grid_data"]').value = data.grid_data || '';
-    }
-  };
+      // --- MAPPING DATA JSON KE TABEL HTML ---
+      dataMapper: (student, index) => {
+          // 1. Hitung Total Skor (Pastikan tipe data angka)
+          const scoreQuiz = (parseFloat(student.quiz_score) || 0) + (parseFloat(student.tts_score) || 0);
+          const scoreObs  = parseFloat(student.obs_score) || 0;
+          const scoreEssay = parseFloat(student.essay_score) || 0;
+          const totalScore = scoreQuiz + scoreObs + scoreEssay;
 
-  // Inisialisasi kedua handler
+          // 2. Cek apakah sudah ada refleksi (untuk warna tombol)
+          // Perhatikan: properti JSON harus sama persis dengan alias di Model (teacher_reflection, student_feedback)
+          const hasReflection = (student.teacher_reflection && student.teacher_reflection.trim() !== "") || 
+          (student.student_feedback && student.student_feedback.trim() !== "");
+          
+          const btnClass = hasReflection ? 'btn-warning' : 'btn-primary';
+          // const btnIcon = hasReflection ? 'bi-pencil-square' : 'bi-plus-lg';
+          const btnIcon = hasReflection ? '' : '';
+          const btnText = hasReflection ? 'Edit Refleksi' : 'Input Refleksi';
+
+          // 3. Tombol Aksi
+          // PENTING: Class 'btn-edit' digunakan CrudHandler untuk trigger modal open
+          // Kita simpan data yang akan dimasukkan ke form di dalam attribute `data-*`
+          const actionBtn = `
+          <button type="button" class="btn btn-sm ${btnClass} btn-edit" 
+          data-id="${student.user_id}" 
+          data-name="${student.student_name}"
+          data-reflection="${student.teacher_reflection || ''}"
+          data-feedback="${student.student_feedback || ''}">
+          <i class="bi ${btnIcon}"></i> ${btnText}
+          </button>
+          `;
+
+          // Return Array kolom tabel
+          return [
+          index + 1,
+          `<div class="fw-bold">${student.student_name}</div>`,
+          `<span class="badge bg-secondary">${scoreQuiz}</span>`,
+          `<span class="badge bg-info text-dark">${scoreObs}</span>`,
+          `<span class="badge bg-success">${scoreEssay}</span>`,
+          `<span class="fw-bold text-primary fs-6">${totalScore}</span>`,
+          actionBtn
+          ];
+        },
+
+      // --- MENGISI FORM MODAL SAAT TOMBOL DIKLIK ---
+      formPopulator: (form, data) => {
+          // `data` disini berisi dataset dari tombol (.btn-edit)
+          
+          // Isi Hidden Input
+          const userIdInput = form.querySelector('#modalUserId');
+          if(userIdInput) userIdInput.value = data.id; // data-id -> user_id
+
+          // Isi Nama Siswa (Readonly)
+          const nameInput = form.querySelector('#modalStudentName');
+          if(nameInput) nameInput.value = data.name;
+
+          // Isi Textarea Refleksi
+          const reflectionInput = form.querySelector('[name="teacher_reflection"]');
+          if(reflectionInput) reflectionInput.value = data.reflection || '';
+
+          // Isi Textarea Feedback
+          const feedbackInput = form.querySelector('[name="student_feedback"]');
+          if(feedbackInput) feedbackInput.value = data.feedback || '';
+        }
+      };
+
+  // Inisialisasi
   new CrudHandler(refleksiConfig).init();
-  new CrudHandler(ttsConfig).init();
-  
 });

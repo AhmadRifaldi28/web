@@ -5,6 +5,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const IS_ADMIN_OR_GURU = window.IS_ADMIN_OR_GURU || false;
   const CURRENT_CLASS_ID = window.CURRENT_CLASS_ID || null;
 
+  // Ambil elemen label yang mau diubah
+  const infoLabel = document.getElementById('info-label');
+  // Ambil semua tombol tab
+  const tabEls = document.querySelectorAll('button[data-bs-toggle="tab"]');
+  // Loop untuk pasang listener di setiap tab
+  tabEls.forEach(tabEl => {
+    tabEl.addEventListener('shown.bs.tab', function (event) {
+      // event.target adalah tab yang baru saja aktif
+      if (event.target.id === 'tts-tab') {
+          infoLabel.textContent = 'tts';
+      } else {
+          infoLabel.textContent = 'kuis';
+      }
+    });
+  });
+
   //  Hapus tombol "Tambah" jika Murid
   if (!IS_ADMIN_OR_GURU) {
     ['btnAddQuiz', 'btnAddTts'].forEach(id => {
@@ -43,11 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // [DIPERSINGKAT] Data Mapper Kuis
     dataMapper: (q, i) => {
-      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_kuis/kuis_detail/${q.id}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i> Detail</a>`;
+      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_kuis/kuis_detail/${q.id}" class="btn btn-sm btn-info"> Detail</a>`;
       
       const actionBtns = IS_ADMIN_OR_GURU ? `
-        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.description || ''}"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}"><i class="bi bi-trash"></i></button>
+        <button class="btn btn-sm btn-warning btn-edit" data-id="${q.id}" data-title="${q.title}" data-description="${q.description || ''}">Ubah</button>
+        <button class="btn btn-sm btn-danger btn-delete" data-id="${q.id}" data-title="${q.title}">Hapus</i></button>
       ` : '';
 
       return [i + 1, q.title, q.description || '-', detailBtn + actionBtns];
@@ -80,11 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Data Mapper TTS
     dataMapper: (t, i) => {
-      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_tts/detail/${t.id}" class="btn btn-info btn-sm me-1"><i class="bi bi-eye"></i> Detail</a>`;
+      const detailBtn = `<a href="${window.BASE_URL}${window.URL_NAME}/pbl_tts/detail/${t.id}" class="btn btn-info btn-sm me-1"> Detail</a>`;
       
       const actionBtns = IS_ADMIN_OR_GURU ? `
-        <button class="btn btn-sm btn-warning btn-edit" data-id="${t.id}" data-title="${t.title}" data-grid_data="${t.grid_data || ''}"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-danger btn-delete" data-id="${t.id}" data-title="${t.title}"><i class="bi bi-trash"></i></button>
+        <button class="btn btn-sm btn-warning btn-edit" data-id="${t.id}" data-title="${t.title}" data-grid_data="${t.grid_data || ''}">Ubah</button>
+        <button class="btn btn-sm btn-danger btn-delete" data-id="${t.id}" data-title="${t.title}">Hapus</i></button>
       ` : '';
 
       return [i + 1, t.title, (t.grid_data || '').substring(0, 50) + '...', detailBtn + actionBtns];

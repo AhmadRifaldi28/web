@@ -16,21 +16,22 @@ class Pbl_kuis extends CI_Controller
     public function kuis_detail($quiz_id = null)
     {
         if (!$quiz_id) redirect('siswa/pbl');
-
+        
         $quiz = $this->Pbl_kuis_model->get_quiz_by_id($quiz_id);
         if (!$quiz) show_404();
 
         $user_id = $this->session->userdata('user_id');
-        
-        // Cek apakah sudah mengerjakan
         $result = $this->Pbl_kuis_model->check_submission($quiz_id, $user_id);
 
-        $data['title'] = 'Kuis: ' . $quiz->title;
-        $data['quiz'] = $quiz;
-        $data['result'] = $result; // Jika ada data, berarti sudah mengerjakan
-        $data['class_id'] = $quiz->class_id;
-        $data['user'] = $this->session->userdata();
-        $data['url_name'] = 'siswa';
+        $data = [
+            'title' => 'Kuis: ' . $quiz->title,
+            'quiz' => $quiz,
+            'result' => $result,
+            'is_done' => ($result) ? true : false, // Flag untuk JS
+            'class_id' => $quiz->class_id,
+            'user' => $this->session->userdata(),
+            'url_name' => 'siswa'
+        ];
 
         $this->load->view('templates/header', $data);
         $this->load->view('siswa/pbl_kuis_detail', $data);
@@ -44,6 +45,14 @@ class Pbl_kuis extends CI_Controller
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode($data));
+    }
+
+    // AJAX: Ambil Review (Mode Lihat Nilai & Jawaban)
+    public function get_review($quiz_id)
+    {
+        $user_id = $this->session->userdata('user_id');
+        $data = $this->Pbl_kuis_model->get_quiz_review($quiz_id, $user_id);
+        $this->output->set_content_type('application/json')->set_output(json_encode($data));
     }
 
     // AJAX: Submit Jawaban

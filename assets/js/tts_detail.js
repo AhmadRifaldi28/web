@@ -204,4 +204,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const handler = new CrudHandler(config);
   handler.init();
+
+  // ============================================================
+  // 2. KONFIGURASI TABEL NILAI SISWA (Read & Delete Only)
+  // ============================================================
+  const submissionConfig = {
+    baseUrl: window.BASE_URL,
+    entityName: 'Nilai Siswa',
+    tableId: 'submissionsTable',
+    // tableParentSelector: '#submissionsTableContainer', // Opsional, default .card-body
+    
+    // Tidak butuh modalId/formId/btnAddId karena tidak ada fitur tambah/edit manual
+    
+    csrf: csrfConfig,
+    urls: {
+      load: `guru/pbl_tts/get_tts_submissions/${CURRENT_TTS_ID}`,
+      // save: Tidak dipakai
+      delete: `guru/pbl_tts/delete_tts_submission`
+    },
+    deleteMethod: 'POST',
+    deleteNameField: 'student_name', // Nama field untuk konfirmasi hapus
+
+    // Mapper Nilai
+    dataMapper: (res, i) => {
+        // Format Tanggal
+        const date = new Date(res.created_at).toLocaleDateString('id-ID', {
+            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        // Warna badge nilai
+        let badgeClass = 'bg-danger';
+        if(res.score >= 80) badgeClass = 'bg-success';
+        else if(res.score >= 60) badgeClass = 'bg-warning text-dark';
+
+        return [
+            i + 1,
+            `<strong>${res.student_name}</strong><br><small class="text-muted">${res.username}</small>`,
+            `<span class="badge ${badgeClass}" style="font-size:1em">${res.score}</span> <br> <small>(${res.total_correct}/${res.total_questions} Benar)</small>`,
+            `<small>${date}</small>`,
+            `
+            <button class="btn btn-sm btn-outline-danger btn-delete"
+              data-id="${res.id}"
+              data-student_name="${res.student_name} (Nilai: ${res.score})">
+              <i class="bi bi-trash"></i> Hapus / Reset
+            </button>
+            `
+        ];
+    },
+    
+    // Dummy functions karena tidak ada form edit/add
+    formPopulator: () => {},
+    onAdd: () => {}
+  };
+
+  // Init Handler Nilai
+  const submissionHandler = new CrudHandler(submissionConfig);
+  submissionHandler.init();
 });

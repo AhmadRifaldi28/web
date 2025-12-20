@@ -1,120 +1,125 @@
-<div class="container py-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<style>
+/* ===== TABLE RESPONSIVE PBL ===== */
+#rekapTable {
+  min-width: 720px !important;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+#rekapTable thead th {
+  background: #e0efff !important;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  #rekapTable thead th{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 576px) {
+  #rekapTable td { white-space: nowrap; }
+}
+
+</style>
+<div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active">Refleksi & Evaluasi Akhir</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <a href="<?= base_url($url_name . '/pbl/tahap4/' . $class_id) ?>" class="btn btn-secondary">← Kembali ke Tahap 4</a>
-    <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>" class="btn btn-info">← Kembali ke Kelas</a>
+      <button class="btn btn-success disabled" disabled><i class="bi bi-check-circle"></i> Project Selesai</button>
   </div>
 
   <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
          value="<?= $this->security->get_csrf_hash(); ?>">
   <input type="hidden" id="classIdHidden" value="<?= $class_id; ?>">
 
-  <ul class="nav nav-tabs mb-3" id="pblTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="refleksi-tab" data-bs-toggle="tab" data-bs-target="#refleksi"
-        type="button" role="tab">Refleksi Akhir</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tts-tab" data-bs-toggle="tab" data-bs-target="#tts"
-        type="button" role="tab">TTS Penutup</button>
-    </li>
-  </ul>
-
-  <div class="tab-content" id="pblTabContent">
-    
-    <div class="tab-pane fade show active" id="refleksi" role="tabpanel">
-      <div class="d-flex justify-content-between mb-2">
-        <h5>Daftar Refleksi Akhir</h5>
-        <button class="btn btn-primary btn-sm" id="btnAddRefleksi">+ Tambah Refleksi</button>
-      </div>
-      <table class="table table-bordered table-hover" id="refleksiTable">
-        <thead class="table-light">
-          <tr><th>No</th><th>Judul</th><th>Deskripsi/Instruksi</th><th>Aksi</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3">
+      <h5 class="mb-0 card-title"><i class="bi bi-table me-1"></i> 
+        <strong class="text-dark">Rekapitulasi Nilai Siswa</strong>
+      </h5>
     </div>
-
-    <div class="tab-pane fade" id="tts" role="tabpanel">
-      <div class="d-flex justify-content-between mb-2">
-        <h5>Daftar TTS Penutup</h5>
-        <button class="btn btn-primary btn-sm" id="btnAddTtsPenutup">+ Tambah TTS</button>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="rekapTable">
+          <thead class="table-light">
+            <tr>
+              <th style="width:60px">No</th>
+              <th>Nama Siswa</th>
+              <th class="text-cente">Quiz & TTS</th>
+              <th class="text-cente">Observasi</th>
+              <th class="text-cente">Esai</th>
+              <th class="text-cente fw-bold text-primary">Total Skor</th>
+              <th width="12%" class="text-cente">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            </tbody>
+        </table>
       </div>
-      <table class="table table-bordered table-hover" id="ttsPenutupTable">
-        <thead class="table-light">
-          <tr><th>No</th><th>Judul</th><th>Ukuran Grid</th><th>Aksi</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
     </div>
-    
   </div>
 </div>
 
 <div class="modal fade" id="refleksiModal" tabindex="-1" aria-labelledby="refleksiModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content shadow-lg border-0">
+    <div class="modal-content border-0 shadow-lg">
       <form id="refleksiForm" autocomplete="off">
         <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title mb-0" id="refleksiModalLabel">Form Refleksi Akhir</h5>
+          <h5 class="modal-title" id="refleksiModalLabel">Input Refleksi & Feedback</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" name="id" id="refleksiId">
+          <input type="hidden" name="user_id" id="modalUserId">
           <input type="hidden" name="class_id" value="<?= $class_id; ?>">
           
           <div class="mb-3">
-            <label for="refleksiTitle" class="form-label">Judul Refleksi</label>
-            <input type="text" name="title" id="refleksiTitle" class="form-control" required>
+            <label class="form-label fw-bold">Siswa:</label>
+            <input type="text" class="form-control-plaintext" id="modalStudentName" readonly value="-">
           </div>
-          <div class="mb-3">
-            <label for="refleksiDescription" class="form-label">Deskripsi / Instruksi</label>
-            <textarea name="description" id="refleksiDescription" class="form-control" rows="5"></textarea>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="teacherReflection" class="form-label">Catatan Refleksi Guru</label>
+              <textarea name="teacher_reflection" id="teacherReflection" class="form-control" rows="6" 
+                placeholder="Tuliskan catatan refleksi mengenai performa siswa..."></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="studentFeedback" class="form-label">Feedback untuk Siswa</label>
+              <textarea name="student_feedback" id="studentFeedback" class="form-control" rows="6" 
+                placeholder="Pesan yang akan dibaca oleh siswa..."></textarea>
+            </div>
           </div>
         </div>
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-primary">Simpan</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan Refleksi</button>
         </div>
       </form>
     </div>
   </div>
 </div>
-
-<div class="modal fade" id="ttsPenutupModal" tabindex="-1" aria-labelledby="ttsPenutupModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content shadow-lg border-0">
-      <form id="ttsPenutupForm" autocomplete="off">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title mb-0" id="ttsPenutupModalLabel">Form TTS Penutup</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="id" id="ttsPenutupId">
-          <input type="hidden" name="class_id" value="<?= $class_id; ?>">
-
-          <div class="mb-3">
-            <label for="ttsPenutupTitle" class="form-label">Judul TTS</label>
-            <input type="text" name="title" id="ttsPenutupTitle" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label for="ttsPenutupGridData" class="form-label">Ukuran Grid (misal: 15)</label>
-            <input type="number" name="grid_data" id="ttsPenutupGridData" class="form-control" placeholder="15" required>
-          </div>
-        </div>
-        <div class="modal-footer bg-light">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 
 <script>
   window.BASE_URL = "<?= base_url(); ?>";
   window.CSRF_TOKEN_NAME = "<?= $this->security->get_csrf_token_name(); ?>";
-  window.IS_ADMIN_OR_GURU = <?= $is_admin_or_guru ? 'true' : 'false' ?>;
   window.CURRENT_CLASS_ID = '<?= $class_id; ?>';
   window.URL_NAME = '<?= $url_name; ?>';
 </script>

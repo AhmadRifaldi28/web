@@ -591,19 +591,31 @@ class Pbl extends CI_Controller
   public function tahap5($class_id = null)
   {
     if (!$class_id) {
-      redirect('guru/dashboard');
+        redirect('siswa/dashboard');
     }
 
     $data['title'] = 'Tahap 5 – Refleksi & Evaluasi Akhir';
     $data['class_id'] = $class_id;
-    $data['user'] = $this->session->userdata();
+    $data['user'] = $this->session->userdata(); // Data user yang login
     $data['url_name'] = 'siswa';
-    $role_id = $this->session->userdata('role_id');    
-    $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
-
+    
+    // Load View
     $this->load->view('templates/header', $data);
-    $this->load->view('guru/pbl_tahap5', $data);
+    $this->load->view('siswa/pbl_tahap5', $data); // View khusus siswa
     $this->load->view('templates/footer');
+  }
+
+  // [AJAX] Get Data Rekap untuk Siswa
+  public function get_my_recap($class_id)
+  {
+    $this->load->model('Refleksi_model');
+    
+    // Kita ambil data SEMUA siswa di kelas tersebut (untuk tabel leaderboard)
+    // Logika privasi tombol "Lihat" akan ditangani di JavaScript
+    $students = $this->Refleksi_model->getAllStudentScores($class_id);
+    
+    // Return JSON
+    echo json_encode($students);
   }
 
   /* CRUD REFLEKSI AKHIR */

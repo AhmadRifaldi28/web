@@ -12,31 +12,34 @@ class Pbl_tts extends CI_Controller
 	}
 
 	public function detail($tts_id = null)
-	{
-		if (!$tts_id) redirect('siswa/pbl');
+  {
+    if (!$tts_id) redirect('siswa/pbl');
 
-		$tts = $this->Pbl_tts_model->get_tts_by_id($tts_id);
-		if (!$tts) show_404();
+    $tts = $this->Pbl_tts_model->get_tts_by_id($tts_id);
+    if (!$tts) show_404();
 
-		$user_id = $this->session->userdata('user_id');
-		$result = $this->Pbl_tts_model->check_submission($tts_id, $user_id);
+    $user_id = $this->session->userdata('user_id');
+    $result = $this->Pbl_tts_model->check_submission($tts_id, $user_id);
 
-        // Decode grid size jika JSON, atau int default
-		$gridSize = (int)($tts->grid_data ?: 15);
-		if ($gridSize < 5) $gridSize = 5;
-		$tts->grid_size = $gridSize;
+    // Grid Size Logic
+    $gridSize = (int)($tts->grid_data ?: 15);
+    if ($gridSize < 5) $gridSize = 5;
+    $tts->grid_size = $gridSize;
 
-		$data['title'] = 'TTS: ' . $tts->title;
-		$data['tts'] = $tts;
-		$data['result'] = $result;
-		$data['class_id'] = $tts->class_id;
-		$data['user'] = $this->session->userdata();
-		$data['url_name'] = 'siswa';
+    $data = [
+        'title' => 'TTS: ' . $tts->title,
+        'tts' => $tts,
+        'result' => $result,
+        'is_done' => ($result) ? true : false, // Flag penting untuk JS
+        'class_id' => $tts->class_id,
+        'user' => $this->session->userdata(),
+        'url_name' => 'siswa'
+    ];
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('siswa/pbl_tts_detail', $data);
-		$this->load->view('templates/footer');
-	}
+    $this->load->view('templates/header', $data);
+    $this->load->view('siswa/pbl_tts_detail', $data);
+    $this->load->view('templates/footer');
+  }
 
     // AJAX: Get Soal & Grid Config (Tanpa Jawaban)
 	public function get_game_data($tts_id)
@@ -46,6 +49,14 @@ class Pbl_tts extends CI_Controller
 		->set_content_type('application/json')
 		->set_output(json_encode($data));
 	}
+
+	// AJAX: Get Review (Mode Lihat Nilai & Emote)
+  public function get_review_data($tts_id)
+  {
+    $user_id = $this->session->userdata('user_id');
+    $data = $this->Pbl_tts_model->get_tts_review($tts_id, $user_id);
+    $this->output->set_content_type('application/json')->set_output(json_encode($data));
+  }
 
     // AJAX: Submit Jawaban
 	public function submit_tts()

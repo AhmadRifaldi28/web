@@ -12,6 +12,17 @@ class Pbl_model extends CI_Model
     return $this->db->get($this->table)->result();
   }
 
+  public function get_file_by_id($id)
+  {
+    return $this->db
+      ->select('id, file_path')
+      ->from('pbl_orientasi')
+      ->where('id', $id)
+      ->get()
+      ->row();
+  }
+
+
   public function insert($data)
   {
     return $this->db->insert($this->table, $data);

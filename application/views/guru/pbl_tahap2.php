@@ -1,52 +1,116 @@
-<div class="container py-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<style>
+/* ===== TABLE RESPONSIVE PBL ===== */
+#quizTable, #ttsTable {
+  min-width: 720px !important;
+}
+
+#quizTable thead th, #ttsTable thead th {
+  background: #e0efff !important;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.action { width: 20%; }
+
+/* Responsive Styles */
+@media (max-width: 1051px) {
+  .action { width: 28%; }
+}
+
+@media (max-width: 768px) {
+  #quizTable thead th, #ttsTable thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 576px) {
+  #quizTable td { white-space: nowrap; }
+}
+
+</style>
+
+<div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active">Organisasi Belajar</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <a href="<?= base_url($url_name . '/pbl/index/' . $class_id) ?>" class="btn btn-secondary">← Kembali ke Tahap 1</a>
-    <a href="<?= base_url($url_name . '/pbl/tahap3/' . $class_id); ?>" 
-    class="btn btn-outline-primary mt-3">
-      <i class="bi bi-list-task"></i> Lanjut ke Tahap 3 – Penyelidikan Mandiri & Kelompok
-    </a>
+      <a href="<?= base_url($url_name . '/pbl/tahap3/' . $class_id); ?>" 
+      class="btn btn-outline-primary me-1">
+        <i class="bi bi-list-task"></i> Lanjut ke Tahap 3
+      </a>
   </div>
 
   <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
          value="<?= $this->security->get_csrf_hash(); ?>">
   <input type="hidden" id="classIdHidden" value="<?= $class_id; ?>">
 
-  <ul class="nav nav-tabs mb-3" id="pblTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="quiz-tab" data-bs-toggle="tab" data-bs-target="#quiz"
-        type="button" role="tab">Kuis</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tts-tab" data-bs-toggle="tab" data-bs-target="#tts"
-        type="button" role="tab">Teka-Teki Silang</button>
-    </li>
-  </ul>
+  <div class="alert alert-info border-0 shadow-sm">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    Halaman ini menampilkan daftar <span id="info-label" class="fw-bold">kuis</span>. 
+    Klik tombol <strong>"Detail"</strong> untuk melihat soal.
+  </div>
 
+  <ul class="nav nav-tabs mb-3" id="pblTab" role="tablist">
+      <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="quiz-tab" data-bs-toggle="tab" data-bs-target="#quiz"
+              type="button" role="tab">Kuis</button>
+      </li>
+      <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tts-tab" data-bs-toggle="tab" data-bs-target="#tts"
+              type="button" role="tab">Teka-Teki Silang</button>
+      </li>
+  </ul>
   <div class="tab-content" id="pblTabContent">
     <div class="tab-pane fade show active" id="quiz" role="tabpanel">
       <div class="d-flex justify-content-between mb-2">
-        <h5>Daftar Kuis</h5>
+        <h5>
+          <i class="bi bi-card-checklist me-1"></i>
+          <strong class="text-dark">Daftar Kuis</strong>
+        </h5>
         <button class="btn btn-primary btn-sm" id="btnAddQuiz">+ Tambah Kuis</button>
       </div>
-      <table class="table table-bordered" id="quizTable">
-        <thead class="table-light">
-          <tr><th>No</th><th>Judul</th><th>Deskripsi</th><th>Aksi</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-bordered" id="quizTable">
+          <thead class="table-light">
+            <tr><th style="width:60px">No</th><th>Judul</th><th>Deskripsi</th><th class="action">Aksi</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="tab-pane fade" id="tts" role="tabpanel">
       <div class="d-flex justify-content-between mb-2">
-        <h5>Daftar Teka-Teki Silang</h5>
+        <h5>
+          <i class="bi bi-dice-3-fill me-1"></i>
+          <strong class="text-dark">Daftar Teka-Teki Silang</strong>
+      </h5>
         <button class="btn btn-primary btn-sm" id="btnAddTts">+ Tambah TTS</button>
       </div>
-      <table class="table table-bordered" id="ttsTable">
-        <thead class="table-light">
-          <tr><th>No</th><th>Judul</th><th>Grid</th><th>Aksi</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-bordered" id="ttsTable">
+          <thead class="table-light">
+            <tr><th style="width:60px">No</th><th>Judul</th><th>Grid</th><th class="action">Aksi</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

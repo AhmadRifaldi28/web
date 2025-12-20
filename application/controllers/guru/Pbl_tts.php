@@ -193,6 +193,30 @@ class Pbl_tts extends CI_Controller
 			]));
 	}
 
+	public function get_tts_submissions($tts_id)
+  {
+    $data = $this->Pbl_tts_model->get_results_by_tts_id($tts_id);
+    $this->output->set_content_type('application/json')->set_output(json_encode($data));
+  }
+
+  public function delete_tts_submission()
+  {
+    $id = $this->input->post('id'); // ID dari tabel pbl_tts_results
+    
+    if(!$id) {
+      echo json_encode(['status'=>'error', 'message'=>'ID tidak ditemukan', 'csrf_hash' => $this->security->get_csrf_hash()]);
+      return;
+    }
+
+    $this->Pbl_tts_model->delete_tts_result($id);
+    
+    echo json_encode([
+      'status' => 'success', 
+      'message' => 'Nilai siswa dihapus (Siswa dapat mengerjakan ulang)', 
+      'csrf_hash' => $this->security->get_csrf_hash()
+    ]);
+  }
+
 }
 
 

@@ -1,8 +1,9 @@
 <div class="container py-4">
 
+  <!-- Header & Import/Export Buttons sama seperti sebelumnya ... -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <p class="text-muted"><?= htmlspecialchars($quiz->description, ENT_QUOTES, 'UTF-8'); ?></p>
+      <p class="text-muted">KUIS: <?= htmlspecialchars($quiz->description, ENT_QUOTES, 'UTF-8'); ?></p>
     </div>
     <a href="<?= base_url('guru/pbl/tahap2/' . $quiz->class_id) ?>" class="btn btn-secondary">← Kembali</a>
   </div>
@@ -11,12 +12,6 @@
     <div class="alert alert-success alert-dismissible fade show" role="alert">
       <strong>Berhasil!</strong> <?= $this->session->flashdata('import_success'); ?>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <?php endif; ?>
-
-  <?php if ($this->session->flashdata('import_error')): ?>
-    <div class="alert alert-danger" role="alert">
-      <strong>Gagal!</strong> <?= $this->session->flashdata('import_error'); ?>
     </div>
   <?php endif; ?>
 
@@ -34,27 +29,55 @@
     </div>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-header">
-      <h5 class="mb-0">Daftar Pertanyaan</h5>
-    </div>
-    <div class="card-body">
-      <table class="table table-hover" id="questionTable">
-        <thead>
-          <tr>
-            <th style="width: 5%;">No</th>
-            <th>Pertanyaan</th>
-            <th style="width: 10%;">Jawaban</th>
-            <th style="width: 15%;">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
+  <div class="row">
+    <!-- Tabel Pertanyaan -->
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white">
+        <h5 class="mb-0 text-primary">Daftar Pertanyaan</h5>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover" id="questionTable">
+          <thead>
+            <tr>
+              <th style="width: 5%;">No</th>
+              <th>Pertanyaan</th>
+              <th style="width: 10%;">Jawaban</th>
+              <th style="width: 15%;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
           </tbody>
-      </table>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tabel Nilai Siswa -->
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-trophy"></i> Daftar Nilai Siswa</h5>
+      </div>
+      <div class="card-body" id="submissionsTableContainer">
+        <table class="table table-hover table-striped" id="submissionsTable">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 5%">No</th>
+              <th>Siswa</th>
+              <th>Nilai</th>
+              <th>Waktu</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Diisi oleh JavaScript submissionHandler -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
+
 </div>
 
+<!-- Modal Pertanyaan & Import tetap sama -->
 <div class="modal fade" id="questionModal" tabindex="-1" aria-labelledby="questionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -67,7 +90,7 @@
           <input type="hidden" name="id" id="questionId">
           <input type="hidden" name="quiz_id" value="<?= $quiz->id; ?>">
           <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" 
-                 value="<?= $this->security->get_csrf_hash(); ?>">
+          value="<?= $this->security->get_csrf_hash(); ?>">
 
           <div class="mb-3">
             <label for="question_text" class="form-label">Teks Pertanyaan</label>
@@ -124,7 +147,7 @@
         <div class="modal-body">
           <input type="hidden" name="quiz_id_import" value="<?= $quiz->id; ?>">
           <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" 
-                 value="<?= $this->security->get_csrf_hash(); ?>">
+          value="<?= $this->security->get_csrf_hash(); ?>">
           <div class="mb-3">
             <label for="import_file" class="form-label">Pilih file (Excel/CSV)</label>
             <input class="form-control" type="file" id="import_file" name="import_file"  required>
@@ -143,7 +166,6 @@
 </div>
 
 <script>
-  // Kirim data dari PHP ke JavaScript
   window.QUIZ_ID = "<?= $quiz->id; ?>";
   window.BASE_URL = "<?= base_url(); ?>";
   window.CSRF_TOKEN_NAME = "<?= $this->security->get_csrf_token_name(); ?>";

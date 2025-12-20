@@ -1,15 +1,71 @@
-<div class="container py-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<style>
+/* ===== TABLE RESPONSIVE PBL ===== */
+#observasiTable, #diskusiTable {
+  min-width: 720px !important;
+}
+
+#observasiTable thead th, #diskusiTable thead th {
+  background: #e0efff !important;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.action { width: 20%; }
+
+/* Responsive Styles */
+@media (max-width: 1051px) {
+  .action { width: 28%; }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  #observasiTable thead th, #diskusiTable thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 576px) {
+  #observasiTable td { white-space: nowrap; }
+}
+
+</style>
+
+<div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active">Penyelidikan Mandiri</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <a href="<?= base_url($url_name . '/pbl/tahap2/' . $class_id) ?>" class="btn btn-secondary">← Kembali ke Tahap 2</a>
-    <a href="<?= base_url($url_name . '/pbl/tahap4/' . $class_id); ?>" 
-    class="btn btn-outline-primary mt-3">
-      <i class="bi bi-list-task"></i> Lanjut ke Tahap 4 – Pengembangan Solusi
-    </a>
+      <a href="<?= base_url($url_name . '/pbl/tahap4/' . $class_id); ?>" 
+      class="btn btn-outline-primary me-1">
+        <i class="bi bi-list-task"></i> Lanjut ke Tahap 4
+      </a>
   </div>
 
   <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
          value="<?= $this->security->get_csrf_hash(); ?>">
   <input type="hidden" id="classIdHidden" value="<?= $class_id; ?>">
+
+  <div class="alert alert-info border-0 shadow-sm">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    Halaman ini menampilkan daftar <span id="info-label" class="fw-bold">ruang observasi</span>. 
+    Klik tombol <strong>"Detail"</strong> untuk melihat detail ruang <span id="info-label2" class="fw-bold">observasi</span>. 
+  </div>
 
   <ul class="nav nav-tabs mb-3" id="pblTab" role="tablist">
     <li class="nav-item" role="presentation">
@@ -27,29 +83,39 @@
     <!-- Tab 1: Ruang Observasi -->
     <div class="tab-pane fade show active" id="observasi" role="tabpanel">
       <div class="d-flex justify-content-between mb-2">
-        <h5>Daftar Ruang Upload Observasi</h5>
+        <h5> 
+          <i class="bi bi-file-text me-1"></i>
+          <strong class="text-dark">Daftar Ruang Observasi</strong>
+        </h5>
         <button class="btn btn-primary btn-sm" id="btnAddObservasi">+ Tambah Ruang</button>
       </div>
-      <table class="table table-bordered table-hover" id="observasiTable">
-        <thead class="table-light">
-          <tr><th>No</th><th>Judul</th><th>Deskripsi</th><th>Aksi</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover" id="observasiTable">
+          <thead class="table-light">
+            <tr><th style="width:60px">No</th><th>Judul</th><th>Deskripsi</th><th class="action">Aksi</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Tab 2: Forum Diskusi -->
     <div class="tab-pane fade" id="diskusi" role="tabpanel">
       <div class="d-flex justify-content-between mb-2">
-        <h5>Daftar Topik Diskusi</h5>
+        <h5>
+          <i class="bi bi-chat-text me-1"></i>
+          <strong>Daftar Topik Diskusi</strong>
+        </h5>
         <button class="btn btn-primary btn-sm" id="btnAddDiskusi">+ Tambah Topik</button>
       </div>
-      <table class="table table-bordered table-hover" id="diskusiTable">
-        <thead class="table-light">
-          <tr><th>No</th><th>Judul</th><th>Deskripsi Singkat</th><th>Aksi</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover" id="diskusiTable">
+          <thead class="table-light">
+            <tr><th style="width:60px">No</th><th>Judul</th><th>Deskripsi Singkat</th><th class="action">Aksi</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
     
   </div>

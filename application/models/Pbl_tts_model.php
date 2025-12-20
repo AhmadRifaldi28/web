@@ -6,6 +6,7 @@ class Pbl_tts_model extends CI_Model
 	private $table_tts = 'pbl_tts';
 	private $table_questions = 'pbl_tts_questions';
 	private $table_results = 'pbl_tts_results';
+	private $table_answers = 'pbl_tts_answers';
 
 	public function get_tts_by_id($id)
 	{
@@ -164,60 +165,117 @@ class Pbl_tts_model extends CI_Model
 		return ['valid' => true, 'message' => ''];
 	}
 
-    public function get_questions_for_student($tts_id)
-    {
-        // Kita perlu panjang jawaban (LENGTH(answer)) untuk membuat kotak input di frontend
-        $this->db->select('id, number, direction, question, start_x, start_y, LENGTH(answer) as ans_length, LEFT(answer, 1) as first_char');
-        $this->db->where('tts_id', $tts_id);
-        $this->db->order_by('number', 'ASC');
-        return $this->db->get($this->table_questions)->result();
+  public function get_questions_for_student($tts_id)
+  {
+    // Ambil soal tanpa jawaban kunci (agar tidak bocor di inspect element saat mengerjakan)
+    $this->db->select('id, number, direction, question, start_x, start_y, LENGTH(answer) as ans_length, LEFT(answer, 1) as first_char');
+    $this->db->where('tts_id', $tts_id);
+    $this->db->order_by('number', 'ASC');
+    return $this->db->get($this->table_questions)->result();
+  }
+
+  // Cek apakah sudah mengerjakan
+  public function check_submission($tts_id, $user_id)
+  {
+      return $this->db->where('tts_id', $tts_id)
+          ->where('user_id', $user_id)
+          ->get($this->table_results)
+          ->row();
+  }
+
+  // --- [BARU] Ambil Data Review (Soal + Kunci + Jawaban Siswa) ---
+  public function get_tts_review($tts_id, $user_id)
+  {
+    $result = $this->check_submission($tts_id, $user_id);
+    if (!$result) return [];
+
+    $this->db->select('q.id, q.number, q.direction, q.question, q.start_x, q.start_y, q.answer as key_answer, LENGTH(q.answer) as ans_length, a.user_answer, a.is_correct');
+    $this->db->from($this->table_questions . ' q');
+    $this->db->join($this->table_answers . ' a', 'a.question_id = q.id');
+    $this->db->where('a.result_id', $result->id);
+    $this->db->order_by('q.number', 'ASC');
+    return $this->db->get()->result();
+  }
+
+  // Proses Penilaian TTS
+  public function submit_answers($tts_id, $user_id, $student_answers)
+  {
+    // 1. Ambil Kunci Jawaban
+    $questions = $this->db->where('tts_id', $tts_id)->get($this->table_questions)->result();
+    
+    $correct_count = 0;
+    $total_questions = count($questions);
+    $result_id = (function_exists('generate_ulid')) ? generate_ulid() : uniqid(); // Gunakan helper generate_ulid() jika ada
+
+    $detail_inserts = [];
+
+    // 2. Loop Validasi
+    foreach ($questions as $q) {
+      $qid = $q->id;
+      // Bersihkan jawaban siswa
+      $raw_ans = isset($student_answers[$qid]) ? trim($student_answers[$qid]) : '';
+      $clean_ans = strtoupper($raw_ans);
+      $key_ans = strtoupper($q->answer);
+
+      $is_correct = ($clean_ans === $key_ans) ? 1 : 0;
+      
+      if ($is_correct) {
+          $correct_count++;
+      }
+
+      // Siapkan data batch insert
+      $detail_inserts[] = [
+        'id' => (function_exists('generate_ulid')) ? generate_ulid() : uniqid('', true),
+        'result_id' => $result_id,
+        'question_id' => $qid,
+        'user_answer' => $clean_ans, // Simpan apa yang diketik siswa
+        'is_correct' => $is_correct
+      ];
     }
 
-    // Cek apakah sudah mengerjakan
-    public function check_submission($tts_id, $user_id)
-    {
-        return $this->db->where('tts_id', $tts_id)
-            ->where('user_id', $user_id)
-            ->get($this->table_results)
-            ->row();
+    $score = ($total_questions > 0) ? ($correct_count / $total_questions) * 100 : 0;
+
+    // 3. Simpan Header Result
+    $data_result = [
+      'id' => $result_id,
+      'tts_id' => $tts_id,
+      'user_id' => $user_id,
+      'score' => round($score),
+      'total_correct' => $correct_count,
+      'total_questions' => $total_questions
+    ];
+    $this->db->insert($this->table_results, $data_result);
+
+    // 4. Simpan Detail Jawaban
+    if (!empty($detail_inserts)) {
+      $this->db->insert_batch($this->table_answers, $detail_inserts);
     }
 
-    // Proses Penilaian TTS
-    public function submit_answers($tts_id, $user_id, $student_answers)
-    {
-        // 1. Ambil Kunci Jawaban Asli
-        $questions = $this->db->where('tts_id', $tts_id)->get($this->table_questions)->result();
-        
-        $correct_count = 0;
-        $total_questions = count($questions);
+    return $data_result;
+  }
 
-        // 2. Bandingkan Jawaban
-        foreach ($questions as $q) {
-            $qid = $q->id;
-            // Normalisasi jawaban siswa (huruf besar, tanpa spasi)
-            $ans = isset($student_answers[$qid]) ? strtoupper(trim($student_answers[$qid])) : '';
-            
-            if ($ans === strtoupper($q->answer)) {
-                $correct_count++;
-            }
-        }
+  /**
+   * Mengambil daftar nilai siswa pada kuis tertentu.
+   * Join dengan tabel users untuk mendapatkan Nama Siswa.
+   */
+  public function get_results_by_tts_id($tts_id)
+  {
+    $this->db->select('r.*, u.name as student_name, u.username');
+    $this->db->from($this->table_results . ' r');
+    $this->db->join('users u', 'u.id = r.user_id');
+    $this->db->where('r.tts_id', $tts_id);
+    $this->db->order_by('r.score', 'DESC'); // Urutkan nilai tertinggi
+    return $this->db->get()->result();
+  }
 
-        // 3. Hitung Skor
-        $score = ($total_questions > 0) ? ($correct_count / $total_questions) * 100 : 0;
-
-        // 4. Simpan ke DB
-        $data = [
-            'id' => generate_ulid(), // Helper ULID
-            'tts_id' => $tts_id,
-            'user_id' => $user_id,
-            'score' => round($score),
-            'total_correct' => $correct_count,
-            'total_questions' => $total_questions
-        ];
-
-        $this->db->insert($this->table_results, $data);
-        return $data;
-    }
+  /**
+   * Menghapus data nilai (reset attempt siswa)
+   */
+  public function delete_tts_result($id)
+  {
+    $this->db->where('id', $id);
+    return $this->db->delete($this->table_results);
+  }
 	
 }
 

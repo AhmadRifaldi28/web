@@ -6,6 +6,7 @@ class Pbl_esai_model extends CI_Model
 	private $table_essays = 'pbl_solution_essays';
 	private $table_submissions = 'pbl_essay_submissions';
 	private $table_questions = 'pbl_essay_questions';
+	private $table_students = 'students';
 	private $table_users = 'users';
 
 	/**
@@ -17,6 +18,40 @@ class Pbl_esai_model extends CI_Model
 			->get($this->table_essays)
 			->row();
 	}
+
+	/**
+   * Mengambil daftar seluruh siswa dalam kelas beserta status pengumpulannya
+   * Logic: Ambil data Student -> Join User (untuk nama) -> Left Join Submission
+   */
+  public function get_class_students_with_submission($class_id, $essay_id)
+  {
+	  // Select kolom yang dibutuhkan
+	  $this->db->select('
+      std.user_id as student_user_id,
+      u.name as student_name,
+      u.image as student_image,
+      sub.id as submission_id,
+      sub.submission_content,
+      sub.grade,
+      sub.feedback,
+      sub.created_at as submitted_at
+	  ');
+
+	  // Dari tabel students (filter by class)
+	  $this->db->from($this->table_students . ' as std');
+	  
+	  // Join ke Users untuk dapat Nama
+	  $this->db->join($this->table_users . ' as u', 'std.user_id = u.id');
+
+	  // LEFT Join ke Submissions untuk cek apakah sudah mengumpulkan
+	  // Kondisi join ganda: user_id sama DAN essay_id sesuai
+	  $this->db->join($this->table_submissions . ' as sub', 'sub.user_id = std.user_id AND sub.essay_id = "' . $essay_id . '"', 'left');
+
+	  $this->db->where('std.class_id', $class_id);
+	  $this->db->where('u.role_id !=', '1'); // Pastikan bukan admin/guru (opsional, tergantung role id siswa)
+	  
+	  return $this->db->get()->result();
+  }
 
 	/**
 	 * Mengambil semua jawaban siswa, di-join dengan nama
