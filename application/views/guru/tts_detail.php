@@ -47,9 +47,53 @@
   .editing-mode .tts-cell:hover {
     background-color: #e3f2fd;
   }
+
+  #questionTable, #submissionsTable {
+  min-width: 720px !important;
+}
+
+#questionTable thead th, #submissionsTable thead th {
+  background: #e0efff !important;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.action { width: 15%; }
+
+/* Responsive Styles */
+@media (max-width: 1051px) {
+  .action { width: 22%; }
+}
+
+@media (max-width: 768px) {
+  #questionTable thead th, #submissionsTable thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 576px) {
+  #questionTable td { white-space: nowrap; }
+}
 </style>
 
-<div class="container py-3">
+<div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active"><?= htmlspecialchars($tts->title, ENT_QUOTES, 'UTF-8'); ?></li>
+      </ol>
+    </nav>
+  </div>
   <div class="d-flex justify-content-between align-items-center mb-3">
     <a href="<?= base_url('guru/pbl/tahap2/' . $class_id) ?>" class="btn btn-secondary">← Kembali</a>
   </div>
@@ -72,45 +116,57 @@
     <div class="card-body">
       <h5><?= htmlspecialchars($tts->title, ENT_QUOTES, 'UTF-8'); ?></h5>
       <p><strong>Preview Grid:</strong></p>
-      <p>Silakan pilih kotak terlebih dahulu!</p>
+      <div class="alert alert-info border-0 shadow-sm">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        Halaman ini menampilkan preview <span id="info-label" class="fw-bold">Teka Teki Silang</span>. 
+        Silakan pilih kotak terlebih dahulu untuk membuat soal.
+      </div>
+
+      <div class="alert alert-danger border-0 shadow-sm">
+        <strong>Belum bisa hapus soal</strong>
+      </div>
       <!-- <div id="ttsGridPreview" class="border p-3 mb-3" style="display:grid; grid-template-columns: repeat(10, 25px); gap:2px;"> -->
       <div id="ttsGridPreview" class="border p-3 mb-3" style="display:grid; justify-content: center; gap:2px;">
       </div>
       <button class="btn btn-primary btn-sm mb-3" id="btnAddQuestion">+ Tambah Pertanyaan</button>
 
-      <table class="table table-bordered" id="questionTable">
-        <thead class="table-light">
-          <tr>
-            <th>No</th>
-            <th>Nomor</th>
-            <th>Arah</th>
-            <th>Pertanyaan</th>
-            <th>Jawaban</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-responsive" id="questionTableContainer">
+        <table class="table table-bordered" id="questionTable">
+          <thead class="table-light">
+            <tr>
+              <th>No</th>
+              <th>Nomor</th>
+              <th>Arah</th>
+              <th>Pertanyaan</th>
+              <th>Jawaban</th>
+              <th class="action">Aksi</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
       <!-- Tabel Nilai Siswa -->
     <div class="card shadow-sm h-100">
       <div class="card-header bg-success text-white">
         <h5 class="mb-0"><i class="bi bi-trophy"></i> Daftar Nilai Siswa</h5>
       </div>
       <div class="card-body" id="submissionsTableContainer">
-        <table class="table table-hover table-striped" id="submissionsTable">
-          <thead class="table-light">
-            <tr>
-              <th style="width: 5%">No</th>
-              <th>Siswa</th>
-              <th>Nilai</th>
-              <th>Waktu</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Diisi oleh JavaScript submissionHandler -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped" id="submissionsTable">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 5%">No</th>
+                <th>Siswa</th>
+                <th>Nilai</th>
+                <th>Waktu</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Diisi oleh JavaScript submissionHandler -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     </div>

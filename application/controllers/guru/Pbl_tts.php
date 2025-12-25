@@ -26,6 +26,7 @@ class Pbl_tts extends CI_Controller
 	  $data['title'] = 'Detail TTS: ' . $tts->title;
 	  $data['tts'] = $tts;
 	  $data['class_id'] = $tts->class_id;
+	  $data['url_name'] = 'guru';
 	  $data['user'] = $this->session->userdata();
 
 	  $this->load->view('templates/header', $data);

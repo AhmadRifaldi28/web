@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formId: 'questionForm',
     modalLabelId: 'questionModalLabel',
     tableId: 'questionTable',
+    tableParentSelector: '#questionTableContainer',
     btnAddId: 'btnAddQuestion',
     csrf: csrfConfig,
     urls: {
@@ -175,11 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
           data-id="${q.id}" data-number="${q.number}"
           data-direction="${q.direction}" data-question="${q.question}"
           data-answer="${q.answer}" data-start_x="${q.start_x}" data-start_y="${q.start_y}">
-          <i class="bi bi-pencil"></i>
+          Ubah
         </button>
         <button class="btn btn-sm btn-danger btn-delete"
           data-id="${q.id}" data-question="${q.question}">
-          <i class="bi bi-trash"></i>
+          Hapus
         </button>`
     ],
     formPopulator: (form, data) => {
@@ -246,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn btn-sm btn-outline-danger btn-delete"
               data-id="${res.id}"
               data-student_name="${res.student_name} (Nilai: ${res.score})">
-              <i class="bi bi-trash"></i> Hapus / Reset
+              Reset
             </button>
             `
         ];

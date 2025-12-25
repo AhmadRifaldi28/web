@@ -2,107 +2,145 @@ import CrudHandler from '../crud_handler.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const csrfEl = document.querySelector('input[name="' + window.CSRF_TOKEN_NAME + '"]');
-    const CURRENT_CLASS_ID = window.CURRENT_CLASS_ID || null;
-    const CURRENT_USER_ID = document.getElementById('currentUserId').value; 
+  const csrfEl = document.querySelector('input[name="' + window.CSRF_TOKEN_NAME + '"]');
+  const CURRENT_CLASS_ID = window.CURRENT_CLASS_ID || null;
+  const CURRENT_USER_ID = document.getElementById('currentUserId').value; // Ambil ID Siswa Login
 
-    if (!CURRENT_CLASS_ID) {
-        console.error('CLASS ID tidak ditemukan.');
-        return;
+  if (!CURRENT_CLASS_ID) return;
+
+  const csrfConfig = {
+    tokenName: window.CSRF_TOKEN_NAME,
+    tokenHash: csrfEl ? csrfEl.value : ''
+  };
+
+  // URL Load: Menggunakan endpoint yang sama (Controller harus return JSON)
+  // Logic Privasi: Kita filter di client-side (Javascript) agar hanya baris siswa ybs yang muncul.
+  // ATAU lebih aman jika Anda membuat controller `siswa/pbl/get_my_recap` yang hanya me-return array 1 baris.
+  // Script di bawah ini support keduanya (Array banyak atau Array satu).
+  const LOAD_URL = `siswa/pbl/get_my_recap/${CURRENT_CLASS_ID}`; 
+
+  // ============================================================
+  // HANDLER 1: TABEL REKAP NILAI (View Only)
+  // ============================================================
+  const rekapConfig = {
+    baseUrl: window.BASE_URL,
+    entityName: 'Nilai Saya',
+    tableId: 'rekapTable',      
+    tableParentSelector: '.card-body',
+    
+    readOnly: true, // View Only
+
+    urls: { load: LOAD_URL },
+
+    dataMapper: (student, index) => {
+
+      // Pastikan float
+      const quiz = parseFloat(student.quiz_score) || 0;
+      const tts = parseFloat(student.tts_score) || 0;
+      const obs = parseFloat(student.obs_score) || 0;
+      const essay = parseFloat(student.essay_score) || 0;
+
+      // Hitung Rata-rata
+      const finalScore = (quiz + tts + obs + essay) / 4;
+
+      return [
+        index + 1, // Nomor urut (akan jadi 1 karena cuma ada 1 data)
+        `<span class="fw-bold text-success">${student.student_name} (Anda)</span>`,
+        quiz.toFixed(0),
+        tts.toFixed(0),
+        obs.toFixed(0),
+        essay.toFixed(0),
+        `<span class="badge bg-primary fs-6">${finalScore.toFixed(2)}</span>`
+      ];
     }
+  };
 
-    const csrfConfig = {
-        tokenName: window.CSRF_TOKEN_NAME,
-        tokenHash: csrfEl ? csrfEl.value : ''
-    };
+  new CrudHandler(rekapConfig).init();
 
-    const refleksiConfig = {
-        baseUrl: window.BASE_URL,
-        entityName: 'Refleksi',
-        
-        // PENTING: readOnly false agar fitur modal handler aktif
-        readOnly: false, 
 
-        // ID Elemen DOM
-        modalId: 'refleksiModal',
-        formId: 'refleksiForm', 
-        
-        // --- PERBAIKAN DISINI ---
-        // Tambahkan modalLabelId agar CrudHandler bisa menemukan elemen judul modal
-        modalLabelId: 'refleksiModalLabel', 
-        // ------------------------
+  // ============================================================
+  // HANDLER 2: TABEL REFLEKSI (Lihat Refleksi)
+  // ============================================================
+  const refleksiConfig = {
+    baseUrl: window.BASE_URL,
+    entityName: 'Refleksi',
+    
+    modalId: 'refleksiModal',
+    formId: 'refleksiForm',
+    modalLabelId: 'refleksiModalLabel', // Penting untuk judul modal
+    
+    tableId: 'reflectionTable', 
+    tableParentSelector: '.reflectionContainer',
+    
+    btnAddId: null, 
+    csrf: csrfConfig,
+    
+    // PENTING: readOnly false agar tombol "Lihat" bisa diklik & membuka modal
+    // Meskipun siswa tidak bisa simpan, kita butuh fitur "Show Modal" dari CrudHandler
+    readOnly: false, 
 
-        tableId: 'rekapTable',
-        btnAddId: null, 
-        
-        tableParentSelector: '.card-body', 
+    urls: {
+      load: LOAD_URL,
+      save: 'siswa/pbl/dummy_save', // Dummy URL (tidak akan dipanggil karena tidak ada tombol submit)
+      delete: null
+    },
 
-        csrf: csrfConfig,
-        
-        urls: {
-            load: `siswa/pbl/get_my_recap/${CURRENT_CLASS_ID}`,
-            save: 'siswa/pbl/dummy_save', // Dummy URL agar tidak error
-            delete: null 
-        },
+    modalTitles: { edit: 'Detail Refleksi & Feedback' },
 
-        modalTitles: { 
-            add: 'Detail Refleksi', 
-            edit: 'Detail Refleksi' 
-        },
+    dataMapper: (student, index) => {
+      // --- FILTER PRIVASI ---
+      if (student.user_id !== CURRENT_USER_ID) return null;
 
-        // --- MAPPING DATA JSON KE TABEL HTML ---
-        dataMapper: (student, index) => {
-            const scoreQuiz = (parseFloat(student.quiz_score) || 0) + (parseFloat(student.tts_score) || 0);
-            const scoreObs  = parseFloat(student.obs_score) || 0;
-            const scoreEssay = parseFloat(student.essay_score) || 0;
-            const totalScore = scoreQuiz + scoreObs + scoreEssay;
+      const teacherRef = student.teacher_reflection || '';
+      const feedback = student.student_feedback || '';
+      
+      // Status apakah guru sudah mengisi
+      const isFilled = teacherRef !== '' || feedback !== '';
+      
+      // Display Teks Pendek di Tabel
+      const displayRef = teacherRef ? teacherRef.substring(0, 40) + '...' : '<span class="text-muted">-</span>';
+      const displayFeed = feedback ? feedback.substring(0, 40) + '...' : '<span class="text-muted">-</span>';
 
-            let actionBtn = '';
-            
-            // Cek apakah baris ini milik user yang sedang login?
-            if (student.user_id === CURRENT_USER_ID) {
-                const hasReflection = (student.teacher_reflection && student.teacher_reflection.trim() !== "") || 
-                                      (student.student_feedback && student.student_feedback.trim() !== "");
-                
-                if (hasReflection) {
-                    actionBtn = `
-                        <button type="button" class="btn btn-sm btn-success btn-edit" 
-                            data-reflection="${student.teacher_reflection || '-'}"
-                            data-feedback="${student.student_feedback || '-'}">
-                            <i class="bi bi-envelope-paper"></i> Lihat Refleksi
-                        </button>
-                    `;
-                } else {
-                    actionBtn = `<span class="badge bg-secondary text-white fw-normal">Belum ada feedback</span>`;
-                }
-            } else {
-                actionBtn = `<span class="text-muted small">-</span>`;
-            }
+      // Tombol Aksi: "Lihat" (View)
+      // Kita gunakan class "btn-edit" agar CrudHandler otomatis membuka modal dan mengisi data
+      let actionBtn = '';
+      if (isFilled) {
+          actionBtn = `
+            <button type="button" class="btn btn-sm btn-info text-white btn-edit" 
+              data-id="${student.user_id}" 
+              data-name="${student.student_name}"
+              data-reflection="${teacherRef}"
+              data-feedback="${feedback}">
+              <i class="bi bi-eye"></i> Lihat Detail
+            </button>
+          `;
+      } else {
+          actionBtn = `<span class="badge bg-secondary">Belum ada feedback</span>`;
+      }
 
-            const nameDisplay = (student.user_id === CURRENT_USER_ID) 
-                ? `<span class="fw-bold text-success">${student.student_name} (Anda)</span>` 
-                : student.student_name;
+      return [
+        index + 1,
+        `<span class="fw-bold text-success">${student.student_name} (Anda)</span>`,
+        displayRef,
+        displayFeed,
+        actionBtn
+      ];
+    },
 
-            return [
-                index + 1,
-                nameDisplay,
-                `<span class="badge bg-secondary">${scoreQuiz}</span>`,
-                `<span class="badge bg-info text-dark">${scoreObs}</span>`,
-                `<span class="badge bg-success">${scoreEssay}</span>`,
-                `<span class="fw-bold text-primary fs-6">${totalScore}</span>`,
-                actionBtn
-            ];
-        },
+    // Fungsi Pengisi Modal
+    formPopulator: (form, data) => {
+      // Isi Nama
+      form.querySelector('#modalStudentName').value = data.name;
+      
+      // Isi Textarea (Readonly)
+      const refArea = form.querySelector('[name="teacher_reflection"]');
+      const feedArea = form.querySelector('[name="student_feedback"]');
+      
+      if(refArea) refArea.value = data.reflection || '- Belum ada catatan -';
+      if(feedArea) feedArea.value = data.feedback || '- Belum ada feedback -';
+    }
+  };
 
-        // --- POPULATE MODAL VIEW ---
-        formPopulator: (form, data) => {
-            const viewReflection = document.getElementById('viewTeacherReflection');
-            const viewFeedback = document.getElementById('viewStudentFeedback');
+  new CrudHandler(refleksiConfig).init();
 
-            if (viewReflection) viewReflection.textContent = data.reflection;
-            if (viewFeedback) viewFeedback.textContent = data.feedback;
-        }
-    };
-
-    new CrudHandler(refleksiConfig).init();
 });

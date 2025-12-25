@@ -30,6 +30,7 @@ class Pbl_observasi extends CI_Controller
         $data['is_admin_or_guru'] = true; // Hardcode true karena ini controller Guru
 
         $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
         $this->load->view('guru/pbl_observasi_detail', $data);
         $this->load->view('templates/footer');
     }

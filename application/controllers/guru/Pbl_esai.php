@@ -6,13 +6,7 @@ class Pbl_esai extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		// is_logged_in();
-		$this->load->model('Pbl_esai_model'); // Model BARU
-		$this->load->library('form_validation');
-		$this->load->library('session');
-		$this->load->helper('security');
-		$this->load->helper('url');
-		// $this->load->helper('ulid');
+		is_logged_in();
 	}
 
 	/**
@@ -25,12 +19,14 @@ class Pbl_esai extends CI_Controller
 		$essay = $this->Pbl_esai_model->get_essay_details($essay_id);
 		if (!$essay) show_404();
 
-		$data['title'] = 'Review Esai: ' . $essay->title;
+		$data['title'] = 'Detail Esai: ' . $essay->title;
 		$data['essay'] = $essay;
 		$data['class_id'] = $essay->class_id; // Ambil class_id dari esai
+    $data['url_name'] = 'guru';
 		$data['user'] = $this->session->userdata();
 
 		$this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar', $data);
 		$this->load->view('guru/pbl_esai_detail', $data); // View Detail BARU
 		$this->load->view('templates/footer');
 	}
@@ -47,27 +43,36 @@ class Pbl_esai extends CI_Controller
 
   public function save_question()
   {
-    // Validasi input
-    $this->form_validation->set_rules('question_text', 'Pertanyaan', 'required');
-    $this->form_validation->set_rules('essay_id', 'ID Esai', 'required');
-
-    if ($this->form_validation->run() == FALSE) {
-        echo json_encode(['status' => 'error', 'message' => validation_errors()]);
+    // Validasi: Pastikan question_text dikirim (bisa array atau string)
+    if (empty($this->input->post('question_text'))) {
+        echo json_encode(['status' => 'error', 'message' => 'Soal tidak boleh kosong.']);
         return;
     }
 
-    $id = $this->input->post('id'); // Jika kosong berarti Insert, jika ada berarti Update
-    $data = [
-        'essay_id'        => $this->input->post('essay_id'),
-        'question_number' => $this->input->post('question_number'),
-        'question_text'   => $this->input->post('question_text'),
-        'weight'          => $this->input->post('weight') ?: 100
-    ];
+    $essay_id = $this->input->post('essay_id');
+    $id = $this->input->post('id'); // ID untuk Edit (jika ada)
+    
+    // Input dari View 'question_text[]' akan diterima sebagai Array
+    $questions = $this->input->post('question_text'); 
+    
+    // Pastikan formatnya array agar konsisten di Model
+    if (!is_array($questions)) {
+        $questions = [$questions];
+    }
 
-    if ($this->Pbl_esai_model->save_question($data, $id)) {
-        echo json_encode(['status' => 'success', 'message' => 'Soal berhasil disimpan.', 'csrf_hash' => $this->security->get_csrf_hash()]);
+    $result = $this->Pbl_esai_model->save_question_batch($essay_id, $questions, $id);
+
+    if ($result) {
+      echo json_encode([
+        'status' => 'success', 
+        'message' => 'Soal berhasil disimpan.', 
+        'csrf_hash' => $this->security->get_csrf_hash()
+      ]);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan soal.']);
+      echo json_encode([
+        'status' => 'error', 
+        'message' => 'Gagal menyimpan atau tidak ada data yang valid.'
+      ]);
     }
   }
 

@@ -9,25 +9,26 @@ class Pbl_kuis extends CI_Controller {
     is_logged_in();
   }
 
-  // --- [FUNGSI BARU] Halaman Detail Kuis ---
+  // --- Halaman Detail Kuis ---
   public function kuis_detail($quiz_id = null)
   {
     if (!$quiz_id) redirect('guru/pbl'); // Arahkan ke halaman utama pbl
 
     $quiz = $this->Pbl_tahap2_model->get_quiz_by_id($quiz_id);
     if (!$quiz) show_404();
-
-    $data['title'] = 'Detail Kuis: ' . $quiz->title;
+    $data['class_id'] = $quiz->class_id;
     $data['quiz'] = $quiz;
+    $data['url_name'] = 'guru';
     $data['user'] = $this->session->userdata();
+    $data['title'] = 'Detail Kuis: ' . $quiz->title;
 
     $this->load->view('templates/header', $data);
-    // $this->load->view('templates/sidebar'); // (Opsional, jika Anda pakai)
-    $this->load->view('guru/kuis_detail', $data); // View baru kita
+    $this->load->view('templates/sidebar');
+    $this->load->view('guru/kuis_detail', $data);
     $this->load->view('templates/footer');
   }
 
-  // --- [FUNGSI BARU] AJAX CRUD untuk Pertanyaan Kuis ---
+  // --- AJAX CRUD untuk Pertanyaan Kuis ---
 
   // AJAX: Get list pertanyaan
   public function get_quiz_questions($quiz_id)
@@ -109,7 +110,7 @@ class Pbl_kuis extends CI_Controller {
     ]);
   }
 
-  // --- [FUNGSI BARU] Import / Export (Placeholder) ---
+  // --- Import / Export (Placeholder) ---
   public function export_quiz($quiz_id)
   {
     // 1. Ambil data
@@ -175,10 +176,10 @@ class Pbl_kuis extends CI_Controller {
 
     // 2. Konfigurasi Upload File
     
-    // [PERBAIKAN] Tentukan path folder dengan FCPATH agar absolut dan pasti
+    // Tentukan path folder dengan FCPATH agar absolut dan pasti
     $upload_dir = FCPATH . 'uploads/temp/';
 
-    // [PERBAIKAN] Cek apakah direktori ada dan bisa ditulisi
+    // Cek apakah direktori ada dan bisa ditulisi
     if (!is_dir($upload_dir)) {
       // Coba buat folder jika belum ada
       if (!mkdir($upload_dir, 0777, TRUE)) {

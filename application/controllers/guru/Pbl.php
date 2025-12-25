@@ -612,11 +612,148 @@ class Pbl extends CI_Controller
   // [AJAX] Mengambil data rekap nilai untuk tabel
   public function get_student_recap($class_id)
   {
-      $this->load->model('Refleksi_model');
       $students = $this->Refleksi_model->getAllStudentScores($class_id);
       
       // Return JSON langsung untuk ditangkap fetch JS
       echo json_encode($students);
+  }
+
+  public function get_final_recap($class_id)
+  {
+    if (!$class_id) {
+        show_404();
+    }
+
+    $data = $this->Refleksi_model->getFinalRecapByClass($class_id);
+
+    $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode($data));
+  }
+
+  public function get_reflection_recap($class_id)
+{
+    if (!$class_id) show_404();
+
+    $data = $this->Refleksi_model->getReflectionRecapByClass($class_id);
+
+    $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode($data));
+}
+
+public function toggle_lock()
+    {
+        // Validasi
+        $class_id = $this->input->post('class_id');
+        $user_id  = $this->input->post('user_id');
+        $status   = $this->input->post('status'); // 1 atau 0
+
+        if (!$class_id || !$user_id) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        $this->load->model('Refleksi_model');
+        
+        // Cek apakah bisa dikunci (harus ada data dulu)
+        $success = $this->Refleksi_model->set_lock_status($class_id, $user_id, $status);
+
+        if ($success) {
+            $msg = ($status == 1) ? 'Nilai dipublikasikan ke siswa.' : 'Nilai ditarik kembali (Draft).';
+            echo json_encode([
+                'status' => 'success', 
+                'message' => $msg,
+                'csrf_hash' => $this->security->get_csrf_hash()
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error', 
+                'message' => 'Gagal! Pastikan Refleksi Guru sudah diisi sebelum mempublikasikan.',
+                'csrf_hash' => $this->security->get_csrf_hash()
+            ]);
+        }
+    }
+
+public function save_teacher_reflection()
+{
+    $this->load->model('Refleksi_model');
+
+    $class_id = $this->input->post('class_id');
+    $user_id  = $this->input->post('user_id');
+
+    if (!$class_id || !$user_id) {
+        $this->_jsonError('Data tidak lengkap');
+        return;
+    }
+
+    // Cek lock
+    if ($this->Refleksi_model->isLocked($class_id, $user_id)) {
+        $this->_jsonError('Refleksi sudah dikunci');
+        return;
+    }
+
+    $data = [
+        'class_id' => $class_id,
+        'user_id'  => $user_id,
+        'teacher_reflection' => $this->input->post('teacher_reflection'),
+        'teacher_feedback'   => $this->input->post('teacher_feedback'),
+        'student_feedback'   => $this->input->post('student_feedback'),
+    ];
+
+    $saved = $this->Refleksi_model->save_reflection($data);
+
+    if ($saved) {
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Refleksi guru berhasil disimpan',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+    } else {
+        $this->_jsonError('Gagal menyimpan refleksi');
+    }
+}
+
+private function _jsonError($msg)
+{
+    echo json_encode([
+        'status' => 'error',
+        'message' => $msg,
+        'csrf_hash' => $this->security->get_csrf_hash()
+    ]);
+}
+
+
+
+  public function save_class_reflection()
+  {
+    $this->form_validation->set_rules('class_id', 'ID Kelas', 'required');
+
+    if ($this->form_validation->run() === FALSE) {
+      echo json_encode([
+        'status' => 'error',
+        'message' => validation_errors(),
+        'csrf_hash' => $this->security->get_csrf_hash()
+      ]);
+      return;
+    }
+
+
+    $data = [
+      'class_id' => $this->input->post('class_id'),
+      'teacher_id' => $this->session->userdata('user_id'),
+      'strengths' => $this->input->post('strengths'),
+      'obstacles' => $this->input->post('obstacles'),
+      'competency_achievement' => $this->input->post('competency_achievement'),
+    ];
+
+    $saved = $this->Refleksi_model->save_class_reflection($data);
+
+    echo json_encode([
+      'status' => $saved ? 'success' : 'error',
+      'message' => $saved ? 'Refleksi kelas berhasil disimpan.' : 'Gagal menyimpan refleksi.',
+      'csrf_hash' => $this->security->get_csrf_hash()
+    ]);
   }
 
   // [AJAX] Simpan Refleksi
@@ -639,7 +776,6 @@ class Pbl extends CI_Controller
       return;
   }
 
-  $this->load->model('Refleksi_model');
 
   // 3. Siapkan Data
   $data = [

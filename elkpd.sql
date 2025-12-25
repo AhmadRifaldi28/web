@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 20, 2025 at 01:09 AM
+-- Generation Time: Dec 24, 2025 at 04:10 AM
 -- Server version: 8.0.30
 -- PHP Version: 7.4.33
 
@@ -41,8 +41,32 @@ CREATE TABLE `classes` (
 --
 
 INSERT INTO `classes` (`id`, `user_id`, `school_id`, `name`, `code`, `created_at`) VALUES
-('01K92EK6YBT0FSC80TDYYD3ZN2', '01K91853JEGYFN8Z034389ETB3', '01K8ZB7PXYMHWEQ4K6C5651EB1', 'Kelas 5A', 'Kal-5A', '2025-11-02 21:12:31'),
+('01K92EK6YBT0FSC80TDYYD3ZN2', '01K91853JEGYFN8Z034389ETB3', '01K8ZB7PXYMHWEQ4K6C5651EB1', 'Kelas 5A', 'Pan-5A', '2025-11-02 21:12:31'),
 ('01K974TZ7SY1GTZP8H9J5769YA', '01K974STMBGJGP4BEC1C216M48', '01K8ZB7PXYMHWEQ4K6C5651EB1', 'Kelas 3', 'Bah-3', '2025-11-04 16:58:12');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pbl_class_reflections`
+--
+
+CREATE TABLE `pbl_class_reflections` (
+  `id` varchar(26) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `class_id` varchar(26) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `teacher_id` varchar(26) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `strengths` text COLLATE utf8mb4_unicode_ci,
+  `obstacles` text COLLATE utf8mb4_unicode_ci,
+  `competency_achievement` text COLLATE utf8mb4_unicode_ci,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pbl_class_reflections`
+--
+
+INSERT INTO `pbl_class_reflections` (`id`, `class_id`, `teacher_id`, `strengths`, `obstacles`, `competency_achievement`, `created_at`, `updated_at`) VALUES
+('01KD5NY3ZFX4VH66S9G3WQ2DJK', '01K92EK6YBT0FSC80TDYYD3ZN2', '01K91853JEGYFN8Z034389ETB3', 'baik', 'kurang', 'baik', '2025-12-23 20:21:19', '2025-12-23 20:21:19');
 
 -- --------------------------------------------------------
 
@@ -90,7 +114,6 @@ CREATE TABLE `pbl_essay_questions` (
   `essay_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'FK ke pbl_solution_essays.id',
   `question_number` int NOT NULL COMMENT 'Nomor urut pertanyaan',
   `question_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Teks pertanyaan',
-  `weight` int DEFAULT '100' COMMENT 'Bobot nilai pertanyaan',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -98,9 +121,12 @@ CREATE TABLE `pbl_essay_questions` (
 -- Dumping data for table `pbl_essay_questions`
 --
 
-INSERT INTO `pbl_essay_questions` (`id`, `essay_id`, `question_number`, `question_text`, `weight`, `created_at`) VALUES
-('01KAWH3R6XCS1R8FX4X0TW9T69', '01K9PJEPZM76X6ANHYW6ZWHBZH', 1, 'apa yang dimaksud?', 20, '2025-11-25 10:32:27'),
-('01KAWJQ56QP8YTBH8V7CPBVSZY', '01K9PJEPZM76X6ANHYW6ZWHBZH', 2, 'jelaskan bagaimana proses?', 20, '2025-11-25 11:00:32');
+INSERT INTO `pbl_essay_questions` (`id`, `essay_id`, `question_number`, `question_text`, `created_at`) VALUES
+('01KD0MCVRWE7Y2HTHEV8DNEQVR', '01KD0MAY7TN4ABV4ETC48J54DB', 3, 'dimanakah', '2025-12-21 21:18:13'),
+('01KD0MCVRWHR27D3QB1NKKN2JA', '01KD0MAY7TN4ABV4ETC48J54DB', 1, 'siapakah yang', '2025-12-21 21:18:13'),
+('01KD0MCVRWTVQY0F3WTDVRX2VE', '01KD0MAY7TN4ABV4ETC48J54DB', 2, 'kapankah', '2025-12-21 21:18:13'),
+('01KD77QAEZS4Q38GRMH1DAWHSA', '01KD77PS1JNENA5SMXY1B1MHGD', 2, 'bagaimana', '2025-12-24 10:51:25'),
+('01KD77QAEZTZ5C8ZP1WC2SHB89', '01KD77PS1JNENA5SMXY1B1MHGD', 1, 'mengapa', '2025-12-24 10:51:25');
 
 -- --------------------------------------------------------
 
@@ -124,8 +150,8 @@ CREATE TABLE `pbl_essay_submissions` (
 --
 
 INSERT INTO `pbl_essay_submissions` (`id`, `essay_id`, `user_id`, `submission_content`, `grade`, `feedback`, `created_at`, `updated_at`) VALUES
-('01KAWJS8NS0DKQY0AYJ2CQN28A', '01K9PJEPZM76X6ANHYW6ZWHBZH', '01K912FR1QZHEWJ6MCVK8WEK5V', 'adalah hjksu yukskl yuiklhnmui , jadi stghs ucjyhg wlskd', 80, 'lumayan bagus, semoga dapat ditingkatkan lagi', '2025-11-25 11:01:41', '2025-11-25 11:04:14'),
-('01KCAXKGK86V995FS4GP3D9CV2', '01K9PJEPZM76X6ANHYW6ZWHBZH', '01K94KA9TRKC5ZEAPM3PRKVP9S', '1. sesuatu yang \r\n2. pertama perlu kita ketahui', 86, 'ok bagus', '2025-12-13 10:55:51', '2025-12-13 21:58:28');
+('01KD25VRZG1YNFGNRMY8YTAKBC', '01KD0MAY7TN4ABV4ETC48J54DB', '01K912FR1QZHEWJ6MCVK8WEK5V', '1.dfgh\r\n2.fgh\r\n3.dfghj', 80, 'ok bagus', '2025-12-22 11:42:42', '2025-12-22 11:45:24'),
+('01KD77RDZBJVCSRQQPM8B9A8RW', '01KD77PS1JNENA5SMXY1B1MHGD', '01K912FR1QZHEWJ6MCVK8WEK5V', '1. ghjk\r\n2.fghjk', 79, 'ok', '2025-12-24 10:52:02', '2025-12-24 10:52:48');
 
 -- --------------------------------------------------------
 
@@ -241,8 +267,8 @@ CREATE TABLE `pbl_observation_results` (
 --
 
 INSERT INTO `pbl_observation_results` (`id`, `observation_slot_id`, `user_id`, `score`, `feedback`, `created_at`) VALUES
-('01KCAX0591Q5F1EA3R1PM4VAKE', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K912FR1QZHEWJ6MCVK8WEK5V', 84, 'Sudah cukup baik, Semangat!', '2025-12-13 10:45:17'),
-('01KCAXQGTBN65F95Z6KC916S6X', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K94KA9TRKC5ZEAPM3PRKVP9S', 75, 'Baik, Lanjutkan!', '2025-12-13 10:58:02');
+('01KCAXQGTBN65F95Z6KC916S6X', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K94KA9TRKC5ZEAPM3PRKVP9S', 75, 'Baik, Lanjutkan!', '2025-12-13 10:58:02'),
+('01KD74HJ342NCA3Y0ZNP6BGCR2', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K912FR1QZHEWJ6MCVK8WEK5V', 78, 'ok', '2025-12-24 09:55:51');
 
 -- --------------------------------------------------------
 
@@ -286,7 +312,7 @@ CREATE TABLE `pbl_observation_uploads` (
 --
 
 INSERT INTO `pbl_observation_uploads` (`id`, `observation_slot_id`, `user_id`, `file_name`, `original_name`, `description`, `created_at`) VALUES
-('01KBP7E7B2A3TQM8ZVXWBV15RT', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K912FR1QZHEWJ6MCVK8WEK5V', '841211c4cc20b505d8a9a4e7f32c9d55.pdf', 'web_edukasi.pdf', 'observasi', '2025-12-05 10:03:40');
+('01KD74GG18RMZ1W5XE5S9ANBMN', '01KAJ4NJ1XTEZ89738D7997ZE0', '01K912FR1QZHEWJ6MCVK8WEK5V', '0c5099ac7cc7c1e346511d24821e3c87.docx', 'usecase.docx', 'sdfgh', '2025-12-24 09:55:16');
 
 -- --------------------------------------------------------
 
@@ -302,6 +328,13 @@ CREATE TABLE `pbl_orientasi` (
   `file_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pbl_orientasi`
+--
+
+INSERT INTO `pbl_orientasi` (`id`, `class_id`, `title`, `reflection`, `file_path`, `created_at`) VALUES
+('01KCY0YXK2H849VN0N0R1BJS21', '01K92EK6YBT0FSC80TDYYD3ZN2', 'test', 'test', 'uploads/pbl/01KCY0YXF079PR2AEHK4TWSC5E.jpg', '2025-12-20 21:00:04');
 
 -- --------------------------------------------------------
 
@@ -322,7 +355,8 @@ CREATE TABLE `pbl_quizzes` (
 --
 
 INSERT INTO `pbl_quizzes` (`id`, `class_id`, `title`, `description`, `created_at`) VALUES
-('01K9RB3FNYYXBC5SBAT705K85N', '01K92EK6YBT0FSC80TDYYD3ZN2', 'kuis', 'kuis ipas', '2025-11-11 09:14:48');
+('01K9RB3FNYYXBC5SBAT705K85N', '01K92EK6YBT0FSC80TDYYD3ZN2', 'kuis', 'kuis ipas', '2025-11-11 09:14:48'),
+('01KD74N5NJWSJ7H86KVYY3Y8WQ', '01K92EK6YBT0FSC80TDYYD3ZN2', 'kuis kedua', 'kuis', '2025-12-24 09:57:49');
 
 -- --------------------------------------------------------
 
@@ -347,7 +381,11 @@ INSERT INTO `pbl_quiz_answers` (`id`, `result_id`, `question_id`, `selected_opti
 ('01KCG42QW8HN3FGTE03DM3HPTK', '01KCG42QW7GXC5Q4N0N0PSJ99N', '01K9RB47XCXWVSSEBMT8NRTNC6', 'A', 0, '2025-12-15 11:25:13'),
 ('01KCG42QW8MPE080ZKCTEQQ009', '01KCG42QW7GXC5Q4N0N0PSJ99N', '01K9RB47XCZ8MQ9BQQXK134F59', 'C', 1, '2025-12-15 11:25:13'),
 ('01KCRD31YR2Y7HZRQXEKV8A287', '01KCRD31YRH785NDRP4H7SVH6G', '01KCRCYDZ1PV0FGRM1VMYWJHT4', 'C', 1, '2025-12-18 16:36:36'),
-('01KCRD31YR674K0GZ30WC9C3GA', '01KCRD31YRH785NDRP4H7SVH6G', '01KCRCYDZ1J1DECFR6QRSBAF3K', 'B', 1, '2025-12-18 16:36:36');
+('01KCRD31YR674K0GZ30WC9C3GA', '01KCRD31YRH785NDRP4H7SVH6G', '01KCRCYDZ1J1DECFR6QRSBAF3K', 'B', 1, '2025-12-18 16:36:36'),
+('01KCY1FRNVFKKXQ8DFG96BP43G', '01KCY1FRNV152S9NYA8AP4J1SB', '01K9RB47XCXWVSSEBMT8NRTNC6', 'C', 1, '2025-12-20 21:09:17'),
+('01KCY1FRNVPRWCNBAB1XVY1B0K', '01KCY1FRNV152S9NYA8AP4J1SB', '01K9RB47XCZ8MQ9BQQXK134F59', 'C', 1, '2025-12-20 21:09:17'),
+('01KD74Q2XE3GKP2W8MEBH8046Y', '01KD74Q2XENEDQG40MQNBVB8KC', '01KD74NS1T2H06XJBZ7T1YMAEH', 'C', 1, '2025-12-24 09:58:52'),
+('01KD74Q2XEXSZB3JBDCDV7DBZ2', '01KD74Q2XENEDQG40MQNBVB8KC', '01KD74NS1TVEKSMVDBQ926B430', 'C', 1, '2025-12-24 09:58:52');
 
 -- --------------------------------------------------------
 
@@ -373,7 +411,9 @@ CREATE TABLE `pbl_quiz_questions` (
 
 INSERT INTO `pbl_quiz_questions` (`id`, `quiz_id`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`, `created_at`) VALUES
 ('01K9RB47XCXWVSSEBMT8NRTNC6', '01K9RB3FNYYXBC5SBAT705K85N', 'siapa', 'Saya', 'Aku', 'Dia', 'Kamu', 'C', '2025-11-11 09:15:13'),
-('01K9RB47XCZ8MQ9BQQXK134F59', '01K9RB3FNYYXBC5SBAT705K85N', '1+1=', '1', '0', '2', '3', 'C', '2025-11-11 09:15:13');
+('01K9RB47XCZ8MQ9BQQXK134F59', '01K9RB3FNYYXBC5SBAT705K85N', '1+1=', '1', '0', '2', '3', 'C', '2025-11-11 09:15:13'),
+('01KD74NS1T2H06XJBZ7T1YMAEH', '01KD74N5NJWSJ7H86KVYY3Y8WQ', 'siapa', 'Saya', 'Aku', 'Dia', 'Kamu', 'C', '2025-12-24 09:58:09'),
+('01KD74NS1TVEKSMVDBQ926B430', '01KD74N5NJWSJ7H86KVYY3Y8WQ', '1+1=', '1', '0', '2', '3', 'C', '2025-12-24 09:58:09');
 
 -- --------------------------------------------------------
 
@@ -397,7 +437,8 @@ CREATE TABLE `pbl_quiz_results` (
 
 INSERT INTO `pbl_quiz_results` (`id`, `quiz_id`, `user_id`, `score`, `total_correct`, `total_questions`, `created_at`) VALUES
 ('01KCG42QW7GXC5Q4N0N0PSJ99N', '01K9RB3FNYYXBC5SBAT705K85N', '01K912FR1QZHEWJ6MCVK8WEK5V', 50, 1, 2, '2025-12-15 11:25:13'),
-('01KCRD31YRH785NDRP4H7SVH6G', '01KCRCX5F24XN6ZV0YXRGHTVHD', '01K912FR1QZHEWJ6MCVK8WEK5V', 100, 2, 2, '2025-12-18 16:36:36');
+('01KCY1FRNV152S9NYA8AP4J1SB', '01K9RB3FNYYXBC5SBAT705K85N', '01K94KA9TRKC5ZEAPM3PRKVP9S', 100, 2, 2, '2025-12-20 21:09:16'),
+('01KD74Q2XENEDQG40MQNBVB8KC', '01KD74N5NJWSJ7H86KVYY3Y8WQ', '01K912FR1QZHEWJ6MCVK8WEK5V', 100, 2, 2, '2025-12-24 09:58:52');
 
 -- --------------------------------------------------------
 
@@ -406,13 +447,14 @@ INSERT INTO `pbl_quiz_results` (`id`, `quiz_id`, `user_id`, `score`, `total_corr
 --
 
 CREATE TABLE `pbl_reflection` (
-  `id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `class_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` char(26) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Siswa',
-  `teacher_reflection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Catatan performa untuk arsip guru',
-  `student_feedback` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Pesan untuk siswa',
-  `final_score` decimal(5,2) DEFAULT '0.00' COMMENT 'Nilai akhir (bisa override)',
-  `status` enum('draft','published') COLLATE utf8mb4_unicode_ci DEFAULT 'draft',
+  `id` varchar(26) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `class_id` varchar(26) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_id` varchar(26) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `teacher_reflection` text COLLATE utf8mb4_unicode_ci,
+  `teacher_feedback` text COLLATE utf8mb4_unicode_ci,
+  `student_reflection` text COLLATE utf8mb4_unicode_ci,
+  `final_score` decimal(5,2) DEFAULT NULL,
+  `is_locked` tinyint(1) DEFAULT '0',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -438,7 +480,7 @@ CREATE TABLE `pbl_reflections` (
 --
 
 INSERT INTO `pbl_reflections` (`id`, `class_id`, `user_id`, `teacher_reflection`, `student_feedback`, `created_at`, `updated_at`) VALUES
-('01KC6D1T5M9WEJX1CWEFMB1F4W', '01K92EK6YBT0FSC80TDYYD3ZN2', '01K912FR1QZHEWJ6MCVK8WEK5V', 'test', 'test', '2025-12-11 16:49:36', '2025-12-11 16:49:36');
+('01KC6D1T5M9WEJX1CWEFMB1F4W', '01K92EK6YBT0FSC80TDYYD3ZN2', '01K912FR1QZHEWJ6MCVK8WEK5V', 'cukup baik', 'tingkatkan belajar supaya hasil lebih maksimal', '2025-12-11 16:49:36', '2025-12-23 20:06:18');
 
 -- --------------------------------------------------------
 
@@ -502,7 +544,8 @@ CREATE TABLE `pbl_solution_essays` (
 --
 
 INSERT INTO `pbl_solution_essays` (`id`, `class_id`, `title`, `description`, `created_at`) VALUES
-('01K9PJEPZM76X6ANHYW6ZWHBZH', '01K92EK6YBT0FSC80TDYYD3ZN2', 'esai ipas', 'deskripsi', '2025-11-10 16:44:47');
+('01KD0MAY7TN4ABV4ETC48J54DB', '01K92EK6YBT0FSC80TDYYD3ZN2', 'test', 'test', '2025-12-21 21:17:10'),
+('01KD77PS1JNENA5SMXY1B1MHGD', '01K92EK6YBT0FSC80TDYYD3ZN2', 'esai', 'esai', '2025-12-24 10:51:08');
 
 -- --------------------------------------------------------
 
@@ -550,7 +593,9 @@ INSERT INTO `pbl_tts_answers` (`id`, `result_id`, `question_id`, `user_answer`, 
 ('01KCGHZX9JHSAPGE03SDJ8GF3C', '01KCGHZX9JDDZKH1YWYKTRM3ER', '01KAR25DRCMG96KXHYZ8G4QK6X', 'MINUM', 1, '2025-12-15 15:28:21'),
 ('01KCGJ53EME5EN9C3KQDHZPTHY', '01KCGJ53EM5TBHETVRQTFY21Q8', '01KATJT02QY755SYVEF7ENAC7J', 'MALAM', 1, '2025-12-15 15:31:11'),
 ('01KCGJ53EMSSPZMAQ7ZD3RBPPR', '01KCGJ53EM5TBHETVRQTFY21Q8', '01KAR25DRCMG96KXHYZ8G4QK6X', 'MINUM', 1, '2025-12-15 15:31:11'),
-('01KCRD405CK8Y7B5QK111K1H5A', '01KCRD405BAVVP8ZK101XEB8ZC', '01KCRCZQMC9QNDV4H0JJRCBHD9', 'QSDFGH', 0, '2025-12-18 16:37:07');
+('01KCRD405CK8Y7B5QK111K1H5A', '01KCRD405BAVVP8ZK101XEB8ZC', '01KCRCZQMC9QNDV4H0JJRCBHD9', 'QSDFGH', 0, '2025-12-18 16:37:07'),
+('01KD74V9DT9J5KWQMQ4Y4SWGHM', '01KD74V9DT6JN90N3ZF8R3X4KS', '01KCY42B1K9RC45M0H9W4A8CSY', 'KALIAN', 1, '2025-12-24 10:01:10'),
+('01KD74V9DTZBEJVKVADDY7TZ1P', '01KD74V9DT6JN90N3ZF8R3X4KS', '01KCRCZQMC9QNDV4H0JJRCBHD9', 'MEREKA', 1, '2025-12-24 10:01:10');
 
 -- --------------------------------------------------------
 
@@ -577,7 +622,8 @@ CREATE TABLE `pbl_tts_questions` (
 INSERT INTO `pbl_tts_questions` (`id`, `tts_id`, `number`, `direction`, `question`, `answer`, `start_x`, `start_y`, `created_at`) VALUES
 ('01KAR25DRCMG96KXHYZ8G4QK6X', '01K9BNTQP0WNJEWQ6H48J1KNJR', 1, 'across', 'Haus', 'MINUM', 1, 1, '2025-11-23 16:54:16'),
 ('01KATJT02QY755SYVEF7ENAC7J', '01K9BNTQP0WNJEWQ6H48J1KNJR', 1, 'down', 'bintang', 'MALAM', 1, 1, '2025-11-24 16:23:36'),
-('01KCRCZQMC9QNDV4H0JJRCBHD9', '01KCRCZ7Q1YD8M2JXVSX7H2G42', 1, 'across', '2werf', 'QWEDFG', 4, 1, '2025-12-18 16:34:47');
+('01KCRCZQMC9QNDV4H0JJRCBHD9', '01KCRCZ7Q1YD8M2JXVSX7H2G42', 1, 'across', 'Siapakah', 'MEREKA', 4, 1, '2025-12-18 16:34:47'),
+('01KCY42B1K9RC45M0H9W4A8CSY', '01KCRCZ7Q1YD8M2JXVSX7H2G42', 2, 'across', 'fghjk', 'KALIAN', 2, 12, '2025-12-20 21:54:22');
 
 -- --------------------------------------------------------
 
@@ -600,7 +646,7 @@ CREATE TABLE `pbl_tts_results` (
 --
 
 INSERT INTO `pbl_tts_results` (`id`, `tts_id`, `user_id`, `score`, `total_correct`, `total_questions`, `created_at`) VALUES
-('01KCRD405BAVVP8ZK101XEB8ZC', '01KCRCZ7Q1YD8M2JXVSX7H2G42', '01K912FR1QZHEWJ6MCVK8WEK5V', 0, 0, 1, '2025-12-18 16:37:07');
+('01KD74V9DT6JN90N3ZF8R3X4KS', '01KCRCZ7Q1YD8M2JXVSX7H2G42', '01K912FR1QZHEWJ6MCVK8WEK5V', 100, 2, 2, '2025-12-24 10:01:10');
 
 -- --------------------------------------------------------
 
@@ -805,6 +851,12 @@ ALTER TABLE `classes`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `pbl_class_reflections`
+--
+ALTER TABLE `pbl_class_reflections`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `pbl_closing_tts`
 --
 ALTER TABLE `pbl_closing_tts`
@@ -923,8 +975,7 @@ ALTER TABLE `pbl_quiz_results`
 -- Indexes for table `pbl_reflection`
 --
 ALTER TABLE `pbl_reflection`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_class_user` (`class_id`,`user_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `pbl_reflections`

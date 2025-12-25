@@ -60,6 +60,8 @@
          value="<?= $this->security->get_csrf_hash(); ?>">
   <input type="hidden" id="classIdHidden" value="<?= $class_id; ?>">
 
+  <?= $this->session->flashdata('message'); ?>
+
   <div class="alert alert-info border-0 shadow-sm">
     <i class="bi bi-info-circle-fill me-2"></i>
     Halaman ini menampilkan daftar esai. Klik tombol <strong>"Detail" </strong>untuk melihat soal esai.

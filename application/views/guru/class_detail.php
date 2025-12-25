@@ -1,4 +1,47 @@
+<style>
+/* ===== TABLE RESPONSIVE PBL ===== */
+#siswaTable {
+  min-width: 720px !important;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+#siswaTable thead th {
+  background: #e0efff !important;
+}
+
+/*#siswaTable tbody td {
+  text-align: right;
+}*/
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  #siswaTable thead th{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 576px) {
+  #siswaTable td { white-space: nowrap; }
+}
+
+</style>
 <div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url('guru/dashboard/detail/' . $sekolah->school_id) ?>">Kelas</a>
+        </li>
+        <li class="breadcrumb-item active">Detail Kelas</li>
+      </ol>
+    </nav>
+  </div>
 
     <div class="card shadow">
         <div class="p-2">
@@ -10,6 +53,12 @@
         <a href="<?= base_url('guru/pbl/index/' . $kelas->id); ?>" class="btn btn-outline-primary mt-3">
           <i class="fas fa-lightbulb"></i> Tahap 1 – Orientasi Masalah (PBL)
       </a>
+  </div>
+
+  <div class="alert alert-info border-0 shadow-sm">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    Halaman ini menampilkan daftar <span id="info-label" class="fw-bold">Siswa</span>. 
+    Klik tombol <strong>"Tambah"</strong> untuk menambahkan Siswa.
   </div>
 
   <div class="d-flex justify-content-between mb-2">
@@ -37,12 +86,6 @@
             </table>
         </div>
     </div>
-</div>
-
-<div class="text-end mt-3">
-    <a href="<?= base_url('guru/pbl/index/' . $kelas->id); ?>" class="btn btn-primary">
-      <i class="fas fa-book-open"></i> Tahap 1 – Orientasi Masalah
-  </a>
 </div>
 
 </div>

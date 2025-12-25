@@ -1,10 +1,54 @@
-<div class="container py-4">
+<style>
+/* ===== TABLE RESPONSIVE PBL ===== */
+#questionTable, #submissionsTable {
+  min-width: 720px !important;
+}
 
-  <!-- Header & Import/Export Buttons sama seperti sebelumnya ... -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <p class="text-muted">KUIS: <?= htmlspecialchars($quiz->description, ENT_QUOTES, 'UTF-8'); ?></p>
-    </div>
+#questionTable thead th, #submissionsTable thead th {
+  background: #e0efff !important;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.action { width: 15%; }
+
+/* Responsive Styles */
+@media (max-width: 1051px) {
+  .action { width: 22%; }
+}
+
+@media (max-width: 768px) {
+  #questionTable thead th, #submissionsTable thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 576px) {
+  #questionTable td { white-space: nowrap; }
+}
+
+</style>
+
+<div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active"><?= htmlspecialchars($quiz->description, ENT_QUOTES, 'UTF-8'); ?></li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <a href="<?= base_url('guru/pbl/tahap2/' . $quiz->class_id) ?>" class="btn btn-secondary">← Kembali</a>
   </div>
 
@@ -36,18 +80,20 @@
         <h5 class="mb-0 text-primary">Daftar Pertanyaan</h5>
       </div>
       <div class="card-body">
-        <table class="table table-hover" id="questionTable">
-          <thead>
-            <tr>
-              <th style="width: 5%;">No</th>
-              <th>Pertanyaan</th>
-              <th style="width: 10%;">Jawaban</th>
-              <th style="width: 15%;">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-hover" id="questionTable">
+            <thead>
+              <tr>
+                <th style="width: 5%;">No</th>
+                <th>Pertanyaan</th>
+                <th style="width: 10%;">Jawaban</th>
+                <th class="action">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -57,20 +103,22 @@
         <h5 class="mb-0"><i class="bi bi-trophy"></i> Daftar Nilai Siswa</h5>
       </div>
       <div class="card-body" id="submissionsTableContainer">
-        <table class="table table-hover table-striped" id="submissionsTable">
-          <thead class="table-light">
-            <tr>
-              <th style="width: 5%">No</th>
-              <th>Siswa</th>
-              <th>Nilai</th>
-              <th>Waktu</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Diisi oleh JavaScript submissionHandler -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped" id="submissionsTable">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 5%">No</th>
+                <th>Siswa</th>
+                <th>Nilai</th>
+                <th>Waktu</th>
+                <th class="action">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Diisi oleh JavaScript submissionHandler -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

@@ -22,22 +22,33 @@
 </style>
 
 
-<div class="container py-3">
-
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <a href="<?= base_url($url_name . '/pbl/tahap3/' . $class_id) ?>" class="btn btn-secondary">← Kembali ke Tahap 3</a>
+<div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active"><?= htmlspecialchars($topic->description, ENT_QUOTES, 'UTF-8'); ?></li>
+      </ol>
+    </nav>
   </div>
 
-  <div class="card shadow-sm mb-3">
-    <div class="card-body">
-      <p class="text-muted">Topik oleh: Guru</p>
-      <p><?= nl2br(htmlspecialchars($topic->description, ENT_QUOTES, 'UTF-8')); ?></p>
-    </div>
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <a href="<?= base_url('guru/pbl/tahap3/' . $topic->class_id) ?>" class="btn btn-secondary">← Kembali</a>
+  </div>
+
+  <div class="alert alert-info border-0 shadow-sm">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    Halaman ini menampilkan daftar <span id="info-label" class="fw-bold">diskusi</span>. 
+    Klik tombol <strong>"Tulis Diskusi"</strong> untuk memulai percakapan.
   </div>
 
   <div class="mb-3">
     <button class="btn btn-primary" id="btnAddPost">
-      <i class="bi bi-plus-lg"></i> Tulis Balasan Baru
+      <i class="bi bi-plus-lg"></i> Tulis Diskusi
     </button>
   </div>
 

@@ -589,34 +589,55 @@ class Pbl extends CI_Controller
    * Halaman utama untuk Tahap 5
    */
   public function tahap5($class_id = null)
-  {
-    if (!$class_id) {
-        redirect('siswa/dashboard');
-    }
+    {
+        if (!$class_id) redirect('siswa/dashboard');
 
-    $data['title'] = 'Tahap 5 – Refleksi & Evaluasi Akhir';
-    $data['class_id'] = $class_id;
-    $data['user'] = $this->session->userdata(); // Data user yang login
-    $data['url_name'] = 'siswa';
-    
-    // Load View
-    $this->load->view('templates/header', $data);
-    $this->load->view('siswa/pbl_tahap5', $data); // View khusus siswa
-    $this->load->view('templates/footer');
-  }
+        $user = $this->session->userdata();
+        $this->load->model('Refleksi_model');
+
+        // CEK AKSES: Apakah guru sudah lock/publish nilai?
+        $can_access = $this->Refleksi_model->check_student_access($class_id, $user['user_id']);
+
+        if (!$can_access) {
+            // Jika belum di-publish, tendang balik ke Tahap 4 atau tampilkan pesan
+            $this->session->set_flashdata('message', '<div class="alert alert-warning" alert-dismissible fade show role="alert">Refleksi dan Nilai Akhir belum dipublikasikan oleh Guru.
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            redirect('siswa/pbl/tahap4/' . $class_id);
+            return;
+        }
+
+        // Jika lolos, lanjut load view...
+        $data['title'] = 'Tahap 5 – Refleksi & Evaluasi Akhir';
+        $data['class_id'] = $class_id;
+        $data['user'] = $user;
+        $data['url_name'] = 'siswa';
+        
+        $this->load->view('templates/header', $data);
+        $this->load->view('siswa/pbl_tahap5', $data);
+        $this->load->view('templates/footer');
+    }
 
   // [AJAX] Get Data Rekap untuk Siswa
   public function get_my_recap($class_id)
-  {
+{
+    // Ambil User ID dari Session (Siswa yang sedang login)
+    // Pastikan key session sesuai dengan login system Anda, biasanya 'id' atau 'user_id'
+    $user_id = $this->session->userdata('user_id'); 
+
+    if (!$class_id || !$user_id) {
+        // Return array kosong jika data tidak valid
+        echo json_encode([]); 
+        return;
+    }
+
     $this->load->model('Refleksi_model');
     
-    // Kita ambil data SEMUA siswa di kelas tersebut (untuk tabel leaderboard)
-    // Logika privasi tombol "Lihat" akan ditangani di JavaScript
-    $students = $this->Refleksi_model->getAllStudentScores($class_id);
+    // Panggil fungsi KHUSUS SATU SISWA
+    $student_data = $this->Refleksi_model->getSingleStudentScore($class_id, $user_id);
     
     // Return JSON
-    echo json_encode($students);
-  }
+    echo json_encode($student_data);
+}
 
   /* CRUD REFLEKSI AKHIR */
   public function get_reflections($class_id)

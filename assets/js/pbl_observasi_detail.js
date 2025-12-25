@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Tombol Edit Nilai
                 gradeBtnHtml = `
-                    <button class="btn btn-sm btn-outline-warning btn-grade mb-1" 
+                    <button class="btn btn-sm btn-warning btn-grade mb-1" 
                         title="Edit Nilai"
                         data-user_id="${item.user_id}" 
                         data-student_name="${item.student_name}"
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         title="Hapus Nilai"
                         data-id="${item.grade_id}" 
                         data-student_name="${item.student_name}">
-                        <i class="bi bi-x-circle"></i>
+                        Hapus Nilai
                     </button>
                 `;
 
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data-grade_id=""
                         data-score=""
                         data-feedback="">
-                        <i class="bi bi-star"></i> Beri Nilai
+                        Beri Nilai
                     </button>
                 `;
             }

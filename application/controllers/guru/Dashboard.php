@@ -79,6 +79,14 @@ class Dashboard extends CI_Controller {
   public function class_save()
   {
   	$this->form_validation->set_rules('name', 'Nama Kelas', 'required|trim');
+
+    /*$this->form_validation->set_rules('name', 'Nama Kelas', 'required|trim|is_unique[classes.name]', [
+      'is_unique' => 'Nama Kelas sudah ada!'
+    ]);
+
+    $this->form_validation->set_rules('code', 'Kode Kelas', 'required|trim|is_unique[classes.code]', [
+      'is_unique' => 'Kode Kelas sudah ada!'
+    ]);*/
   	
   	if ($this->form_validation->run() === FALSE) {
   		echo json_encode([

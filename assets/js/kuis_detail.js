@@ -50,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
           data-option_c="${q.option_c}"
           data-option_d="${q.option_d}"
           data-correct_answer="${q.correct_answer}">
-          <i class="bi bi-pencil"></i>
+          Ubah
         </button>
         <button class="btn btn-sm btn-danger btn-delete"
           data-id="${q.id}"
           data-question="${q.question_text.substring(0, 20)}...">
-          <i class="bi bi-trash"></i>
+          Hapus
         </button>
       `
     ],
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn btn-sm btn-outline-danger btn-delete"
               data-id="${res.id}"
               data-student_name="${res.student_name} (Nilai: ${res.score})">
-              <i class="bi bi-trash"></i> Hapus / Reset
+              </i>Reset
             </button>
             `
         ];

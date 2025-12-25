@@ -89,6 +89,55 @@ class Pbl_esai_model extends CI_Model
 	}
 
 	/**
+   * Mendapatkan nomor urut terakhir untuk esai tertentu
+   */
+  public function get_last_question_number($essay_id)
+  {
+    $this->db->select_max('question_number');
+    $this->db->where('essay_id', $essay_id);
+    $query = $this->db->get($this->table_questions);
+    $result = $query->row();
+    return $result->question_number ? (int)$result->question_number : 0;
+  }
+
+  /**
+   * Menyimpan Soal (Bisa insert banyak sekaligus atau update satu)
+   */
+  public function save_question_batch($essay_id, $questions_data, $update_id = null)
+  {
+    // KASUS 1: UPDATE (Edit 1 Soal)
+    if ($update_id) {
+      // Ambil data pertama saja karena edit hanya 1 row
+      $text = $questions_data[0]; 
+      $this->db->where('id', $update_id);
+      return $this->db->update($this->table_questions, ['question_text' => $text]);
+    }
+
+    // KASUS 2: INSERT BATCH (Tambah Banyak Soal)
+    $batch_data = [];
+    $last_num = $this->get_last_question_number($essay_id);
+
+    foreach ($questions_data as $text) {
+      if (trim($text) === '') continue; // Skip input kosong
+      
+      $last_num++;
+      $batch_data[] = [
+        'id'              => generate_ulid(),
+        'essay_id'        => $essay_id,
+        'question_number' => $last_num,
+        'question_text'   => $text,
+        'created_at'      => date('Y-m-d H:i:s')
+      ];
+    }
+
+    if (!empty($batch_data)) {
+      return $this->db->insert_batch($this->table_questions, $batch_data);
+    }
+    
+    return false;
+  }
+
+	/**
 	 * Menyimpan (Create/Update) pertanyaan esai
 	 */
 	public function save_question($data, $id = null)
