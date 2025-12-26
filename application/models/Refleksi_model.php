@@ -11,7 +11,7 @@ class Refleksi_model extends CI_Model {
    * Mengambil rekap nilai siswa + data refleksi jika ada
    * 
    */
-  public function getAllStudentScores($class_id)
+  public function getAllStudentScores($class_id, $only_locked = false)
   {
         $this->db->select('
             u.id as user_id, 
@@ -46,10 +46,31 @@ class Refleksi_model extends CI_Model {
         $this->db->join('pbl_reflections r', 'r.user_id = u.id AND r.class_id = s.class_id', 'left');
 
         $this->db->where('s.class_id', $class_id);
+
+        // FILTER KHUSUS DATA YANG SUDAH DILOCK
+        if ($only_locked) {
+            $this->db->where('r.is_locked', 1);
+        }
         
         $this->db->group_by('u.id'); 
 
         return $this->db->get()->result();
+  }
+
+  // Ambil Data Sekolah berdasarkan Class ID
+  public function getSchoolByClassId($class_id)
+  {
+    $this->db->select('s.*');
+    $this->db->from('classes c');
+    $this->db->join('schools s', 's.id = c.school_id');
+    $this->db->where('c.id', $class_id);
+    return $this->db->get()->row();
+  }
+
+  // Ambil Info Kelas
+  public function getClassInfo($class_id)
+  {
+    return $this->db->get_where('classes', ['id' => $class_id])->row();
   }
 
   // FUNGSI BARU: Update Status Lock
@@ -237,7 +258,7 @@ public function isLocked($class_id, $user_id)
     // Cek apakah data sudah ada
   	$exists = $this->db->get_where('pbl_reflections', [
   		'class_id' => $data['class_id'],
-  		'user_id'  => $data['user_id']
+  		'user_id'  => $data['user_id'],
   	])->row();
 
   	if ($exists) {
@@ -245,7 +266,8 @@ public function isLocked($class_id, $user_id)
   		$this->db->where('id', $exists->id);
   		return $this->db->update('pbl_reflections', [
   			'teacher_reflection' => $data['teacher_reflection'],
-  			'student_feedback'   => $data['student_feedback']
+  			'student_feedback'   => $data['student_feedback'],
+        'is_locked'          => $data['is_locked'] // Update status kunci
   		]);
   	} else {
       // Insert baru jika belum ada

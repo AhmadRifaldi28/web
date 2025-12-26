@@ -1,17 +1,19 @@
 <style>
-/* ===== TABLE RESPONSIVE PBL ===== */
-#rekapTable {
-  min-width: 720px !important;
-}
+/* Styling agar tabel responsif */
+#rekapTable, #reflectionTable { min-width: 800px !important; }
+
+thead th { background: #e0efff !important; text-align: center; vertical-align: middle; }
 
 .table-responsive {
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch;
 }
 
-#rekapTable thead th {
+/*#rekapTable thead th {
   background: #e0efff !important;
-}
+}*/
+
+.action { width: 16%; }
 
 @media (max-width: 768px) {
   #rekapTable thead th{
@@ -22,14 +24,9 @@
 }
 
 @media (max-width: 576px) {
-  #rekapTable td { white-space: nowrap; }
+  #rekapTable td, #reflectionTable td { white-space: nowrap; }
 }
 
-/* Styling agar tabel responsif */
-#rekapTable, #reflectionTable { min-width: 800px !important; }
-
-.table-responsive { overflow-x: auto !important; }
-thead th { background: #e0efff !important; text-align: center; vertical-align: middle; }
 
 </style>
 
@@ -43,9 +40,19 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
     </nav>
   </div>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <a href="<?= base_url($url_name . '/pbl/tahap4/' . $class_id) ?>" class="btn btn-secondary">← Kembali ke Tahap 4</a>
+
+    <a href="<?= base_url($url_name . '/pbl/export_excel/' . $class_id); ?>" target="_blank" class="btn btn-success me-1">
+            <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+        </a>
+        
+    <a href="<?= base_url($url_name . '/pbl/export_report/' . $class_id); ?>" target="_blank" class="btn btn-danger">
+            <i class="bi bi-file-earmark-pdf"></i> Export Laporan (PDF)
+        </a>
     <button class="btn btn-success disabled" disabled><i class="bi bi-check-circle"></i> Project Selesai</button>
+
+    <?= $this->session->flashdata('message'); ?>
   </div>
 
   <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
@@ -55,7 +62,7 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
     <div class="card-header bg-white py-3">
       <h5 class="mb-0 card-title text-primary"><i class="bi bi-bar-chart-line me-1"></i> Rekap Nilai Siswa</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body rekapContainer">
       <div class="table-responsive">
         <table class="table table-hover table-bordered align-middle" id="rekapTable">
           <thead class="table-light">
@@ -67,7 +74,7 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
               <th>Observasi</th>
               <th>Esai</th>
               <th class="fw-bold text-primary">Nilai Akhir</th>
-              <th>Aksi</th>
+              <th class="action">Aksi</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -90,7 +97,8 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
               <th>Nama Siswa</th>
               <th>Refleksi Guru</th>
               <th>Umpan Balik Siswa</th>
-              <th width="15%">Aksi</th>
+              <!-- <th width="15%">Aksi</th> -->
+              <th class="action">Aksi</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -103,10 +111,10 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
 
 <div class="modal fade" id="refleksiModal" tabindex="-1" aria-labelledby="refleksiModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-0 shadow-lg">
+    <div class="modal-content shadow-lg border-0">
       <form id="refleksiForm" autocomplete="off">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="refleksiModalLabel">Input Refleksi</h5>
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title mb-0" id="refleksiModalLabel">Form Refleksi</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -129,11 +137,20 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
               <textarea name="student_feedback" id="studentFeedback" class="form-control" rows="5" 
                 placeholder="Pesan semangat atau masukan untuk siswa..."></textarea>
             </div>
+            <div class="d-flex justify-content-end border-top pt-3">
+              <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="is_locked" name="is_locked" value="1">
+                  <label class="form-check-label fw-bold text-danger" for="is_locked">
+                      <i class="bi bi-lock-fill"></i> Kunci & Publikasikan Nilai?
+                  </label>
+                  <small class="d-block text-muted" style="font-size: 0.8rem;">Jika aktif, siswa dapat melihat nilai & feedback.</small>
+              </div>
+          </div>
           </div>
         </div>
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Simpan</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan</button>
         </div>
       </form>
     </div>

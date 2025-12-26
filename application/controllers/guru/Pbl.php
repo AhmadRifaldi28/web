@@ -1,6 +1,12 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+
 class Pbl extends CI_Controller
 {
   public function __construct()
@@ -675,6 +681,46 @@ public function toggle_lock()
         }
     }
 
+    public function export_report($class_id)
+    {
+        // Cek Login & Role Guru
+        if (!$this->session->userdata('role_id')) redirect('auth');
+        
+        $this->load->library('pdf');
+        $this->load->model('Refleksi_model');
+
+        // 1. Ambil Data Sekolah & Kelas
+        $school = $this->Refleksi_model->getSchoolByClassId($class_id);
+        $class  = $this->Refleksi_model->getClassInfo($class_id);
+
+        if (!$school || !$class) {
+            show_error('Data Sekolah atau Kelas tidak ditemukan.');
+        }
+
+        // 2. Ambil Data Siswa (Hanya yang LOCKED / Final)
+        // Parameter kedua 'true' mengaktifkan filter is_locked = 1
+        $students = $this->Refleksi_model->getAllStudentScores($class_id, true);
+
+        if (empty($students)) {
+            $this->session->set_flashdata('message', '<div class="alert alert-warning">Belum ada nilai siswa yang dipublikasikan (dikunci).</div>');
+            redirect('guru/pbl/tahap5/' . $class_id);
+        }
+
+        // 3. Siapkan Data View
+        $data = [
+            'school'   => $school,
+            'class'    => $class,
+            'students' => $students,
+            'title'    => 'Laporan Hasil Belajar PBL - ' . $class->name
+        ];
+
+        // 4. Load View ke Variable HTML
+        $html = $this->load->view('guru/pdf/pbl_report_class', $data, true);
+
+        // 5. Generate PDF (Landscape agar muat tabel narasi)
+        $this->pdf->generate($html, 'Laporan_PBL_' . $class->name, 'A4', 'landscape');
+    }
+
 public function save_teacher_reflection()
 {
     $this->load->model('Refleksi_model');
@@ -777,12 +823,15 @@ private function _jsonError($msg)
   }
 
 
-  // 3. Siapkan Data
+  // Cek apakah checkbox dicentang? Jika ya valuenya '1', jika tidak null (maka kita set 0)
+  $is_locked = $this->input->post('is_locked') ? 1 : 0;
+
   $data = [
       'class_id' => $this->input->post('class_id'),
       'user_id' => $this->input->post('user_id'),
       'teacher_reflection' => $this->input->post('teacher_reflection'),
       'student_feedback' => $this->input->post('student_feedback'),
+      'is_locked' => $is_locked // Tambahkan field ini
   ];
 
   // 4. Simpan ke Database
@@ -804,6 +853,173 @@ private function _jsonError($msg)
       ]);
     }
   }
+
+  public function export_excel($class_id)
+    {
+        // 1. Cek Login & Data
+        if (!$this->session->userdata('role_id')) redirect('auth');
+        $this->load->model('Refleksi_model');
+
+        $school = $this->Refleksi_model->getSchoolByClassId($class_id);
+        $class  = $this->Refleksi_model->getClassInfo($class_id);
+        // Ambil siswa yang LOCKED (Published)
+        $students = $this->Refleksi_model->getAllStudentScores($class_id, true);
+
+        if (!$school || !$class) show_error('Data Sekolah/Kelas tidak ditemukan.');
+        if (empty($students)) {
+            $this->session->set_flashdata('message', '<div class="alert alert-warning">Belum ada nilai yang dipublikasikan.</div>');
+            redirect('guru/pbl/tahap5/' . $class_id);
+        }
+
+        // 2. Inisialisasi Spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // --- STYLING VARIABLES ---
+        $styleHeader = [
+            'font' => ['bold' => true, 'size' => 12],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ];
+        $styleTableHead = [
+            'font' => ['bold' => true, 'color' => ['rgb' => '000000']],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E0EFFF']], // Biru muda
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+        ];
+        $styleBorder = [
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            'alignment' => ['vertical' => Alignment::VERTICAL_TOP] // Text rata atas
+        ];
+
+        // --- BAGIAN 1: KOP SURAT ---
+        $sheet->mergeCells('A1:G1');
+        $sheet->setCellValue('A1', strtoupper($school->name));
+        $sheet->getStyle('A1')->applyFromArray(['font' => ['bold' => true, 'size' => 14], 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]]);
+
+        $sheet->mergeCells('A2:G2');
+        $sheet->setCellValue('A2', $school->address);
+        $sheet->getStyle('A2')->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]]);
+
+        $sheet->mergeCells('A3:G3');
+        $sheet->setCellValue('A3', 'LAPORAN HASIL PEMBELAJARAN BERBASIS PROYEK (PBL)');
+        $sheet->getStyle('A3')->applyFromArray($styleHeader);
+
+        // --- BAGIAN 2: INFO KELAS ---
+        $row = 5;
+        $sheet->setCellValue('A'.$row, 'Kelas');
+        $sheet->setCellValue('B'.$row, ': ' . $class->name . ' (' . $class->code . ')');
+        $sheet->setCellValue('E'.$row, 'Guru Pengampu');
+        $sheet->setCellValue('F'.$row, ': ' . $this->session->userdata('name'));
+        
+        $row++;
+        $sheet->setCellValue('A'.$row, 'Tahun Ajaran');
+        $sheet->setCellValue('B'.$row, ': ' . date('Y'));
+        $sheet->setCellValue('E'.$row, 'Tanggal Cetak');
+        $sheet->setCellValue('F'.$row, ': ' . date('d F Y'));
+
+        // --- BAGIAN 3: TABEL REKAP NILAI ---
+        $row += 2; // Spasi
+        $sheet->setCellValue('A'.$row, 'I. REKAP NILAI SISWA');
+        $sheet->getStyle('A'.$row)->getFont()->setBold(true);
+
+        $row++;
+        $tableStart = $row;
+        // Header Tabel Nilai
+        $headers1 = ['No', 'Nama Siswa', 'Quiz (Avg)', 'TTS (Avg)', 'Observasi', 'Esai', 'Nilai Akhir'];
+        $col = 'A';
+        foreach ($headers1 as $h) {
+            $sheet->setCellValue($col.$row, $h);
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+            $col++;
+        }
+        $sheet->getStyle("A$row:G$row")->applyFromArray($styleTableHead);
+
+        // Isi Data Tabel Nilai
+        $no = 1;
+        $row++;
+        foreach ($students as $s) {
+            $quiz = floatval($s->quiz_score);
+            $tts = floatval($s->tts_score);
+            $obs = floatval($s->obs_score);
+            $essay = floatval($s->essay_score);
+            $final = ($quiz + $tts + $obs + $essay) / 4;
+
+            $sheet->setCellValue('A'.$row, $no++);
+            $sheet->setCellValue('B'.$row, $s->student_name);
+            $sheet->setCellValue('C'.$row, $quiz);
+            $sheet->setCellValue('D'.$row, $tts);
+            $sheet->setCellValue('E'.$row, $obs);
+            $sheet->setCellValue('F'.$row, $essay);
+            $sheet->setCellValue('G'.$row, number_format($final, 2));
+            
+            // Center alignment untuk nilai
+            $sheet->getStyle("A$row")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("C$row:G$row")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            
+            $row++;
+        }
+        // Apply Border Tabel 1
+        $sheet->getStyle("A$tableStart:G".($row-1))->applyFromArray($styleBorder);
+
+
+        // --- BAGIAN 4: TABEL REFLEKSI & FEEDBACK ---
+        $row += 2; // Spasi antar tabel
+        $sheet->setCellValue('A'.$row, 'II. REFLEKSI & UMPAN BALIK');
+        $sheet->getStyle('A'.$row)->getFont()->setBold(true);
+
+        $row++;
+        $tableStart2 = $row;
+        // Header Tabel Refleksi
+        // Merge cells untuk kolom Refleksi dan Feedback agar lebih lebar
+        $sheet->setCellValue('A'.$row, 'No');
+        $sheet->setCellValue('B'.$row, 'Nama Siswa');
+        $sheet->setCellValue('C'.$row, 'Refleksi Guru');
+        $sheet->mergeCells("C$row:D$row"); // Gabung C & D
+        $sheet->setCellValue('E'.$row, 'Umpan Balik Siswa');
+        $sheet->mergeCells("E$row:G$row"); // Gabung E, F, G
+
+        $sheet->getStyle("A$row:G$row")->applyFromArray($styleTableHead);
+
+        // Isi Data Tabel Refleksi
+        $no = 1;
+        $row++;
+        foreach ($students as $s) {
+            $sheet->setCellValue('A'.$row, $no++);
+            $sheet->setCellValue('B'.$row, $s->student_name);
+            
+            // Refleksi Guru
+            $sheet->setCellValue('C'.$row, $s->teacher_reflection ?: '-');
+            $sheet->mergeCells("C$row:D$row");
+            
+            // Feedback Siswa
+            $sheet->setCellValue('E'.$row, $s->student_feedback ?: '-');
+            $sheet->mergeCells("E$row:G$row");
+
+            // Wrap Text (PENTING AGAR TEXT PANJANG TURUN KE BAWAH)
+            $sheet->getStyle("C$row:E$row")->getAlignment()->setWrapText(true);
+            
+            $row++;
+        }
+        // Apply Border Tabel 2
+        $sheet->getStyle("A$tableStart2:G".($row-1))->applyFromArray($styleBorder);
+
+        // Atur Lebar Kolom Manual untuk area teks agar wrap text berfungsi baik
+        $sheet->getColumnDimension('C')->setWidth(40);
+        $sheet->getColumnDimension('E')->setWidth(40);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+
+
+        // 3. Output File Download
+        $filename = 'Laporan_PBL_' . preg_replace('/[^A-Za-z0-9]/', '_', $class->name) . '_' . date('Ymd');
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
 
   // --- AJAX: Save Grade ---
   public function save_grade()
