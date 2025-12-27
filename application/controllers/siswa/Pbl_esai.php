@@ -37,6 +37,7 @@ class Pbl_esai extends CI_Controller
     $data['user'] = $this->session->userdata();
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
     $this->load->view('siswa/pbl_esai_detail', $data);
     $this->load->view('templates/footer');
   }

@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateStyle: 'medium', timeStyle: 'short'
             });
             
-            const fileUrl = `${window.BASE_URL}uploads/observasi/${item.file_name}`;
+            // const fileUrl = `${window.BASE_URL}uploads/observasi/${item.file_name}`;
+            const fileUrl = `${window.BASE_URL}file/observasi/${item.file_name}`;
             
             // Logika Tombol Nilai
             let gradeBtnHtml = '';
@@ -99,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <small class="text-muted"><i class="bi bi-file-earmark"></i> ${item.original_name}</small><br>
                     <small class="text-muted">${item.description || ''}</small>
                  </div>`,
-                `<a href="${fileUrl}" target="_blank" class="btn btn-sm btn-info text-white"><i class="bi bi-download"></i> Unduh</a>`,
+                `<a href="${fileUrl}" target="_blank" class="btn btn-sm btn-info text-dark"><i class="bi bi-download"></i> Unduh</a>`,
                 
                 // Kolom Status Nilai
                 gradeStatusHtml,

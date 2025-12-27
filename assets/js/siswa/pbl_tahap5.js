@@ -106,12 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
       let actionBtn = '';
       if (isFilled) {
           actionBtn = `
-            <button type="button" class="btn btn-sm btn-info text-white btn-edit" 
+            <button type="button" class="btn btn-sm btn-info text-dark btn-edit" 
               data-id="${student.user_id}" 
               data-name="${student.student_name}"
               data-reflection="${teacherRef}"
               data-feedback="${feedback}">
-              <i class="bi bi-eye"></i> Lihat Detail
+              Lihat Detail
             </button>
           `;
       } else {

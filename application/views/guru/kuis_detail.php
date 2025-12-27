@@ -62,7 +62,7 @@
   <div class="card shadow-sm mb-3">
     <div class="d-flex flex-wrap gap-2 p-3">
       <button class="btn btn-primary" id="btnAddQuestion">
-        <i class="bi bi-plus-lg"></i> Tambah Pertanyaan
+        <i class="bi bi-plus-circle me-1"></i> Tambah Pertanyaan
       </button>
       <a href="<?= base_url('guru/pbl_kuis/export_quiz/' . $quiz->id) ?>" class="btn btn-success">
         <i class="bi bi-file-earmark-spreadsheet"></i> Export

@@ -83,12 +83,12 @@
 	<!-- ================= NAVIGASI ATAS ================= -->
 	<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
 		<a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>"
-			class="btn btn-outline-secondary">
+			class="btn btn-secondary">
 			<i class="bi bi-arrow-left"></i> Kembali ke Kelas
 		</a>
 
 		<a href="<?= base_url($url_name . '/pbl/tahap2/' . $class_id); ?>"
-			class="btn btn-primary">
+			class="btn btn-outline-primary">
 			<i class="bi bi-list-task me-1"></i>
 			Lanjut ke Tahap 2
 		</a>
@@ -194,7 +194,7 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
 						<button type="submit" class="btn btn-primary">
-							<i class="bi bi-save me-1"></i> Simpan
+							Simpan
 						</button>
 					</div>
 				</form>

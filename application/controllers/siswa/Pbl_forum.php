@@ -30,7 +30,7 @@ class Pbl_forum extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
 		$this->load->view('templates/header', $data);
-		// $this->load->view('templates/sidebar');
+		$this->load->view('templates/sidebar');
 		$this->load->view('guru/pbl_forum_detail', $data); // View Detail BARU
 		$this->load->view('templates/footer');
 	}

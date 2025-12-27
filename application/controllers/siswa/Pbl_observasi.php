@@ -31,6 +31,7 @@ class Pbl_observasi extends CI_Controller
 		$data['url_name'] = 'siswa';
 
 		$this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
       $this->load->view('siswa/pbl_observasi_detail', $data); // View khusus siswa
       $this->load->view('templates/footer');
   }

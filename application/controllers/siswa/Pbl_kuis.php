@@ -34,6 +34,7 @@ class Pbl_kuis extends CI_Controller
         ];
 
         $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
         $this->load->view('siswa/pbl_kuis_detail', $data);
         $this->load->view('templates/footer');
     }

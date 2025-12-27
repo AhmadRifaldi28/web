@@ -37,7 +37,7 @@
   </div>
 
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-    <a href="<?= base_url('guru/pbl/tahap3/' . $topic->class_id) ?>" class="btn btn-secondary">← Kembali</a>
+    <a href="<?= base_url($url_name . '/pbl/tahap3/' . $topic->class_id) ?>" class="btn btn-secondary">← Kembali</a>
   </div>
 
   <div class="alert alert-info border-0 shadow-sm">
@@ -48,7 +48,7 @@
 
   <div class="mb-3">
     <button class="btn btn-primary" id="btnAddPost">
-      <i class="bi bi-plus-lg"></i> Tulis Diskusi
+      <i class="bi bi-plus-circle me-1"></i> Tulis Diskusi
     </button>
   </div>
 

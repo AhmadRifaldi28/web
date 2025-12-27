@@ -34,7 +34,9 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
   <div class="pagetitle mb-3">
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">PBL</a></li>
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">PBL</a>
+        </li>
         <li class="breadcrumb-item active">Refleksi & Evaluasi Akhir</li>
       </ol>
     </nav>

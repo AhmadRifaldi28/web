@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="badge bg-${badge}">
           <i class="bi ${icon} me-1"></i> ${ext.toUpperCase()}
         </span>
-        <button class="btn btn-outline-primary btn-sm btn-preview"
+        <button class="btn btn-outline-info btn-sm text-dark btn-preview"
           data-id="${item.id}" data-ext="${ext}">
           Lihat
         </button>

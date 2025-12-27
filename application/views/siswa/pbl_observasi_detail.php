@@ -1,7 +1,19 @@
-<div class="container py-4">
-	<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="container-fluid">
+	<div class="pagetitle mb-3">
+		<nav>
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+						PBL
+					</a>
+				</li>
+				<li class="breadcrumb-item active"><?= htmlspecialchars($slot->description, ENT_QUOTES, 'UTF-8'); ?></li>
+			</ol>
+		</nav>
+	</div>
+	<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
 		<div>
-			<h4 class="mb-1"><?= $title; ?></h4>
 			<p class="text-muted mb-0">Unggah hasil observasi Anda di sini.</p>
 		</div>
 		<a href="<?= base_url('siswa/pbl/tahap3/' . $class_id) ?>" class="btn btn-secondary">
@@ -9,7 +21,6 @@
 		</a>
 	</div>
 
-	<!-- [BARU] Menampilkan Nilai & Feedback jika ada -->
 	<?php if (!empty($result)) : ?>
 		<div class="card shadow-sm mb-4 border-start border-success border-4">
 			<div class="card-body">
@@ -30,7 +41,6 @@
 		</div>
 	<?php endif; ?>
 
-	<!-- Instruksi Tugas -->
 	<div class="card shadow-sm mb-4 border-start border-primary border-4">
 		<div class="card-body">
 			<h5 class="card-title text-primary">Instruksi Tugas:</h5>
@@ -38,19 +48,15 @@
 		</div>
 	</div>
 
-	<!-- Tabel Upload -->
 	<div class="card shadow-sm">
 		<div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
 			<h6 class="m-0 font-weight-bold text-primary">File Saya</h6>
 			
-			<!-- Button Upload -->
-			<!-- Jika sudah dinilai, Anda bisa opsional menonaktifkan tombol upload dengan menambahkan kondisi -->
-			<!-- Contoh: <button ... <//?= !empty($result) ? 'disabled' : '' ?>> -->
 			<button class="btn btn-primary btn-sm" id="btnAddUpload">
 				<i class="bi bi-cloud-upload"></i> Upload File Baru
 			</button>
 		</div>
-		<div class="card-body">
+		<div class="card-body uploadContainer">
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover" id="myUploadsTable" width="100%" cellspacing="0">
 					<thead class="table-light">

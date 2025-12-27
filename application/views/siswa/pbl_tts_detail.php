@@ -51,10 +51,21 @@
 	.emote-icon { font-size: 1.2rem; margin-left: 8px; }
 </style>
 
-<div class="container py-4">
+<div class="container-fluid">
+  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active"><?= htmlspecialchars($tts->title, ENT_QUOTES, 'UTF-8'); ?></li>
+      </ol>
+    </nav>
+  </div>
 	<div class="d-flex justify-content-between align-items-center mb-3">
 		<div>
-			<h4 class="mb-1"><?= $title; ?></h4>
 			<p class="text-muted">
 				<?= $is_done ? 'Berikut adalah hasil pengerjaan Anda.' : 'Isi teka-teki silang berikut.'; ?>
 			</p>

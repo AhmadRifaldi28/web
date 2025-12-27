@@ -12,7 +12,9 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
   <div class="pagetitle mb-3">
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">PBL</a></li>
+        <li class="breadcrumb-item">
+          <a href="<?= base_url($url_name . '/dashboard/class_detail/' . $class_id) ?>">PBL</a>
+        </li>
         <li class="breadcrumb-item active">Refleksi & Evaluasi Akhir</li>
       </ol>
     </nav>
@@ -80,7 +82,7 @@ thead th { background: #e0efff !important; text-align: center; vertical-align: m
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0 shadow-lg">
       <form id="refleksiForm" autocomplete="off">
-        <div class="modal-header bg-info text-white">
+        <div class="modal-header bg-primary text-white">
           <h5 class="modal-title" id="refleksiModalLabel"><i class="bi bi-eye"></i> Detail Refleksi</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>

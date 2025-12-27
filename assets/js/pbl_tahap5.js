@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logic Tombol Input/Ubah
     const btnClass = isFilled ? 'btn-warning' : 'btn-primary';
     const btnText = isFilled ? 'Ubah' : 'Input';
-    const icon = isFilled ? 'bi-pencil-square' : 'bi-plus-lg';
+    const icon = isFilled ? 'bi-pencil-square' : 'bi-plus-circle';
 
     return `
       <div class="btn-group" role="group">

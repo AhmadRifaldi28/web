@@ -83,7 +83,7 @@
           <i class="bi bi-pencil-square me-1"></i>
           <strong class="text-dark">Daftar Aktivitas Esai</strong>
         </h5>
-        <button class="btn btn-primary btn-sm" id="btnAddEsai">+ Tambah Esai</button>
+        <button class="btn btn-success btn-sm" id="btnAddEsai"><i class="bi bi-plus-circle me-1"></i> Tambah Esai</button>
       </div>
       <div class="table-responsive">
         <table class="table table-bordered table-hover" id="esaiTable">
@@ -116,7 +116,7 @@
             <input type="text" name="title" id="esaiTitle" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label for="esaiDescription" class="form-label">Deskripsi / Instruksi Esai</label>
+            <label for="esaiDescription" class="form-label">Deskripsi Esai</label>
             <textarea name="description" id="esaiDescription" class="form-control" rows="5"></textarea>
           </div>
         </div>

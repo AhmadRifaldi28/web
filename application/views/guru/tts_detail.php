@@ -122,13 +122,10 @@
         Silakan pilih kotak terlebih dahulu untuk membuat soal.
       </div>
 
-      <div class="alert alert-danger border-0 shadow-sm">
-        <strong>Belum bisa hapus soal</strong>
-      </div>
       <!-- <div id="ttsGridPreview" class="border p-3 mb-3" style="display:grid; grid-template-columns: repeat(10, 25px); gap:2px;"> -->
       <div id="ttsGridPreview" class="border p-3 mb-3" style="display:grid; justify-content: center; gap:2px;">
       </div>
-      <button class="btn btn-primary btn-sm mb-3" id="btnAddQuestion">+ Tambah Pertanyaan</button>
+      <button class="btn btn-primary btn-sm mb-3" id="btnAddQuestion"><i class="bi bi-plus-circle me-1"></i> Tambah Pertanyaan</button>
 
       <div class="table-responsive" id="questionTableContainer">
         <table class="table table-bordered" id="questionTable">

@@ -45,16 +45,16 @@
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="<?= base_url('guru/dashboard') ?>">Kelas</a>
+          <a href="<?= base_url('guru/dashboard') ?>">Sekolah</a>
         </li>
-        <li class="breadcrumb-item active">Organisasi Belajar</li>
+        <li class="breadcrumb-item active">Detail Sekolah</li>
       </ol>
     </nav>
   </div>
 
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <a href="<?= base_url('guru/dashboard') ?>" class="btn btn-secondary my-3">← Kembali ke Dashboard</a>
-      <button class="btn btn-primary" id="btnAddClass">
+      <button class="btn btn-success" id="btnAddClass">
                 <i class="fas fa-plus"></i> Tambah Kelas Baru
             </button>
   </div>
@@ -117,7 +117,7 @@
                     <div class="mb-3">
                         <label for="classCode" class="form-label">Kode Kelas</label>
                         <input type="text" class="form-control" id="classCode" name="code" aria-describedby="codeHelp">
-                        <div id="codeHelp" class="form-text">Bisa berupa kode unik (misal: "6-A"). Kosongkan untuk kode acak.</div>
+                        <div id="codeHelp" class="form-text">Bisa berupa kode unik (misal: "4-A"). Kosongkan untuk kode acak.</div>
                     </div>
                 </div>
                 <div class="modal-footer">

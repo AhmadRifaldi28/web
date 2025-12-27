@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mapping Data JSON ke Tabel
     dataMapper: (q, i) => {
     	// Tampilkan pertanyaan lengkap
-    	return [q.question_number, q.question_text, `<span class="badge bg-info text-dark">${q.weight}</span>`];
+    	return [q.question_number, q.question_text];
     }
   };
 

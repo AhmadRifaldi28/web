@@ -25,6 +25,34 @@
   <!-- Template Main CSS File -->
   <link href="<?= base_url('assets/css/style.css'); ?>" rel="stylesheet">
 
+  <style>
+  /* ===== TABLE RESPONSIVE PBL ===== */
+  #siswaTable, #quizTable, #ttsTable, #myUploadsTable, #questionTable {
+    min-width: 720px !important;
+  }
+
+  #siswaTable thead th, #quizTable thead th, #ttsTable thead th, #myUploadsTable thead th, #questionTable thead th {
+    background: #e0efff !important;
+  }
+
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .action { width: 20%; }
+
+  /* Responsive Styles */
+  @media (max-width: 1051px) {
+    .action { width: 28%; }
+  }
+
+  @media (max-width: 576px) {
+    #siswaTable td, #quizTable td, #myUploadsTable td, #action td { white-space: nowrap; }
+  }
+
+  </style>
+
   <!-- <script src="</?= base_url('assets/js/jquery-3.6.0.min.js') ?>"></script> -->
   <!-- <script src="</?= base_url('assets/js/csrf.js'); ?>"></script> -->
 </head>

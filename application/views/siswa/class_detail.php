@@ -1,4 +1,14 @@
 <div class="container-fluid">
+	<div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url('siswa/dashboard/') ?>">Kelas</a>
+        </li>
+        <li class="breadcrumb-item active">Detail Kelas</li>
+      </ol>
+    </nav>
+  </div>
 
 	<div class="card shadow">
 		<div class="container-fluid">
@@ -91,11 +101,11 @@
 	</div>
 
 
-	<div class="text-end mt-3">
+	<!-- <div class="text-end mt-3">
 		<a href="<?= base_url('siswa/pbl/index/' . $kelas->id); ?>" class="btn btn-primary">
 			<i class="fas fa-book-open"></i> Tahap 1 – Orientasi Masalah
 		</a>
-	</div>
+	</div> -->
 
 </div>
 

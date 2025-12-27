@@ -23,6 +23,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_user_role($role_id, $allowed_roles);
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
     $this->load->view('guru/pbl_orientasi', $data);
     $this->load->view('templates/footer');
   }
@@ -130,6 +131,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
 	  $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
 	  $this->load->view('guru/pbl_tahap2', $data);
 	  $this->load->view('templates/footer');
 	}
@@ -289,6 +291,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
     $this->load->view('guru/pbl_tahap3', $data);
     $this->load->view('templates/footer');
   }
@@ -445,6 +448,7 @@ class Pbl extends CI_Controller
     $data['is_admin_or_guru'] = $this->User_model->check_is_teacher($role_id);
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
     // $this->load->view('templates/sidebar');
     $this->load->view('guru/pbl_tahap4', $data);
     $this->load->view('templates/footer');
@@ -613,6 +617,7 @@ class Pbl extends CI_Controller
         $data['url_name'] = 'siswa';
         
         $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar');
         $this->load->view('siswa/pbl_tahap5', $data);
         $this->load->view('templates/footer');
     }

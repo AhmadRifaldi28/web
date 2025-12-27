@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     baseUrl: window.BASE_URL,
     entityName: 'Nilai Siswa',
     tableId: 'submissionsTable',
-    // tableParentSelector: '#submissionsTableContainer', // Opsional, default .card-body
+    tableParentSelector: '#submissionsTableContainer', // Opsional, default .card-body
     
     // Tidak butuh modalId/formId/btnAddId karena tidak ada fitur tambah/edit manual
     

@@ -83,7 +83,7 @@
           <i class="bi bi-card-checklist me-1"></i>
           <strong class="text-dark">Daftar Kuis</strong>
         </h5>
-        <button class="btn btn-primary btn-sm" id="btnAddQuiz">+ Tambah Kuis</button>
+        <button class="btn btn-success btn-sm" id="btnAddQuiz"><i class="bi bi-plus-circle me-1"></i> Tambah Kuis</button>
       </div>
       <div class="table-responsive">
         <table class="table table-bordered" id="quizTable">
@@ -101,7 +101,7 @@
           <i class="bi bi-dice-3-fill me-1"></i>
           <strong class="text-dark">Daftar Teka-Teki Silang</strong>
       </h5>
-        <button class="btn btn-primary btn-sm" id="btnAddTts">+ Tambah TTS</button>
+        <button class="btn btn-success btn-sm" id="btnAddTts"><i class="bi bi-plus-circle me-1"></i> Tambah TTS</button>
       </div>
       <div class="table-responsive">
         <table class="table table-bordered" id="ttsTable">

@@ -44,7 +44,7 @@
             PBL
           </a>
         </li>
-        <li class="breadcrumb-item active">Penyelidikan Mandiri</li>
+        <li class="breadcrumb-item active">Penyelidikan Mandiri & Kelompok</li>
       </ol>
     </nav>
   </div>
@@ -87,7 +87,7 @@
           <i class="bi bi-file-text me-1"></i>
           <strong class="text-dark">Daftar Ruang Observasi</strong>
         </h5>
-        <button class="btn btn-primary btn-sm" id="btnAddObservasi">+ Tambah Ruang</button>
+        <button class="btn btn-success btn-sm" id="btnAddObservasi"><i class="bi bi-plus-circle me-1"></i> Tambah Ruang</button>
       </div>
       <div class="table-responsive">
         <table class="table table-bordered table-hover" id="observasiTable">
@@ -106,7 +106,7 @@
           <i class="bi bi-chat-text me-1"></i>
           <strong>Daftar Topik Diskusi</strong>
         </h5>
-        <button class="btn btn-primary btn-sm" id="btnAddDiskusi">+ Tambah Topik</button>
+        <button class="btn btn-success btn-sm" id="btnAddDiskusi"><i class="bi bi-plus-circle me-1"></i> Tambah Topik</button>
       </div>
       <div class="table-responsive">
         <table class="table table-bordered table-hover" id="diskusiTable">
@@ -170,7 +170,7 @@
             <input type="text" name="title" id="diskusiTitle" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label for="diskusiDescription" class="form-label">Deskripsi / Pancingan Diskusi</label>
+            <label for="diskusiDescription" class="form-label">Deskripsi  Diskusi</label>
             <textarea name="description" id="diskusiDescription" class="form-control" rows="3"></textarea>
           </div>
         </div>

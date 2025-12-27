@@ -1,4 +1,16 @@
-<div class="container py-4">
+<div class="container-fluid">
+	  <div class="pagetitle mb-3">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="<?= base_url('siswa/dashboard/class_detail/' . $class_id) ?>">
+            PBL
+          </a>
+        </li>
+        <li class="breadcrumb-item active"><?= htmlspecialchars($essay->description, ENT_QUOTES, 'UTF-8'); ?></li>
+      </ol>
+    </nav>
+  </div>
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<div>
 			<a href="<?= base_url('siswa/pbl/tahap4/' . $class_id); ?>" class="btn btn-outline-secondary btn-sm mb-2">
@@ -19,16 +31,17 @@
 					<h5 class="card-title mb-0 text-primary"><i class="bi bi-question-circle"></i> Soal Esai</h5>
 				</div>
 				<div class="card-body" id="questionTableContainer">
-					<table class="table table-hover align-middle" id="questionTable">
-						<thead class="table-light">
-							<tr>
-								<th width="10%">No</th>
-								<th>Pertanyaan</th>
-								<th width="15%">Bobot</th>
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-hover align-middle" id="questionTable">
+							<thead class="table-light">
+								<tr>
+									<th width="10%">No</th>
+									<th>Pertanyaan</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -86,10 +99,10 @@
 									<i class="bi bi-send"></i> <?= $btn_text; ?>
 								</button>
 								<?php else: ?>
-									<button class="btn btn-secondary disabled" disabled>
+									<button class="btn btn-secondary" disabled>
 										<i class="bi bi-lock"></i> Jawaban Terkunci (Sudah Dinilai)
 									</button>
-									<button class="btn btn-info text-white mt-2" data-bs-toggle="modal" data-bs-target="#readOnlyModal">
+									<button class="btn btn-info text-dark mt-2" data-bs-toggle="modal" data-bs-target="#readOnlyModal">
 										<i class="bi bi-eye"></i> Lihat Jawaban Saya
 									</button>
 								<?php endif; ?>
@@ -124,7 +137,7 @@
 						<div class="modal-footer bg-light">
 							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
 							<button type="submit" class="btn btn-primary">
-								<i class="bi bi-save"></i> Kirim Jawaban
+							 	Kirim Jawaban
 							</button>
 						</div>
 					</form>

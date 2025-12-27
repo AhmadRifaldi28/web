@@ -61,7 +61,7 @@
 				<div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
 					<h5 class="card-title mb-0 text-primary"><i class="bi bi-question-circle"></i> Daftar Pertanyaan</h5>
 					<button class="btn btn-primary btn-sm" id="btnAddQuestion">
-						<i class="bi bi-plus-lg"></i> Tambah Soal
+						<i class="bi bi-plus-circle me-1"></i> Tambah Soal
 					</button>
 				</div>
 				<div class="card-body" id="questionTableContainer">

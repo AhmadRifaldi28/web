@@ -63,7 +63,7 @@
 
   <div class="d-flex justify-content-between mb-2">
     <h5>Daftar Siswa</h5>
-    <button class="btn btn-primary btn-sm" id="btnAddStudent" data-bs-toggle="modal" data-bs-target="#siswaModal">
+    <button class="btn btn-success btn-sm" id="btnAddStudent" data-bs-toggle="modal" data-bs-target="#siswaModal">
         <i class="fas fa-user-plus"></i> Tambah Siswa
     </button>
 </div>

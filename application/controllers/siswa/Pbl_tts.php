@@ -37,6 +37,7 @@ class Pbl_tts extends CI_Controller
     ];
 
     $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar');
     $this->load->view('siswa/pbl_tts_detail', $data);
     $this->load->view('templates/footer');
   }

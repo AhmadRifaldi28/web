@@ -1,9 +1,10 @@
-import CrudHandler from '../crud_handler.js'; // Sesuaikan path relatif ke crud_handler.js
+import CrudHandler from '../crud_handler.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
     const csrfEl = document.querySelector('input[name="' + window.CSRF_TOKEN_NAME + '"]');
     const SLOT_ID = window.SLOT_ID;
+    const btnAddId = 'btnAddUpload'; // Simpan ID tombol dalam variabel
 
     if (!SLOT_ID) return;
 
@@ -20,11 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formId: 'uploadForm',
         modalLabelId: 'uploadModalLabel',
         tableId: 'myUploadsTable',
-        btnAddId: 'btnAddUpload',
+        btnAddId: btnAddId, // Gunakan variabel ID
         
-        // Dummy ID untuk menghindari error init CrudHandler
         hiddenIdField: 'dummyId', 
-        tableParentSelector: '.card-body',
+        tableParentSelector: '.uploadContainer',
         
         csrf: csrfConfig,
         urls: {
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             delete: (id) => `siswa/pbl_observasi/delete_upload/${id}`
         },
         deleteMethod: 'POST',
-        deleteNameField: 'name', 
+        deleteNameField: 'original_name', // Ubah ke original_name agar konfirmasi hapus lebih jelas
         
         modalTitles: { add: 'Upload Hasil Observasi', edit: '' },
 
@@ -44,20 +44,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 timeStyle: 'short'
             });
 
-            const fileUrl = `${window.BASE_URL}uploads/observasi/${item.file_name}`;
+            // const fileUrl = `${window.BASE_URL}uploads/observasi/${item.file_name}`;
+            const fileUrl = `${window.BASE_URL}file/observasi/${item.file_name}`;
             
             // Tombol Download
             const downloadBtn = `
-                <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-info text-white me-1" title="Unduh">
-                    <i class="bi bi-download"></i>
+                <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-info text-dark me-1" title="Unduh">
+                    Unduh
                 </a>
             `;
 
             const deleteBtn = `
                 <button class="btn btn-sm btn-danger btn-delete" 
                     data-id="${item.id}" 
-                    data-name="${item.original_name}">
-                    <i class="bi bi-trash"></i>
+                    data-original_name="${item.original_name}"> 
+                    Hapus
                 </button>
             `;
 
@@ -76,6 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset form saat tombol tambah diklik
         onAdd: (form) => {
             form.reset();
+        },
+
+        // [BARU] Logika Toggle Tombol Upload
+        // Dijalankan otomatis oleh CrudHandler setiap kali data selesai dimuat (Load/Save/Delete)
+        onDataLoaded: (data) => {
+            const btnAdd = document.getElementById(btnAddId);
+            if (btnAdd) {
+                // Jika ada data (length > 0), sembunyikan tombol. Jika kosong, tampilkan.
+                if (data && data.length > 0) {
+                    btnAdd.classList.add('d-none');
+                } else {
+                    btnAdd.classList.remove('d-none');
+                }
+            }
         }
     };
 
